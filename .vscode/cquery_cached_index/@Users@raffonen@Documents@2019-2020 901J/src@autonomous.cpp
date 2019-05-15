@@ -64,11 +64,7 @@ std::vector<float> track(){
     prevr = currentr;
     prevb = currentb;
 
-<<<<<<< HEAD
-    theta1 = thetar + 180*((dl-dr)/(rdis+ldis))/pi;//convert angle to degrees and add to initial global angle to find new angle
-=======
     theta1 = thetar + 180*((dl-dr)/(rdis+ldis))/M_PI;//convert angle to degrees and add to initial angle to find new angle
->>>>>>> e215b24d3a20aa4b0cab207879d3e60babeee8f6
 
     dtheta = theta1 - theta0; //change in angle
 
