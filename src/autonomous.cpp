@@ -32,9 +32,9 @@ namespace WheelTracker{
   float dtheta;
 
 
-  std::vector<float> d (2);
-  std::vector<float> dtemp (2);
-  std::vector <float> d1 (2);
+  std::vector<float> d (3);
+  std::vector<float> dtemp (3);
+  std::vector <float> d1 (3);
 
   float rad;
   float angle;
@@ -75,7 +75,7 @@ std::vector<float> track(){
     }else{
       dtemp.at(0) = 2 * sin(dtheta/2) * (ds/dtheta + bdis);
       dtemp.at(1) = 2 * sin(dtheta/2) * (dr/dtheta + rdis);
-    }
+
 
     //calculate average orientation
     thetam = theta0 + dtheta/2;
@@ -89,7 +89,7 @@ std::vector<float> track(){
     //convert back
     dtemp[0] = rad * cos(angle);
     dtemp[1] = rad * sin(angle);
-
+}
     //add position vector to old one
     for(int i = 0; i < 2; i++){
       d1[i] = d[i] + dtemp[i];
@@ -99,7 +99,7 @@ std::vector<float> track(){
 
       d[0] = d1[0];
       d[1] = d1[1];
-
+      d1[2] = theta0;
       //return new position
       return d1;
     }
@@ -121,8 +121,18 @@ std::vector<float> track(){
  * from where it left off.
  */
 void autonomous() {
+  std::vector<float> RobotPosition (3);
+
 while(true){
-  WheelTracker::track();
+  RobotPosition = WheelTracker::track();
+  printf("X: %f\r\n",RobotPosition[0]);
+  printf("Y: %f\r\n",RobotPosition[1]);
+  printf("THETA: %f\r\n",RobotPosition[2]);
+  printf("LEFT ENCODER %d\r\n",LeftEncoder.get_value());
+  printf("RIGHT ENCODER %d\r\n",RightEncoder.get_value());
+  printf("Back ENCODER %d\r\n",BackEncoder.get_value());
+
+
 }
 
 
