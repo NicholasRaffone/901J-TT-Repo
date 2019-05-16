@@ -24,3 +24,4 @@ pros::ADIEncoder BackEncoder(BENC_TOP_PORT,BENC_BOT_PORT,true);
 bool blueSide = false; // 1
 bool farSide = false; // 2
 bool park = true; // 4
+std::vector<float> RobotPosition (3);

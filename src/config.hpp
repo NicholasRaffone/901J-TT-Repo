@@ -1,4 +1,5 @@
 #include "main.h"
+#include <vector>
 
 extern const int LEFT_WHEEL_PORT; //17
 extern const int LEFT_CHAIN_PORT; //18
@@ -19,3 +20,4 @@ extern pros::Controller master;
 extern pros::ADIEncoder LeftEncoder;
 extern pros::ADIEncoder RightEncoder;
 extern pros::ADIEncoder BackEncoder;
+extern std::vector<float> RobotPosition;

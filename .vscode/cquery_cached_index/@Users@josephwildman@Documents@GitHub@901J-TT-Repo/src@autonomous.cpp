@@ -106,7 +106,32 @@ std::vector<float> track(){
 
 }
 
+void measure_jerk(){
+  float vel_max = 200*4/60; //inches per s
+  float pos = 0;
+  float d_pos;
+  float vel;
+  float vel_prev;
+  float a_prev;
+  float a;
+  float d_a;
+  float j_max = 5.0 ;//inch / s^3
+  while (true){
+    d_pos = RobotPosition[0] - pos;
 
+    a += 0.01*j_max;
+    vel += a_prev*0.01;
+    pos += vel_prev*0.01;
+    vel_prev = vel;
+    a_prev = a;
+    left_wheel.move_velocity(vel);
+    right_wheel.move_velocity(vel);
+    left_chain.move_velocity(vel);
+    right_chain.move_velocity(vel);
+
+    pros::delay(10);
+  }
+}
 
 //test
 /**
@@ -121,7 +146,6 @@ std::vector<float> track(){
  * from where it left off.
  */
 void autonomous() {
-  std::vector<float> RobotPosition (3);
 
 while(true){
   RobotPosition = WheelTracker::track();
@@ -131,7 +155,7 @@ while(true){
   printf("LEFT ENCODER %d\r\n",LeftEncoder.get_value());
   printf("RIGHT ENCODER %d\r\n",RightEncoder.get_value());
   printf("Back ENCODER %d\r\n",BackEncoder.get_value());
-
+  pros::delay(10);
 
 }
 
