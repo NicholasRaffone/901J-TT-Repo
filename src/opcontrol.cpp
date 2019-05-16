@@ -15,18 +15,37 @@
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	pros::Controller master(pros::E_CONTROLLER_MASTER);
-	pros::Motor left_mtr(1);
-	pros::Motor right_mtr(2);
-	while (true) {
-		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
-		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
-		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);
-		int left = master.get_analog(ANALOG_LEFT_Y);
-		int right = master.get_analog(ANALOG_RIGHT_Y);
 
-		left_mtr = left;
-		right_mtr = right;
-		pros::delay(20);
-	}
+
+		while (true) {
+			double power = 600*master.get_analog(ANALOG_LEFT_Y)/127;
+			double turn = 600*master.get_analog(ANALOG_RIGHT_X)/127;
+			//int left = (int)(pow(((power + turn)/600.0),2.0)*600.0);
+			//int right = (int) (pow(((power - turn)/600.0),2.0)*600.0);
+			int left = power+turn;
+			int right = power-turn;
+			left_wheel.move_velocity(left);
+			left_chain.move_velocity(left);
+			right_wheel.move_velocity(right);
+			right_chain.move_velocity(right);
+
+
+			if(master.get_digital(pros::E_CONTROLLER_DIGITAL_X) != 0){
+				left_wheel.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+				right_wheel.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+				left_chain.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+				right_chain.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+				left_wheel.move_velocity(0);
+				left_chain.move_velocity(0);
+				right_wheel.move_velocity(0);
+				right_chain.move_velocity(0);
+			}else{
+				left_wheel.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+				right_wheel.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+				left_chain.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+				right_chain.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+			}
+
+			pros::delay(2);
+		}
 }
