@@ -19,7 +19,7 @@ void opcontrol() {
 
 		while (true) {
 			double power = 600*master.get_analog(ANALOG_LEFT_Y)/127;
-			double turn = 600*master.get_analog(ANALOG_RIGHT_X)/127;
+			double turn = 600*master.get_analog(ANALOG_RIGHT_X)/137;
 			//int left = (int)(pow(((power + turn)/600.0),2.0)*600.0);
 			//int right = (int) (pow(((power - turn)/600.0),2.0)*600.0);
 			int left = power+turn;

@@ -155,7 +155,7 @@ while(true){
   printf("LEFT ENCODER %d\r\n",LeftEncoder.get_value());
   printf("RIGHT ENCODER %d\r\n",RightEncoder.get_value());
   printf("Back ENCODER %d\r\n",BackEncoder.get_value());
-  pros::delay(10);
+  pros::delay(1000);
 
 }
 
