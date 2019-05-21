@@ -133,6 +133,33 @@ void measure_jerk(){
   }
 }
 
+void curvyboi(){//should be task but idk how
+  double VMAX = 200;
+  double pl;
+  double pr;
+  double vl;
+  double vr;
+  double kp;
+  double sl;//read from csv
+  double sr;//read from csv
+  double el;
+  double er;
+  double ktheta;
+  double dtheta;
+
+  dtheta = heading - actual;//heading read from csv
+
+  pl = vl/VMAX + kp*(sl-el) - ktheta * dtheta;
+
+  pr = vr/VMAX + kp*(sr-er) + ktheta * dtheta;
+
+  left_wheel.movevelocity(pl);
+  left_chain.movevelocity(pl);
+  right_wheel.movevelocity(pr);
+  right_chain.movevelocity(pr);
+
+}
+
 //test
 /**
  * Runs the user autonomous code. This function will be started in its own task
