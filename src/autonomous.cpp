@@ -135,17 +135,17 @@ void measure_jerk(){
 
 void curvyboi(){//should be task but idk how
   double VMAX = 200;
-  double pl;
-  double pr;
-  double vl;
-  double vr;
-  double kp;
+  double pl;//power
+  double pr;//power
+  double vl;//read from csv
+  double vr;//read from csv
+  double kp;//Kp
   double sl;//read from csv
   double sr;//read from csv
-  double el;
-  double er;
-  double ktheta;
-  double dtheta;
+  double el;//encoder value
+  double er;//encoder value
+  double ktheta;//Ktheta
+  double dtheta;//heading - gyro reading
 
   dtheta = heading - actual;//heading read from csv
 
@@ -153,10 +153,10 @@ void curvyboi(){//should be task but idk how
 
   pr = vr/VMAX + kp*(sr-er) + ktheta * dtheta;
 
-  left_wheel.movevelocity(pl);
-  left_chain.movevelocity(pl);
-  right_wheel.movevelocity(pr);
-  right_chain.movevelocity(pr);
+  left_wheel.movevelocity(VMAX*pl);
+  left_chain.movevelocity(VMAX*pl);
+  right_wheel.movevelocity(pr*VMAX);
+  right_chain.movevelocity(pr*VMAX);
 
 }
 
