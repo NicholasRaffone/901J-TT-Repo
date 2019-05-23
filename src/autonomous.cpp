@@ -17,9 +17,9 @@ namespace WheelTracker{
   float theta0 = 0;
   float thetam;
 
-  float rdis = 10;
-  float ldis = 10;
-  float bdis=10;
+  float rdis = 4.72440945;
+  float ldis = 4.72440945;
+  float bdis= 4.33070866;
 
   float dltheta = 0; //change in encoder angle
   float drtheta = 0;
@@ -132,7 +132,7 @@ void measure_jerk(){
     pros::delay(10);
   }
 }
-
+/**
 void curvyboi(){//should be task but idk how
   double VMAX = 200;
   double pl;//power
@@ -159,7 +159,7 @@ void curvyboi(){//should be task but idk how
   right_chain.movevelocity(pr*VMAX);
 
 }
-
+**/
 //test
 /**
  * Runs the user autonomous code. This function will be started in its own task
