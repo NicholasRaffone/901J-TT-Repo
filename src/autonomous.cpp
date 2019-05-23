@@ -2,6 +2,7 @@
 #include "config.hpp"
 #include <math.h>
 #include <vector>
+/*
 namespace WheelTracker{
   float wheelrad = 2.75;
 
@@ -132,6 +133,7 @@ void measure_jerk(){
     pros::delay(10);
   }
 }
+*/
 /**
 void curvyboi(){//should be task but idk how
   double VMAX = 200;
@@ -175,6 +177,7 @@ void curvyboi(){//should be task but idk how
 void autonomous() {
 
 while(true){
+  /*
   RobotPosition = WheelTracker::track();
   printf("X: %f\r\n",RobotPosition[0]);
   printf("Y: %f\r\n",RobotPosition[1]);
@@ -183,7 +186,7 @@ while(true){
   printf("RIGHT ENCODER %d\r\n",RightEncoder.get_value());
   printf("Back ENCODER %d\r\n",BackEncoder.get_value());
   pros::delay(1000);
-
+*/
 }
 
 
