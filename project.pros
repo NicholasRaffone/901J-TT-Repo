@@ -248,6 +248,11 @@
                 "version": "3.3.13"
             }
         },
-        "upload_options": {}
+        "upload_options": {
+            "compress_bin": true,
+            "description": "Created with PROS",
+            "remote_name": "2019-2020 901J",
+            "slot": 1
+        }
     }
 }

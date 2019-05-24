@@ -120,11 +120,13 @@ void WheelTrack2 (void* param){
  * task, not resume it from where it left off.
  */
 void opcontrol() {
+  std::string text("wheelTrack");
+  pros::Task punchTask(WheelTrack2,&text);
 
 
 		while (true) {
-			double power = 600*master.get_analog(ANALOG_LEFT_Y)/127;
-			double turn = 600*master.get_analog(ANALOG_RIGHT_X)/137;
+			double power = 500*master.get_analog(ANALOG_LEFT_Y)/127;
+			double turn = 500*master.get_analog(ANALOG_RIGHT_X)/137;
 			//int left = (int)(pow(((power + turn)/600.0),2.0)*600.0);
 			//int right = (int) (pow(((power - turn)/600.0),2.0)*600.0);
 			int left = power+turn;
@@ -151,9 +153,7 @@ void opcontrol() {
 				right_chain.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 			}
 
-        std::string text("wheelTrack");
-        pros::Task punchTask(WheelTrack2,&text);
-        printf("THETA: %f",d[2]);
+      printf("THETA: %f",d[2]);
 
 			pros::delay(10);
 		}
