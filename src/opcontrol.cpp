@@ -2,6 +2,7 @@
 #include "config.hpp"
 #include <math.h>
 #include <vector>
+<<<<<<< HEAD
 #include "okapi/api.hpp"
 
 using namespace okapi;
@@ -25,6 +26,11 @@ ThreeEncoderSkidSteerModel profileController = AsyncControllerFactory::motionPro
   10.0, // Maximum linear jerk of the Chassis in m/s/s/s
   myChassis // Chassis Controller
 );**/
+
+
+std::vector<float> d (3);
+
+void WheelTrack2 (void* param){
 
   float wheelrad = 2.75;
 
@@ -55,7 +61,7 @@ ThreeEncoderSkidSteerModel profileController = AsyncControllerFactory::motionPro
   float dtheta;
 
 
-  std::vector<float> d (3);
+
   std::vector<float> dtemp (3);
   std::vector <float> d1 (3);
 
@@ -65,11 +71,8 @@ ThreeEncoderSkidSteerModel profileController = AsyncControllerFactory::motionPro
   float currentr;
   float currentb;
 
-std::vector<float> track(){
 
-    //printf("Error: %f \n", theta1);
-    //printf("dtheta: %f \n", dtheta);
-
+  while (true){
     currentl = LeftEncoder.get_value();
     currentr = RightEncoder.get_value();
     currentb = BackEncoder.get_value();
@@ -124,12 +127,9 @@ std::vector<float> track(){
       d[1] = d1[1];
       d1[2] = thetam;
       //return new position
-
-
-      return d1;
+      pros::delay(5);
     }
-
-
+}
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -176,13 +176,9 @@ void opcontrol() {
 				right_chain.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 			}
 
-			  RobotPosition = track();
-			  printf("X: %f\r\n",RobotPosition[0]);
-			  printf("Y: %f\r\n",RobotPosition[1]);
-			  printf("THETA: %f\r\n",RobotPosition[2]);
-			  printf("LEFT ENCODER %d\r\n",LeftEncoder.get_value());
-			  printf("RIGHT ENCODER %d\r\n",RightEncoder.get_value());
-			  printf("Back ENCODER %d\r\n",BackEncoder.get_value());
+        std::string text("wheelTrack");
+        pros::Task punchTask(WheelTrack2,&text);
+        printf("THETA: %f",d[2]);
 
 			pros::delay(10);
 		}
