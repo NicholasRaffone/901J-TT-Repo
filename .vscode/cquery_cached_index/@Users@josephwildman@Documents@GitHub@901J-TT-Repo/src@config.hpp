@@ -3,7 +3,7 @@
 
 extern const int LEFT_WHEEL_PORT; //17
 extern const int LEFT_CHAIN_PORT; //18
-extern const int RIGHT_CHAIN_PORT; //14
+extern const int RIGHT_CHAIN_PORT; //13
 extern const int RIGHT_WHEEL_PORT; //15
 extern const char LENC_TOP_PORT;
 extern const char LENC_BOT_PORT;

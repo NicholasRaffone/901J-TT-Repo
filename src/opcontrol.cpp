@@ -3,8 +3,10 @@
 #include <math.h>
 #include <vector>
 
+std::vector<float> d (3);
 
-namespace WheelTracker{
+void WheelTrack2 (void* param){
+
   float wheelrad = 2.75;
 
   float lencval = 0;
@@ -34,7 +36,7 @@ namespace WheelTracker{
   float dtheta;
 
 
-  std::vector<float> d (3);
+
   std::vector<float> dtemp (3);
   std::vector <float> d1 (3);
 
@@ -44,10 +46,8 @@ namespace WheelTracker{
   float currentr;
   float currentb;
 
-std::vector<float> track(){
 
-
-
+  while (true){
     currentl = LeftEncoder.get_value();
     currentr = RightEncoder.get_value();
     currentb = BackEncoder.get_value();
@@ -103,9 +103,8 @@ std::vector<float> track(){
       d[1] = d1[1];
       d1[2] = theta0;
       //return new position
-      return d1;
+      pros::delay(5);
     }
-
 }
 
 /**
@@ -153,13 +152,9 @@ void opcontrol() {
 				right_chain.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 			}
 
-			  RobotPosition = WheelTracker::track();
-			  printf("X: %f\r\n",RobotPosition[0]);
-			  printf("Y: %f\r\n",RobotPosition[1]);
-			  printf("THETA: %f\r\n",RobotPosition[2]);
-			  printf("LEFT ENCODER %d\r\n",LeftEncoder.get_value());
-			  printf("RIGHT ENCODER %d\r\n",RightEncoder.get_value());
-			  printf("Back ENCODER %d\r\n",BackEncoder.get_value());
+        std::string text("wheelTrack");
+        pros::Task punchTask(WheelTrack2,&text);
+        printf("THETA: %f",d[2]);
 
 			pros::delay(10);
 		}
