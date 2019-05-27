@@ -2,30 +2,36 @@
 #include "config.hpp"
 #include <math.h>
 #include <vector>
-<<<<<<< HEAD
 #include "okapi/api.hpp"
 
 using namespace okapi;
 
+okapi::MotorGroup group1 ({17,18});
+okapi::MotorGroup group2 ({13,15});
+
+okapi::ADIEncoder leftenc ('A','B');
+okapi::ADIEncoder rightenc ('C','D');
+okapi::ADIEncoder backenc ('E','F');
+
 ThreeEncoderSkidSteerModel myChassis = ChassisModelFactory::create(
-  okapi::MotorGroup group3 ({1,2}),
+  group1,
   //left_wheel, // Left motors
   //okapi::MotorGroup right (1, 2),
     //{RIGHT_WHEEL_PORT, RIGHT_CHAIN_PORT},// Right motors
-    right_wheel,
-  LeftEncoder,
-  RightEncoder,
-  BackEncoder,
+  group2,
+  leftenc,
+  rightenc,
+  backenc,
   200.0, // 4 inch wheels, 12.5 inch wheelbase width
   2000.0
 );
-/**
+
 ThreeEncoderSkidSteerModel profileController = AsyncControllerFactory::motionProfile(
   1.0,  // Maximum linear velocity of the Chassis in m/s
   2.0,  // Maximum linear acceleration of the Chassis in m/s/s
   10.0, // Maximum linear jerk of the Chassis in m/s/s/s
   myChassis // Chassis Controller
-);**/
+);
 
 
 std::vector<float> d (3);
