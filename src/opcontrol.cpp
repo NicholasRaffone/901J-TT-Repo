@@ -4,7 +4,24 @@
 #include <vector>
 #include "okapi/api.hpp"
 
+/*TimeUtil profiledUtil = TimeUtilFactory::withSettledUtilParams(50, 5, 100_ms);
+
+AsyncPosIntegratedController leftController(std::shared_ptr<Motor>(&driveL1), chassisUtil);
+AsyncPosIntegratedController rightController(std::shared_ptr<Motor>(&driveR1), chassisUtil);
+
+SkidSteerModel chassisModel = ChassisModelFactory::create({DRIVE_PORT_L1, DRIVE_PORT_L2}, {-DRIVE_PORT_R1, -DRIVE_PORT_R2}, 200);
+
+ChassisControllerIntegrated chassisController(
+    chassisUtil,
+    std::shared_ptr<SkidSteerModel>(&chassisModel),
+    std::unique_ptr<AsyncPosIntegratedController>(&leftController),
+    std::unique_ptr<AsyncPosIntegratedController>(&rightController),
+    AbstractMotor::gearset::green, {4.125_in, 13.078_in});*/
+
 using namespace okapi;
+
+TimeUtil chassisUtil = TimeUtilFactory::withSettledUtilParams(50, 5, 100_ms);
+
 
 okapi::MotorGroup group1 ({17,18});
 okapi::MotorGroup group2 ({13,15});
@@ -12,6 +29,8 @@ okapi::MotorGroup group2 ({13,15});
 okapi::ADIEncoder leftenc ('A','B');
 okapi::ADIEncoder rightenc ('C','D');
 okapi::ADIEncoder backenc ('E','F');
+
+okapi::ChassisScales scales ({4_in, 11.5_in});
 
 ThreeEncoderSkidSteerModel myChassis = ChassisModelFactory::create(
   group1,
@@ -26,11 +45,14 @@ ThreeEncoderSkidSteerModel myChassis = ChassisModelFactory::create(
   2000.0
 );
 
-ThreeEncoderSkidSteerModel profileController = AsyncControllerFactory::motionProfile(
+auto profileController = AsyncControllerFactory::motionProfile(
   1.0,  // Maximum linear velocity of the Chassis in m/s
   2.0,  // Maximum linear acceleration of the Chassis in m/s/s
   10.0, // Maximum linear jerk of the Chassis in m/s/s/s
-  myChassis // Chassis Controller
+  std::shared_ptr<ThreeEncoderSkidSteerModel>(&myChassis),
+  scales,
+AbstractMotor::gearset::green,
+chassisUtil
 );
 
 
@@ -154,6 +176,12 @@ void opcontrol() {
   std::string text("wheelTrack");
   pros::Task punchTask(WheelTrack2,&text);
 
+  profileController.generatePath({
+    Point{0_ft, 0_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
+    Point{3_ft, 0_ft, 0_deg}}, // The next point in the profile, 3 feet forward
+    "A" // Profile name
+  );
+  profileController.waitUntilSettled();
 
 		while (true) {
 			double power = 500*master.get_analog(ANALOG_LEFT_Y)/127;
