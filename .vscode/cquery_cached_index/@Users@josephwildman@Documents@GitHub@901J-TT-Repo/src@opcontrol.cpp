@@ -2,6 +2,59 @@
 #include "config.hpp"
 #include <math.h>
 #include <vector>
+#include "okapi/api.hpp"
+
+/*TimeUtil profiledUtil = TimeUtilFactory::withSettledUtilParams(50, 5, 100_ms);
+
+AsyncPosIntegratedController leftController(std::shared_ptr<Motor>(&driveL1), chassisUtil);
+AsyncPosIntegratedController rightController(std::shared_ptr<Motor>(&driveR1), chassisUtil);
+
+SkidSteerModel chassisModel = ChassisModelFactory::create({DRIVE_PORT_L1, DRIVE_PORT_L2}, {-DRIVE_PORT_R1, -DRIVE_PORT_R2}, 200);
+
+ChassisControllerIntegrated chassisController(
+    chassisUtil,
+    std::shared_ptr<SkidSteerModel>(&chassisModel),
+    std::unique_ptr<AsyncPosIntegratedController>(&leftController),
+    std::unique_ptr<AsyncPosIntegratedController>(&rightController),
+    AbstractMotor::gearset::green, {4.125_in, 13.078_in});*/
+
+using namespace okapi;
+
+TimeUtil chassisUtil = TimeUtilFactory::withSettledUtilParams(50, 5, 100_ms);
+
+
+okapi::MotorGroup group1 ({Motor(17,true,AbstractMotor::gearset::green),Motor(18,false,AbstractMotor::gearset::green)});
+okapi::MotorGroup group2 ({Motor(13,false,AbstractMotor::gearset::green),Motor(15,true,AbstractMotor::gearset::green)});
+
+okapi::ADIEncoder leftenc ('A','B');
+okapi::ADIEncoder rightenc ('C','D');
+okapi::ADIEncoder backenc ('E','F');
+
+  okapi::ChassisScales scales ({2.75_in, 16.4_in});
+
+ThreeEncoderSkidSteerModel myChassis = ChassisModelFactory::create(
+  group1,
+  //left_wheel, // Left motors
+  //okapi::MotorGroup right (1, 2),
+    //{RIGHT_WHEEL_PORT, RIGHT_CHAIN_PORT},// Right motors
+  group2,
+  leftenc,
+  rightenc,
+  backenc,
+  200.0, // 4 inch wheels, 12.5 inch wheelbase width
+  12000.0
+);
+
+auto profileController = AsyncControllerFactory::motionProfile(
+  1.1,  // Maximum linear velocity of the Chassis in m/s
+  2.0,  // Maximum linear acceleration of the Chassis in m/s/s
+  10.0, // Maximum linear jerk of the Chassis in m/s/s/s
+  std::shared_ptr<ThreeEncoderSkidSteerModel>(&myChassis),
+  scales,
+AbstractMotor::gearset::green,
+chassisUtil
+);
+
 
 std::vector<float> d (3);
 
@@ -120,13 +173,38 @@ void WheelTrack2 (void* param){
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-  std::string text("wheelTrack");
-  pros::Task punchTask(WheelTrack2,&text);
+  //std::string text("wheelTrack");
+  //pros::Task punchTask(WheelTrack2,&text);
 
+  profileController.generatePath({
+    Point{0_ft, 0_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
+    Point{4_ft, 0_ft, 0_deg}}, // The next point in the profile, 3 feet forward
+    "A" // Profile name
+  );
+  profileController.generatePath({
+    Point{3_ft, 0_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
+    Point{6_ft, 3_ft, 0_deg}}, // The next point in the profile, 3 feet forward
+    "B" // Profile name
+  );
+  profileController.generatePath({
+    Point{4_ft, 1_ft, 90_deg},  // Profile starting position, this will normally be (0, 0, 0)
+    Point{6_ft, 3_ft, 0_deg}}, // The next point in the profile, 3 feet forward
+    "C" // Profile name
+  );
+  profileController.setTarget("A");
+  profileController.waitUntilSettled();
+
+  //profileController.setTarget("B");
+
+  //profileController.waitUntilSettled();
+
+    //profileController.setTarget("C");
+
+    //profileController.waitUntilSettled();
 
 		while (true) {
 			double power = 500*master.get_analog(ANALOG_LEFT_Y)/127;
-			double turn = 500*master.get_analog(ANALOG_RIGHT_X)/137;
+			double turn = 500*master.get_analog(ANALOG_RIGHT_X)/127;
 			//int left = (int)(pow(((power + turn)/600.0),2.0)*600.0);
 			//int right = (int) (pow(((power - turn)/600.0),2.0)*600.0);
 			int left = power+turn;
