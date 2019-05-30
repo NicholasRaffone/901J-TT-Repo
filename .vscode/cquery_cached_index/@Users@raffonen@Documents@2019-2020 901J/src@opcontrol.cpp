@@ -20,7 +20,7 @@ ChassisControllerIntegrated chassisController(
 
 using namespace okapi;
 
-TimeUtil chassisUtil = TimeUtilFactory::withSettledUtilParams(50, 5, 100_ms);
+TimeUtil chassisUtil = TimeUtilFactory::withSettledUtilParams(50, 5, 250_ms);
 
 
 okapi::MotorGroup group1 ({Motor(17,true,AbstractMotor::gearset::green),Motor(18,false,AbstractMotor::gearset::green)});
@@ -178,12 +178,12 @@ void opcontrol() {
 
   profileController.generatePath({
     Point{0_ft, 0_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
-    Point{4_ft, 0_ft, 0_deg}}, // The next point in the profile, 3 feet forward
+    Point{4_ft, 3_ft, 0_deg}}, // The next point in the profile, 3 feet forward
     "A" // Profile name
   );
   profileController.generatePath({
-    Point{3_ft, 0_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
-    Point{6_ft, 3_ft, 0_deg}}, // The next point in the profile, 3 feet forward
+    Point{4_ft, 3_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
+    Point{6_ft, -3_ft, -90_deg}}, // The next point in the profile, 3 feet forward
     "B" // Profile name
   );
   profileController.generatePath({
@@ -193,7 +193,8 @@ void opcontrol() {
   );
   profileController.setTarget("A");
   profileController.waitUntilSettled();
-
+  profileController.setTarget("B");
+  profileController.waitUntilSettled();
   //profileController.setTarget("B");
 
   //profileController.waitUntilSettled();
