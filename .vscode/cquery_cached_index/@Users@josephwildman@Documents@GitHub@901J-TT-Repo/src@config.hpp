@@ -21,3 +21,7 @@ extern pros::ADIEncoder LeftEncoder;
 extern pros::ADIEncoder RightEncoder;
 extern pros::ADIEncoder BackEncoder;
 extern std::vector<float> RobotPosition;
+
+extern bool blueSide; // 1
+extern bool farSide; // 2
+extern bool park; // 4

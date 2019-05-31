@@ -30,7 +30,7 @@ okapi::ADIEncoder leftenc ('A','B');
 okapi::ADIEncoder rightenc ('C','D');
 okapi::ADIEncoder backenc ('E','F');
 
-  okapi::ChassisScales scales ({2.75_in, 16.4_in});
+  okapi::ChassisScales scales ({4_in, 16.4_in});
 
 ThreeEncoderSkidSteerModel myChassis = ChassisModelFactory::create(
   group1,
@@ -46,9 +46,9 @@ ThreeEncoderSkidSteerModel myChassis = ChassisModelFactory::create(
 );
 
 auto profileController = AsyncControllerFactory::motionProfile(
-  1.1,  // Maximum linear velocity of the Chassis in m/s
-  2.0,  // Maximum linear acceleration of the Chassis in m/s/s
-  10.0, // Maximum linear jerk of the Chassis in m/s/s/s
+  0.75,  // Maximum linear velocity of the Chassis in m/s
+  1.5,  // Maximum linear acceleration of the Chassis in m/s/s
+  7.5, // Maximum linear jerk of the Chassis in m/s/s/s
   std::shared_ptr<ThreeEncoderSkidSteerModel>(&myChassis),
   scales,
 AbstractMotor::gearset::green,
@@ -178,23 +178,34 @@ void opcontrol() {
 
   profileController.generatePath({
     Point{0_ft, 0_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
-    Point{4_ft, 3_ft, 0_deg}}, // The next point in the profile, 3 feet forward
+    Point{5_ft, 2_ft, -90_deg}}, // The next point in the profile, 3 feet forward
     "A" // Profile name
   );
   profileController.generatePath({
-    Point{4_ft, 3_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
-    Point{6_ft, -3_ft, -90_deg}}, // The next point in the profile, 3 feet forward
+    Point{-5_ft, -2_ft, 90_deg},  // Profile starting position, this will normally be (0, 0, 0)
+    Point{0_ft, 0_ft, 0_deg}}, // The next point in the profile, 3 feet forward
     "B" // Profile name
   );
-  profileController.generatePath({
-    Point{4_ft, 1_ft, 90_deg},  // Profile starting position, this will normally be (0, 0, 0)
-    Point{6_ft, 3_ft, 0_deg}}, // The next point in the profile, 3 feet forward
-    "C" // Profile name
-  );
+
   profileController.setTarget("A");
   profileController.waitUntilSettled();
-  profileController.setTarget("B");
+
+  /*profileController.generatePath({
+    Point{5_ft, 2_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
+    Point{6_ft, 1_ft, 45_deg}}, // The next point in the profile, 3 feet forward
+    "B" // Profile name
+  );*/
+  /*profileController.generatePath({
+    Point{6_ft, 1_ft, 45_deg},  // Profile starting position, this will normally be (0, 0, 0)
+    Point{7_ft, 0_ft, 90_deg}}, // The next point in the profile, 3 feet forward
+    "C" // Profile name
+  );*/
+  profileController.setTarget("B",true);
   profileController.waitUntilSettled();
+
+
+  //profileController.setTarget("C");
+  //profileController.waitUntilSettled();
   //profileController.setTarget("B");
 
   //profileController.waitUntilSettled();
@@ -202,7 +213,6 @@ void opcontrol() {
     //profileController.setTarget("C");
 
     //profileController.waitUntilSettled();
-
 		while (true) {
 			double power = 500*master.get_analog(ANALOG_LEFT_Y)/127;
 			double turn = 500*master.get_analog(ANALOG_RIGHT_X)/127;
