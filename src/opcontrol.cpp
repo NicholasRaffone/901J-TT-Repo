@@ -45,6 +45,23 @@ ThreeEncoderSkidSteerModel myChassis = ChassisModelFactory::create(
   12000.0
 );
 
+TimeUtil chassisUtil2 = TimeUtilFactory::withSettledUtilParams(50, 5, 100_ms);
+/*
+chassisUtil,
+std::shared_ptr<ThreeEncoderSkidSteerModel>(&myChassis),
+okapi::IterativePosPIDController::Gains{0.1,0.0001,0.001},
+okapi::IterativePosPIDController::Gains{0.1,0.0001,0.001},
+okapi::IterativePosPIDController::Gains{0.1,0.0001,0.001},
+AbstractMotor::gearset::green,
+scales
+std::unique_ptr<okapi::IterativePosPIDController>
+*/
+auto bruh = new IterativePosPIDController(0.01, 0.01, 0.01, 0,
+                          chassisUtil);
+std::unique_ptr<Filter> iderivativeFilter = std::make_unique<PassthroughFilter>();
+
+
+
 auto profileController = AsyncControllerFactory::motionProfile(
   0.75,  // Maximum linear velocity of the Chassis in m/s
   1.5,  // Maximum linear acceleration of the Chassis in m/s/s
