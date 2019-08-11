@@ -3,6 +3,25 @@
 #include <math.h>
 #include <vector>
 #include "okapi/api.hpp"
+const float WHEELDIAM = 2.75;
+const float L_DIS_IN = 4.72440945;
+const float R_DIS_IN = 4.72440945;
+const float B_DIS_IN = 4.33070866;
+const float TICKS_PER_ROTATION =  360.0;
+const float  SPIN_TO_IN_LR = (WHEELDIAM * M_PI / TICKS_PER_ROTATION);
+const float  SPIN_TO_IN_S = (WHEELDIAM * M_PI / TICKS_PER_ROTATION);
+
+
+typedef struct _pos
+{
+	float angle;
+	float x;
+	float y;
+	int leftLast;
+	int rightLast;
+	int backLast;
+} rPos; // Position of the robot
+
 
 /*TimeUtil profiledUtil = TimeUtilFactory::withSettledUtilParams(50, 5, 100_ms);
 
@@ -72,110 +91,57 @@ AbstractMotor::gearset::green,
 chassisUtil
 );
 
+rPos mainPosition {0.0,0.0,0.0,0,0,0};
 
-std::vector<float> d (3);
+void trackPos(rPos& position)
+{
+  int currentL = LeftEncoder.get_value();
+  int currentR = RightEncoder.get_value();
+  int currentB = BackEncoder.get_value();
 
-void WheelTrack2 (void* param){
+  float deltaL = (currentL - position.leftLast) * SPIN_TO_IN_LR;
+  float deltaR = (currentR - position.rightLast) * SPIN_TO_IN_LR;
+  float deltaB = (currentB - position.backLast) * SPIN_TO_IN_S;
 
-  float wheelrad = 2.75;
+  position.leftLast = currentL;
+  position.rightLast = currentR;
+  position.backLast = currentB;
 
-  float lencval = 0;
-  float rencval = 0;
-  float bencval = 0;
+  float h; // The hypotenuse of the triangle formed by the middle of the robot on the starting position and ending position and the middle of the circle it travels around
+	float i; // Half on the angle that I've traveled
+	float h2; // The same as h but using the back instead of the side wheels
 
-  float prevl = 0;
-  float prevr = 0;
-  float prevb = 0;
-  float thetar = 90;//constant
-  float theta1;
-  float theta0 = 0;
-  float thetam;
+	float angle = (deltaL - deltaR) / (L_DIS_IN + R_DIS_IN); // The angle that I've traveled
+  if (angle)
+	{
+		float r = deltaR / angle; // The radius of the circle the robot travel's around with the right side of the robot
+		i = angle / 2.0;
+		float sinI = sin(i);
+		h = ((r + R_DIS_IN) * sinI) * 2.0;
 
-  float rdis = 4.72440945;
-  float ldis = 4.72440945;
-  float bdis= 4.33070866;
+		float r2 = deltaB / angle; // The radius of the circle the robot travel's around with the back of the robot
+		h2 = ((r2 + B_DIS_IN) * sinI) * 2.0;
+	}
+	else
+	{
+		h = deltaR;
+		i = 0;
 
-  float dltheta = 0; //change in encoder angle
-  float drtheta = 0;
-  float dbtheta = 0;
+		h2 = deltaB;
+	}
+  float p = i + position.angle; // The global ending angle of the robot
+	float cosP = cos(p);
+	float sinP = sin(p);
 
-  float dl; //change in distance
-  float dr;
-  float ds;
+	// Update the global position
+	position.y += h * cosP;
+	position.x += h * sinP;
 
-  float dtheta;
+	position.y += h2 * -sinP; // -sin(x) = sin(-x)
+	position.x += h2 * cosP; // cos(x) = cos(-x)
 
-
-
-  std::vector<float> dtemp (3);
-  std::vector <float> d1 (3);
-
-  float rad;
-  float angle;
-  float currentl;
-  float currentr;
-  float currentb;
-
-
-  while (true){
-    currentl = LeftEncoder.get_value();
-    currentr = RightEncoder.get_value();
-    currentb = BackEncoder.get_value();
-
-    dltheta = currentl - prevl;
-    drtheta = currentr - prevr;
-    dbtheta = currentb - prevb;
-
-    //distance traveled by each wheel
-    dl = ((dltheta)/360) * 2 *M_PI * wheelrad;
-    dr = ((drtheta)/360) * 2 *M_PI * wheelrad;
-    ds = ((dbtheta)/360) * 2 *M_PI * wheelrad;
-
-    //update values
-    prevl = currentl;
-    prevr = currentr;
-    prevb = currentb;
-
-    theta1 = thetar + 180*((dl-dr)/(rdis+ldis))/M_PI;//convert angle to degrees and add to initial angle to find new angle
-
-    dtheta = theta1 - theta0; //change in angle
-    //if(dtheta == 0.0){//if only vertical movement add vertical component dr
-
-    //  dtemp.at(0) = ds;
-  //    dtemp.at(1) = dr;
-    //}
-      dtemp.at(0) = 2 * sin(dtheta/2) * (ds/dtheta + bdis);
-      dtemp.at(1) = 2 * sin(dtheta/2) * (dr/dtheta + rdis);
-
-
-    //calculate average orientation
-    thetam = (theta0 + dtheta)/2;
-
-    //convert position to polar
-    angle = atan(dtemp[1] / dtemp[0]);
-    rad = sqrt(dtemp[0] * dtemp[0] + dtemp[1] * dtemp[1]);
-
-    angle += -1 * thetam;
-
-    //convert back
-    dtemp[0] = rad * cos(angle);
-    dtemp[1] = rad * sin(angle);
-//}
-    //add position vector to old one
-    for(int i = 0; i < 2; i++){
-      d1[i] = d[i] + dtemp[i];
-    }
-
-      theta0 = theta1;
-
-      d[0] = d1[0];
-      d[1] = d1[1];
-      d1[2] = thetam;
-      //return new position
-      pros::delay(5);
-    }
+	position.angle += angle;
 }
-
 /**
  * Runs the operator control code. This function will be started in its own task
  * with the default priority and stack size whenever the robot is enabled via
@@ -231,8 +197,8 @@ void opcontrol() {
 
     //profileController.waitUntilSettled();
 		while (true) {
-			double power = 500*master.get_analog(ANALOG_LEFT_Y)/127;
-			double turn = 500*master.get_analog(ANALOG_RIGHT_X)/127;
+			double power = 200*master.get_analog(ANALOG_LEFT_Y)/127;
+			double turn = 200*master.get_analog(ANALOG_RIGHT_X)/127;
 			//int left = (int)(pow(((power + turn)/600.0),2.0)*600.0);
 			//int right = (int) (pow(((power - turn)/600.0),2.0)*600.0);
 			int left = power+turn;
@@ -259,7 +225,7 @@ void opcontrol() {
 				right_chain.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 			}
 
-      printf("THETA: %f",d[2]);
+
 
 			pros::delay(10);
 		}
