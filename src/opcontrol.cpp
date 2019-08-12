@@ -53,9 +53,6 @@ okapi::ADIEncoder backenc ('E','F');
 
 ThreeEncoderSkidSteerModel myChassis = ChassisModelFactory::create(
   group1,
-  //left_wheel, // Left motors
-  //okapi::MotorGroup right (1, 2),
-    //{RIGHT_WHEEL_PORT, RIGHT_CHAIN_PORT},// Right motors
   group2,
   leftenc,
   rightenc,
