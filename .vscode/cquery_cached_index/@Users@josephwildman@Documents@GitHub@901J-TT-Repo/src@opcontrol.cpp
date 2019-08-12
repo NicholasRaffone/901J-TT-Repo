@@ -93,7 +93,7 @@ chassisUtil
 
 rPos mainPosition {0.0,0.0,0.0,0,0,0};
 
-void trackPos(rPos& position)
+void trackPos(rPos& position) //Based off of 5225a E-bots Pilons APS code, https://github.com/nickmertin/5225A-2017-2018/blob/master/src/auto.c
 {
   int currentL = LeftEncoder.get_value();
   int currentR = RightEncoder.get_value();
@@ -142,6 +142,16 @@ void trackPos(rPos& position)
 
 	position.angle += angle;
 }
+
+void position_task(void* param){
+  while(true){
+    trackPos(mainPosition);
+    printf("Xpos: %f\r\n",mainPosition.x);
+    printf("Ypos: %f\r\n",mainPosition.y);
+    printf("Angle: %f\r\n",mainPosition.angle);
+  }
+  pros::delay(10);
+}
 /**
  * Runs the operator control code. This function will be started in its own task
  * with the default priority and stack size whenever the robot is enabled via
@@ -158,6 +168,8 @@ void trackPos(rPos& position)
 void opcontrol() {
   //std::string text("wheelTrack");
   //pros::Task punchTask(WheelTrack2,&text);
+  std::string text("position");
+  pros::Task punchTask(position_task,&text);
 
   profileController.generatePath({
     Point{0_ft, 0_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
