@@ -3,13 +3,13 @@
 #include "config.hpp"
 #include <string>
 
-
+/*
  static lv_res_t color_action(lv_obj_t * btn)
  {
   lv_obj_t * btn2 = (lv_obj_t *) lv_obj_get_free_ptr(btn);
 
   static lv_style_t redstyle;
-  lv_style_copy(&redstyle, &lv_style_plain);    /*Copy a built-in style to initialize the new style*/
+  lv_style_copy(&redstyle, &lv_style_plain);    //Copy a built-in style to initialize the new style
   redstyle.body.main_color = LV_COLOR_RED;
   redstyle.body.grad_color = LV_COLOR_RED;
   redstyle.body.border.color = LV_COLOR_GRAY;
@@ -17,14 +17,14 @@
   redstyle.text.color = LV_COLOR_WHITE;
 
    static lv_style_t bluestyle;
-   lv_style_copy(&bluestyle, &lv_style_plain);    /*Copy a built-in style to initialize the new style*/
+   lv_style_copy(&bluestyle, &lv_style_plain);    //Copy a built-in style to initialize the new style
    bluestyle.body.main_color = LV_COLOR_BLUE;
    bluestyle.body.grad_color = LV_COLOR_BLUE;
    bluestyle.body.border.color = LV_COLOR_GRAY;
    bluestyle.body.border.width = 2;
    bluestyle.text.color = LV_COLOR_WHITE;
 
-    lv_obj_t * label1 = lv_obj_get_child(btn, NULL); /*The label is the only child*/
+    lv_obj_t * label1 = lv_obj_get_child(btn, NULL); //The label is the only child
     if(blueSide == true){
       lv_obj_set_style(btn, &redstyle);
       blueSide = false;
@@ -44,7 +44,7 @@
  static lv_res_t side_action(lv_obj_t * btn)
  {
    static lv_style_t redstyle;
-   lv_style_copy(&redstyle, &lv_style_plain);    /*Copy a built-in style to initialize the new style*/
+   lv_style_copy(&redstyle, &lv_style_plain);
    redstyle.body.main_color = LV_COLOR_RED;
    redstyle.body.grad_color = LV_COLOR_RED;
    redstyle.body.border.color = LV_COLOR_GRAY;
@@ -52,14 +52,14 @@
    redstyle.text.color = LV_COLOR_WHITE;
 
    static lv_style_t bluestyle;
-   lv_style_copy(&bluestyle, &lv_style_plain);    /*Copy a built-in style to initialize the new style*/
+   lv_style_copy(&bluestyle, &lv_style_plain);
    bluestyle.body.main_color = LV_COLOR_BLUE;
    bluestyle.body.grad_color = LV_COLOR_BLUE;
    bluestyle.body.border.color = LV_COLOR_GRAY;
    bluestyle.body.border.width = 2;
    bluestyle.text.color = LV_COLOR_WHITE;
 
-   lv_obj_t * label1 = lv_obj_get_child(btn, NULL); /*The label is the only child*/
+   lv_obj_t * label1 = lv_obj_get_child(btn, NULL);
        if(farSide == true){
          farSide = false;
          lv_label_set_text(label1, "Close");
@@ -80,7 +80,7 @@
  {
    lv_obj_t * mbox1 = lv_mbox_create(lv_scr_act(), NULL);
    lv_obj_set_size(mbox1, 450, 500);
-   lv_obj_align(mbox1, NULL, LV_ALIGN_CENTER, 10, 10); /*Align to the center*/
+   lv_obj_align(mbox1, NULL, LV_ALIGN_CENTER, 10, 10); //Align to the center
 
    std::string color;//initialize strings
    std::string side;
@@ -115,13 +115,13 @@
  static lv_res_t parkyes(lv_obj_t * btn)
  {
    static lv_style_t parkstyle;
-   lv_style_copy(&parkstyle, &lv_style_plain);    /*Copy a built-in style to initialize the new style*/
+   lv_style_copy(&parkstyle, &lv_style_plain);    //Copy a built-in style to initialize the new style
    parkstyle.body.main_color = LV_COLOR_YELLOW;
    parkstyle.body.grad_color = LV_COLOR_YELLOW;
    parkstyle.body.border.color = LV_COLOR_GRAY;
    parkstyle.body.border.width = 2;
    parkstyle.text.color = LV_COLOR_BLACK;
-   lv_obj_t * label1 = lv_obj_get_child(btn, NULL); /*The label is the only child*/
+   lv_obj_t * label1 = lv_obj_get_child(btn, NULL); //The label is the only child
    if(park == true){
      park = false;
      lv_label_set_text(label1, "No Park");
@@ -133,11 +133,70 @@
    return LV_RES_OK;
  }
 
+*/
+lv_obj_t * myButton;
+lv_obj_t * myButtonLabel;
+lv_obj_t * myLabel;
+
+lv_style_t myButtonStyleREL; //relesed style
+lv_style_t myButtonStylePR; //pressed style
+
+static lv_res_t btn_click_action(lv_obj_t * btn)
+{
+    uint8_t id = lv_obj_get_free_num(btn); //id usefull when there are multiple buttons
+
+    if(id == 0)
+    {
+        char buffer[100];
+		sprintf(buffer, "button was clicked %i milliseconds from start", pros::millis());
+		lv_label_set_text(myLabel, buffer);
+    }
+
+    return LV_RES_OK;
+}
 
 void initialize() {/*Create a three buttons, color, side, display auton */
 
+
+  lv_style_copy(&myButtonStyleREL, &lv_style_plain);
+  myButtonStyleREL.body.main_color = LV_COLOR_SILVER;
+  myButtonStyleREL.body.grad_color = LV_COLOR_BLUE;
+  myButtonStyleREL.body.radius = 2;
+  myButtonStyleREL.text.color = LV_COLOR_GREEN;
+  lv_style_copy(&myButtonStylePR, &lv_style_plain);
+  myButtonStyleREL.body.main_color = LV_COLOR_BLUE;
+  myButtonStyleREL.body.grad_color = LV_COLOR_GREEN;
+  myButtonStyleREL.body.radius = 2;
+  myButtonStyleREL.text.color = LV_COLOR_SILVER;
+  myButton = lv_btn_create(lv_scr_act(), NULL); //create button, lv_scr_act() is deafult screen object
+    lv_obj_set_free_num(myButton, 0); //set button is to 0
+    lv_btn_set_action(myButton, LV_BTN_ACTION_CLICK, btn_click_action); //set function to be called on button click
+    lv_btn_set_style(myButton, LV_BTN_STYLE_REL, &myButtonStyleREL); //set the relesed style
+    lv_btn_set_style(myButton, LV_BTN_STYLE_PR, &myButtonStylePR); //set the pressed style
+    lv_obj_set_size(myButton, 200, 50); //set the button size
+    lv_obj_align(myButton, NULL, LV_ALIGN_IN_RIGHT_MID, 10, 10); //set the position to top mid
+
+    myButtonLabel = lv_label_create(myButton, NULL); //create label and puts it inside of the button
+    lv_label_set_text(myButtonLabel, "Click the Button"); //sets label text
+
+    myLabel = lv_label_create(lv_scr_act(), NULL); //create label and puts it on the screen
+    lv_label_set_text(myLabel, "Button has not been clicked yet"); //sets label text
+    lv_obj_align(myLabel, NULL, LV_ALIGN_CENTER, 10, 0); //set the position to center
+
+   /*Create a Label on the currently active screen*/
+   lv_obj_t * label1 =  lv_label_create(lv_scr_act(), NULL);
+
+   /*Modify the Label's text*/
+   lv_label_set_text(label1, "Hello world!");
+
+   /* Align the Label to the center
+    * NULL means align on parent (which is the screen now)
+    * 0, 0 at the end means an x, y offset after alignment*/
+   lv_obj_align(label1, NULL, LV_ALIGN_OUT_LEFT_TOP, 100, 0);
+
+/*
      static lv_style_t initredstyle;
-     lv_style_copy(&initredstyle, &lv_style_plain);    /*Copy a built-in style to initialize the new style*/
+     lv_style_copy(&initredstyle, &lv_style_plain);    //Copy a built-in style to initialize the new style
      initredstyle.body.main_color = LV_COLOR_RED;
      initredstyle.body.grad_color = LV_COLOR_RED;
      initredstyle.body.border.color = LV_COLOR_GRAY;
@@ -145,28 +204,28 @@ void initialize() {/*Create a three buttons, color, side, display auton */
      initredstyle.text.color = LV_COLOR_WHITE;
 
      static lv_style_t parkstyle;
-     lv_style_copy(&parkstyle, &lv_style_plain);    /*Copy a built-in style to initialize the new style*/
+     lv_style_copy(&parkstyle, &lv_style_plain);
      parkstyle.body.main_color = LV_COLOR_YELLOW;
      parkstyle.body.grad_color = LV_COLOR_YELLOW;
      parkstyle.body.border.color = LV_COLOR_GRAY;
      parkstyle.body.border.width = 2;
      parkstyle.text.color = LV_COLOR_BLACK;
 
-    lv_obj_t * btn1 = lv_btn_create(lv_scr_act(), NULL);         /*Create a button on the currently loaded screen*/
+    lv_obj_t * btn1 = lv_btn_create(lv_scr_act(), NULL);         //Create a button on the currently loaded screen
     lv_obj_set_style(btn1, &initredstyle);
     lv_obj_t * label = lv_label_create(btn1, NULL);
     lv_label_set_text(label, "Red");
-		lv_btn_set_action(btn1, LV_BTN_ACTION_CLICK, color_action); /*Set function to be called when the button is released*/
-    lv_obj_align(btn1, label, LV_ALIGN_OUT_BOTTOM_LEFT, -30, 20);  /*Align below the label*/
+		lv_btn_set_action(btn1, LV_BTN_ACTION_CLICK, color_action); //Set function to be called when the button is released
+    lv_obj_align(btn1, label, LV_ALIGN_OUT_BOTTOM_LEFT, -30, 20);  //Align below the label
 
 
-    /*Copy the previous button*/
-    lv_obj_t * btn2 = lv_btn_create(lv_scr_act(), btn1);        /*Second parameter is an object to copy*/
+    //Copy the previous button
+    lv_obj_t * btn2 = lv_btn_create(lv_scr_act(), btn1);        //Second parameter is an object to copy
     lv_obj_set_style(btn2, &initredstyle);
     label = lv_label_create(btn2, NULL);
     lv_label_set_text(label, "Close");
     lv_btn_set_action(btn2, LV_BTN_ACTION_CLICK, side_action);
-    lv_obj_align(btn2, btn1, LV_ALIGN_OUT_RIGHT_MID, 35, 0);    /*Align next to the prev. button.*/
+    lv_obj_align(btn2, btn1, LV_ALIGN_OUT_RIGHT_MID, 35, 0);    //Align next to the prev. button.
 
     lv_obj_set_free_ptr(btn1, btn2);
 
@@ -183,7 +242,7 @@ void initialize() {/*Create a three buttons, color, side, display auton */
     lv_obj_set_style(btn4, &parkstyle);
     lv_btn_set_action(btn4, LV_BTN_ACTION_CLICK, parkyes);
     lv_obj_align(btn4, btn2, LV_ALIGN_OUT_RIGHT_TOP, 35,60);
-
+*/
 
 }
 

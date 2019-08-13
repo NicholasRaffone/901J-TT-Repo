@@ -1,5 +1,9 @@
 #include "main.h"
 #include <vector>
+#include "pos_struct.h"
+#include "okapi/api.hpp"
+using namespace okapi;
+
 
 extern const int LEFT_WHEEL_PORT; //17
 extern const int LEFT_CHAIN_PORT; //18
@@ -17,11 +21,11 @@ extern pros::Motor right_wheel;
 extern pros::Motor left_chain;
 extern pros::Motor right_chain;
 extern pros::Controller master;
-extern pros::ADIEncoder LeftEncoder;
-extern pros::ADIEncoder RightEncoder;
-extern pros::ADIEncoder BackEncoder;
-extern std::vector<float> RobotPosition;
+extern okapi::ADIEncoder leftenc;
+extern okapi::ADIEncoder rightenc;
+extern okapi::ADIEncoder backenc;
 
 extern bool blueSide; // 1
 extern bool farSide; // 2
 extern bool park; // 4
+extern rPos mainPosition;

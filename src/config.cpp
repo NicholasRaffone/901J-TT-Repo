@@ -1,4 +1,8 @@
 #include "config.hpp"
+#include "pos_struct.h"
+#include "okapi/api.hpp"
+using namespace okapi;
+
 const int LEFT_WHEEL_PORT = 17; //17
 const int LEFT_CHAIN_PORT = 18; //18
 const int RIGHT_CHAIN_PORT = 13; //13
@@ -20,8 +24,11 @@ pros::Controller master (CONTROLLER_MASTER);
 //pros::ADIEncoder RightEncoder(RENC_TOP_PORT,RENC_BOT_PORT,true);
 //pros::ADIEncoder BackEncoder(BENC_TOP_PORT,BENC_BOT_PORT,true);
 
-
+okapi::ADIEncoder leftenc ('A','B');
+okapi::ADIEncoder rightenc ('C','D');
+okapi::ADIEncoder backenc ('E','F');
 
 bool blueSide = false; // 1
 bool farSide = false; // 2
 bool park = true; // 4
+rPos mainPosition {0.0,0.0,0.0,0,0,0};
