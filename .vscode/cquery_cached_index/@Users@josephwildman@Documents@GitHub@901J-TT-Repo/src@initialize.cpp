@@ -16,13 +16,13 @@
   redstyle.body.border.width = 2;
   redstyle.text.color = LV_COLOR_WHITE;
 
- static lv_style_t bluestyle;
- lv_style_copy(&bluestyle, &lv_style_plain);    /*Copy a built-in style to initialize the new style*/
- bluestyle.body.main_color = LV_COLOR_BLUE;
- bluestyle.body.grad_color = LV_COLOR_BLUE;
- bluestyle.body.border.color = LV_COLOR_GRAY;
- bluestyle.body.border.width = 2;
- bluestyle.text.color = LV_COLOR_WHITE;
+   static lv_style_t bluestyle;
+   lv_style_copy(&bluestyle, &lv_style_plain);    /*Copy a built-in style to initialize the new style*/
+   bluestyle.body.main_color = LV_COLOR_BLUE;
+   bluestyle.body.grad_color = LV_COLOR_BLUE;
+   bluestyle.body.border.color = LV_COLOR_GRAY;
+   bluestyle.body.border.width = 2;
+   bluestyle.text.color = LV_COLOR_WHITE;
 
     lv_obj_t * label1 = lv_obj_get_child(btn, NULL); /*The label is the only child*/
     if(blueSide == true){

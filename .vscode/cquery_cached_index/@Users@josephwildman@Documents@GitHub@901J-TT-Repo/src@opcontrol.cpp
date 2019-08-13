@@ -45,17 +45,14 @@ TimeUtil chassisUtil = TimeUtilFactory::withSettledUtilParams(50, 5, 250_ms);
 okapi::MotorGroup group1 ({Motor(17,true,AbstractMotor::gearset::green),Motor(18,false,AbstractMotor::gearset::green)});
 okapi::MotorGroup group2 ({Motor(13,false,AbstractMotor::gearset::green),Motor(15,true,AbstractMotor::gearset::green)});
 
-okapi::ADIEncoder leftenc ('A','B');
-okapi::ADIEncoder rightenc ('C','D');
-okapi::ADIEncoder backenc ('E','F');
+okapi::ADIEncoder leftenc ('G','H');
+okapi::ADIEncoder rightenc ('C','E');
+okapi::ADIEncoder backenc ('A','D');
 
   okapi::ChassisScales scales ({4_in, 16.4_in});
 
 ThreeEncoderSkidSteerModel myChassis = ChassisModelFactory::create(
   group1,
-  //left_wheel, // Left motors
-  //okapi::MotorGroup right (1, 2),
-    //{RIGHT_WHEEL_PORT, RIGHT_CHAIN_PORT},// Right motors
   group2,
   leftenc,
   rightenc,
@@ -95,9 +92,9 @@ rPos mainPosition {0.0,0.0,0.0,0,0,0};
 
 void trackPos(rPos& position) //Based off of 5225a E-bots Pilons APS code, https://github.com/nickmertin/5225A-2017-2018/blob/master/src/auto.c
 {
-  int currentL = LeftEncoder.get_value();
-  int currentR = RightEncoder.get_value();
-  int currentB = BackEncoder.get_value();
+  int currentL = leftenc.get();
+  int currentR = rightenc.get();
+  int currentB = backenc.get();
 
   float deltaL = (currentL - position.leftLast) * SPIN_TO_IN_LR;
   float deltaR = (currentR - position.rightLast) * SPIN_TO_IN_LR;
@@ -144,11 +141,27 @@ void trackPos(rPos& position) //Based off of 5225a E-bots Pilons APS code, https
 }
 
 void position_task(void* param){
+	int x = 0;
+	leftenc.reset();
+	rightenc.reset();
+	backenc.reset();
   while(true){
     trackPos(mainPosition);
-    printf("Xpos: %f\r\n",mainPosition.x);
-    printf("Ypos: %f\r\n",mainPosition.y);
-    printf("Angle: %f\r\n",mainPosition.angle);
+		if (x == 0){
+			printf("Xpos: %f\r\n",mainPosition.x);
+			printf("Ypos: %f\r\n",mainPosition.y);
+			printf("Angle: %f\r\n",mainPosition.angle);
+			printf("l: %f\r\n",leftenc.get());
+			printf("r: %f\r\n",rightenc.get());
+			printf("b: %f\r\n",backenc.get());
+
+			x++;
+		} else if (x < 500){
+			x++;
+		} else {
+			x = 0;
+		}
+
   }
   pros::delay(10);
 }
@@ -170,7 +183,7 @@ void opcontrol() {
   //pros::Task punchTask(WheelTrack2,&text);
   std::string text("position");
   pros::Task punchTask(position_task,&text);
-
+/*
   profileController.generatePath({
     Point{0_ft, 0_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
     Point{5_ft, 2_ft, -90_deg}}, // The next point in the profile, 3 feet forward
@@ -185,6 +198,9 @@ void opcontrol() {
   profileController.setTarget("A");
   profileController.waitUntilSettled();
 
+	profileController.setTarget("B",true);
+	profileController.waitUntilSettled();
+	*/
   /*profileController.generatePath({
     Point{5_ft, 2_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
     Point{6_ft, 1_ft, 45_deg}}, // The next point in the profile, 3 feet forward
@@ -195,8 +211,7 @@ void opcontrol() {
     Point{7_ft, 0_ft, 90_deg}}, // The next point in the profile, 3 feet forward
     "C" // Profile name
   );*/
-  profileController.setTarget("B",true);
-  profileController.waitUntilSettled();
+
 
 
   //profileController.setTarget("C");
