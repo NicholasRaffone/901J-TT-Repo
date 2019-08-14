@@ -2,7 +2,7 @@
 #include "display/lv_conf.h"
 #include "config.hpp"
 #include <string>
-
+#include <cstdio>
 /*
  static lv_res_t color_action(lv_obj_t * btn)
  {
@@ -139,10 +139,15 @@ lv_obj_t * myButtonLabel;
 lv_obj_t * myLabel;
 
 lv_style_t * myButtonStyleREL; //relesed style
-lv_style_t myButtonStylePR; //pressed style
-
+lv_style_t * myButtonStylePR; //pressed style
+lv_obj_t * scr2 = lv_obj_create(NULL,NULL);
+lv_obj_t * scr1 = lv_obj_create(NULL,NULL);
+lv_obj_t * line1;
+lv_obj_t * testButton;
+int x = 0;
 static lv_res_t btn_click_action(lv_obj_t * btn)
 {
+
     uint8_t id = lv_obj_get_free_num(btn); //id usefull when there are multiple buttons
 
     if(id == 0)
@@ -150,6 +155,17 @@ static lv_res_t btn_click_action(lv_obj_t * btn)
         char buffer[100];
 		sprintf(buffer, "AUTON", pros::millis());
 		lv_label_set_text(myLabel, buffer);
+      if (x == 0 ){
+        lv_scr_load(scr2);
+        lv_obj_set_parent(myButton, scr2);
+        x = 1;
+      } else if (x == 1) {
+        lv_scr_load(scr1);
+        lv_obj_set_parent(myButton, scr1);
+        x = 0;
+
+      }
+      printf("test %i", x);
     }
 
     return LV_RES_OK;
@@ -169,7 +185,7 @@ lv_obj_t * createBtn(lv_obj_t * parent, lv_coord_t x, lv_coord_t y, lv_coord_t w
     return btn;
 }
 
-lv_style_t * createBasicStyle(lv_style_t style_temp, lv_color_t mainColor, lv_color_t gradColor, int radius, lv_color_t textColor){
+lv_style_t * createBasicStyle(lv_style_t style_temp, lv_color_t mainColor, lv_color_t gradColor, int radius, lv_color_t textColor){ //sets up style for buttons pretty much
 
   lv_style_t * basicStyle = (lv_style_t *)malloc(sizeof(lv_style_t));
 
@@ -183,8 +199,9 @@ lv_style_t * createBasicStyle(lv_style_t style_temp, lv_color_t mainColor, lv_co
   return basicStyle;
 
 }
-void initialize() {/*Create a three buttons, color, side, display auton */
 
+void initialize() {/*Create a three buttons, color, side, display auton */
+ lv_scr_load(scr1);
 
 
   //lv_style_copy(myButtonStyleREL, &lv_style_plain);
@@ -192,28 +209,35 @@ void initialize() {/*Create a three buttons, color, side, display auton */
   myButtonStyleREL.body.grad_color = LV_COLOR_BLUE;
   myButtonStyleREL.body.radius = 2;
   myButtonStyleREL.text.color = LV_COLOR_GREEN;*/
-  myButtonStyleREL = createBasicStyle(lv_style_pretty,LV_COLOR_SILVER,LV_COLOR_BLUE,2,LV_COLOR_GREEN);
   /*myButtonStyleREL.body.main_color = LV_COLOR_SILVER;
   myButtonStyleREL->body.grad_color = LV_COLOR_BLUE;
   myButtonStyleREL->body.radius = 2;
   myButtonStyleREL->text.color = LV_COLOR_GREEN;*/
-  lv_style_copy(&myButtonStylePR, &lv_style_plain);
+  /*lv_style_copy(&myButtonStylePR, &lv_style_plain);
   myButtonStylePR.body.main_color = LV_COLOR_BLUE;
   myButtonStylePR.body.grad_color = LV_COLOR_GREEN;
   myButtonStylePR.body.radius = 2;
-  myButtonStylePR.text.color = LV_COLOR_SILVER;
-  myButton = lv_btn_create(lv_scr_act(), NULL); //create button, lv_scr_act() is deafult screen object
-    lv_obj_set_free_num(myButton, 0); //set button is to 0
+  myButtonStylePR.text.color = LV_COLOR_SILVER;*/
+
+  //myButton = lv_btn_create(lv_scr_act(), NULL); //create button, lv_scr_act() is deafult screen object
+  //lv_obj_set_free_num(myButton, 0); //set button is to 0
+  //lv_obj_set_size(myButton, 200, 50); //set the button size
+  //myButtonLabel = lv_label_create(myButton, NULL); //create label and puts it inside of the button
+  //lv_label_set_text(myButtonLabel, "Click the Button"); //sets label text
+
+  myButtonStyleREL = createBasicStyle(lv_style_pretty,LV_COLOR_SILVER,LV_COLOR_BLUE,2,LV_COLOR_GREEN);
+  myButtonStylePR = createBasicStyle(lv_style_pretty,LV_COLOR_BLUE,LV_COLOR_GREEN,2,LV_COLOR_SILVER);
+
+
+    myButton = createBtn(lv_scr_act(), 0,0,200,50, 0, "click the button");
     lv_btn_set_action(myButton, LV_BTN_ACTION_CLICK, btn_click_action); //set function to be called on button click
     lv_btn_set_style(myButton, LV_BTN_STYLE_REL, myButtonStyleREL); //set the relesed style
-    lv_btn_set_style(myButton, LV_BTN_STYLE_PR, &myButtonStylePR); //set the pressed style
-    lv_obj_set_size(myButton, 200, 50); //set the button size
+    lv_btn_set_style(myButton, LV_BTN_STYLE_PR, myButtonStylePR); //set the pressed style
     lv_obj_align(myButton, NULL, LV_ALIGN_IN_RIGHT_MID, 10, 10); //set the position to top mid
 
-    myButtonLabel = lv_label_create(myButton, NULL); //create label and puts it inside of the button
-    lv_label_set_text(myButtonLabel, "Click the Button"); //sets label text
 
-    myLabel = lv_label_create(lv_scr_act(), NULL); //create label and puts it on the screen
+
+    myLabel = lv_label_create(scr1, NULL); //create label and puts it on the screen
     lv_label_set_text(myLabel, "NONE"); //sets label text
     lv_obj_align(myLabel, NULL, LV_ALIGN_OUT_RIGHT_TOP, -150, 0); //set the position to center
     //TOP LINE
@@ -222,8 +246,8 @@ void initialize() {/*Create a three buttons, color, side, display auton */
     style_line1.line.color = LV_COLOR_SILVER;
     style_line1.line.width = 2;
     static lv_point_t line_points[] = { {0, 25}, {400, 25}};
-    lv_obj_t * line1;
-    line1 = lv_line_create(lv_scr_act(), NULL);
+
+    line1 = lv_line_create(scr1, NULL);
     lv_line_set_style(line1,&style_line1);
     lv_line_set_points(line1, line_points, 2); /*Set the points*/
 
@@ -232,7 +256,7 @@ void initialize() {/*Create a three buttons, color, side, display auton */
 
 
    /*Create a Label on the currently active screen*/
-   lv_obj_t * label1 =  lv_label_create(lv_scr_act(), NULL);
+   lv_obj_t * label1 =  lv_label_create(scr1, NULL);
 
    /*Modify the Label's text*/
    lv_label_set_text(label1, "Hello world!");
@@ -241,8 +265,8 @@ void initialize() {/*Create a three buttons, color, side, display auton */
     * NULL means align on parent (which is the screen now)
     * 0, 0 at the end means an x, y offset after alignment*/
    lv_obj_align(label1, NULL, LV_ALIGN_OUT_LEFT_TOP, 100, 0);
-   lv_obj_t * testButton;
-   testButton = createBtn(lv_scr_act(), 100, 100, 100, 50, 1, "TEST");
+
+   testButton = createBtn(scr1, 100, 100, 100, 50, 1, "TEST");
    lv_obj_align(testButton, NULL, LV_ALIGN_OUT_LEFT_TOP, 40,100); //set the position to top mid
 /*
      static lv_style_t initredstyle;
