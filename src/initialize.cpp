@@ -8,6 +8,8 @@ lv_obj_t * redAutonButton;
 lv_obj_t * blueAutonButton;
 lv_obj_t * skillsAutonButton;
 lv_obj_t * debugButton;
+lv_obj_t * goBackButton;
+
 lv_obj_t * batteryLabel;
 lv_obj_t * autonState;
 lv_style_t * redButtonStyleREL; //released style
@@ -18,23 +20,35 @@ lv_style_t * skillsButtonStyleREL; //released style
 lv_style_t * skillsButtonStylePR; //pressed style
 lv_style_t * debugButtonStyleREL; //released style
 lv_style_t * debugButtonStylePR; //pressed style
+lv_style_t * goBackStyleREL; //released style
+lv_style_t * goBackStylePR; //pressed style
 lv_obj_t * redScr = lv_obj_create(NULL,NULL);
 lv_obj_t * blueScr = lv_obj_create(NULL,NULL);
 lv_obj_t * skillsScr = lv_obj_create(NULL,NULL);
 lv_obj_t * debugScr = lv_obj_create(NULL,NULL);
 lv_obj_t * mainScr = lv_obj_create(NULL,NULL);
+lv_obj_t * redAutonButtons [4];
 
 lv_obj_t * line1;
 lv_obj_t * testButton;
 lv_obj_t * autonLabel;
 
 int screenNum = 0;
+int screenLoad [4] = {0,0,0,0};
 
 void updateBattery(){ //don't want to use task since might slow down brain too much
   char buffer[100];
   sprintf(buffer, "BATTERY: %d", (int)pros::battery::get_capacity());
   lv_label_set_text(batteryLabel, buffer);
 }
+
+void loadDefaultObj(lv_obj_t * scr){
+  lv_scr_load(scr);
+  lv_obj_set_parent(line1, scr);
+  lv_obj_set_parent(autonLabel,scr);
+  lv_obj_set_parent(batteryLabel,scr);
+}
+
 
 lv_obj_t * drawRectangle( int x, int y, int width, int height, lv_color_t fillColor, lv_color_t borderColor ) { //function courtesy of jpearman, https://www.vexforum.com/t/lvgl-how-to-draw-a-rectangle-using-lvgl/50977/5, modified slightly
   lv_obj_t * obj1 = lv_obj_create(lv_scr_act(), NULL);
@@ -54,74 +68,6 @@ lv_obj_t * drawRectangle( int x, int y, int width, int height, lv_color_t fillCo
   return obj1;
 }
 
-static lv_res_t btn_click_action_screen(lv_obj_t * btn) //function courtesy of team81k,
-{
-
-    uint8_t id = lv_obj_get_free_num(btn); //id usefull when there are multiple buttons
-    updateBattery();
-
-    if(id == 0)
-    {
-      if (screenNum == 0 ){
-        lv_scr_load(redScr);
-        lv_obj_set_parent(line1, redScr);
-        lv_obj_set_parent(autonLabel,redScr);
-        lv_obj_set_parent(batteryLabel,redScr);
-        //lv_obj_set_parent(autonState,redScr);
-        screenNum = 1;
-      }
-
-    } else if (id == 1){
-      if (screenNum == 0){
-        lv_scr_load(blueScr);
-        lv_obj_set_parent(line1, blueScr);
-        lv_obj_set_parent(autonLabel,blueScr);
-        lv_obj_set_parent(batteryLabel,blueScr);
-        screenNum = 2;
-      }
-
-    } else if (id == 2){
-      if (screenNum == 0){
-        lv_scr_load(skillsScr);
-        lv_obj_set_parent(line1, skillsScr);
-        lv_obj_set_parent(autonLabel,skillsScr);
-        lv_obj_set_parent(batteryLabel,skillsScr);
-        screenNum = 3;
-      }
-
-    } else if (id == 3){
-      if (screenNum == 0){
-        lv_scr_load(debugScr);
-        lv_obj_set_parent(line1, debugScr);
-        lv_obj_set_parent(autonLabel,debugScr);
-        lv_obj_set_parent(batteryLabel,debugScr);
-        screenNum = 4;
-      }
-
-    }
-    printf("test %i", screenNum);
-    /*
-    if (screenNum == 0 ){
-      lv_scr_load(scr2);
-      lv_obj_set_parent(line1, scr2);
-      lv_obj_set_parent(autonLabel,scr2);
-      lv_obj_set_parent(batteryLabel,scr2);
-      //lv_obj_set_parent(autonState,scr2);
-
-      screenNum = 1;
-    } else if (screenNum == 1) {
-      lv_scr_load(mainScr);
-      lv_obj_set_parent(line1, scr1);
-      lv_obj_set_parent(autonLabel,scr1);
-      lv_obj_set_parent(batteryLabel,scr1);
-      //lv_obj_set_parent(autonState,scr1);
-
-
-      screenNum = 0;
-
-    } */
-    return LV_RES_OK;
-}
 lv_obj_t * createBtn(lv_obj_t * parent, lv_coord_t x, lv_coord_t y, lv_coord_t width, lv_coord_t height, //function courtesy of 81K: https://team81k.github.io/ProsLVGLTutorial/
     int id, const char * title)
 {
@@ -151,6 +97,69 @@ lv_style_t * createBasicStyle(lv_style_t style_temp, lv_color_t mainColor, lv_co
   return basicStyle;
 
 }
+static lv_res_t btn_click_auton(lv_obj_t * btn){
+
+}
+
+
+
+static lv_res_t btn_click_action_screen(lv_obj_t * btn) //function courtesy of team81k,
+{
+
+    uint8_t id = lv_obj_get_free_num(btn); //id usefull when there are multiple buttons
+    updateBattery();
+
+    if(id == 0)
+    {
+      loadDefaultObj(redScr);
+      lv_obj_align(goBackButton, NULL, LV_ALIGN_OUT_LEFT_TOP, 340, 170); //set the position to top mid
+      lv_obj_set_parent(goBackButton, redScr);
+
+      if (screenNum == 0 && screenLoad[0] == 0){
+
+        redAutonButtons[0] = createBtn(redScr,0,0,200,60,10, "RED 1");
+        redAutonButtons[1] = createBtn(redScr,0,0,200,60,11, "RED 2");
+        redAutonButtons[2] = createBtn(redScr,0,0,200,60,12, "RED 3");
+        redAutonButtons[3] = createBtn(redScr,0,0,200,60,13, "RED 4");
+
+        for (int i = 0; i < 4; i++){
+          if (i<2){lv_obj_align(redAutonButtons[i], NULL, LV_ALIGN_OUT_LEFT_TOP, 210+260*i, 40); }
+          else if(i<4){lv_obj_align(redAutonButtons[i], NULL, LV_ALIGN_OUT_LEFT_TOP, 210+260*(i-2), 105);}
+          lv_btn_set_action(redAutonButtons[i], LV_BTN_ACTION_CLICK, btn_click_auton); //set function to be called on button click
+          lv_btn_set_style(redAutonButtons[i], LV_BTN_STYLE_REL, redButtonStyleREL); //set the relesed style
+          lv_btn_set_style(redAutonButtons[i], LV_BTN_STYLE_PR, redButtonStylePR); //set the pressed style
+
+        }
+
+
+      }
+      screenNum = 1;
+    } else if (id == 1){
+      if (screenNum == 0){
+        loadDefaultObj(blueScr);
+        screenNum = 2;
+      }
+
+    } else if (id == 2){
+      if (screenNum == 0){
+        loadDefaultObj(skillsScr);
+        screenNum = 3;
+      }
+
+    } else if (id == 3){
+      if (screenNum == 0){
+        loadDefaultObj(debugScr);
+        screenNum = 4;
+      }
+
+    } else if (id == 4){
+      loadDefaultObj(mainScr);
+      screenNum = 0;
+    }
+    printf("test %i", screenNum);
+
+    return LV_RES_OK;
+}
 
 void initialize() {/*Create a three buttons, color, side, display auton */
  lv_scr_load(mainScr);
@@ -177,6 +186,14 @@ void initialize() {/*Create a three buttons, color, side, display auton */
   //lv_obj_set_size(myButton, 200, 50); //set the button size
   //myButtonLabel = lv_label_create(myButton, NULL); //create label and puts it inside of the button
   //lv_label_set_text(myButtonLabel, "Click the Button"); //sets label text
+    goBackButton = createBtn(lv_scr_act(), 0,0,200,60, 4, "EXIT");
+    goBackStyleREL = createBasicStyle(lv_style_pretty,LV_COLOR_ORANGE,LV_COLOR_SILVER,2,LV_COLOR_WHITE);
+    goBackStylePR = createBasicStyle(lv_style_pretty,LV_COLOR_SILVER,LV_COLOR_WHITE,2,LV_COLOR_ORANGE);
+    lv_btn_set_action(goBackButton, LV_BTN_ACTION_CLICK, btn_click_action_screen); //set function to be called on button click
+    lv_btn_set_style(goBackButton, LV_BTN_STYLE_REL, goBackStyleREL); //set the relesed style
+    lv_btn_set_style(goBackButton, LV_BTN_STYLE_PR, goBackStylePR); //set the pressed style
+    lv_obj_align(goBackButton, NULL, LV_ALIGN_OUT_LEFT_TOP, 470, 500); //set the position to top mid
+
 
     redButtonStyleREL = createBasicStyle(lv_style_pretty,LV_COLOR_RED,LV_COLOR_SILVER,2,LV_COLOR_WHITE);
     redButtonStylePR = createBasicStyle(lv_style_pretty,LV_COLOR_SILVER,LV_COLOR_WHITE,2,LV_COLOR_RED);
