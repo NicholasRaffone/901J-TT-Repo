@@ -137,17 +137,17 @@ void position_task(void* param){
 	backenc.reset();
   while(true){
     trackPos(mainPosition);
-		if ((int)pros::millis() % 50 == 0){
-			printf("Xpos: %f\r\n",mainPosition.x);
+		//if ((int)pros::millis() % 50 == 0){
+			/*printf("Xpos: %f\r\n",mainPosition.x);
 			printf("Ypos: %f\r\n",mainPosition.y);
 			printf("Angle: %f\r\n",mainPosition.angle);
 			printf("l: %f\r\n",leftenc.get());
 			printf("r: %f\r\n",rightenc.get());
-			printf("b: %f\r\n",backenc.get());
+			printf("b: %f\r\n",backenc.get());*/
 
-		}
+		//}
+		pros::delay(10);
   }
-  pros::delay(10);
 }
 /**
  * Runs the operator control code. This function will be started in its own task

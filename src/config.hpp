@@ -25,7 +25,6 @@ extern okapi::ADIEncoder leftenc;
 extern okapi::ADIEncoder rightenc;
 extern okapi::ADIEncoder backenc;
 
-extern bool blueSide; // 1
-extern bool farSide; // 2
-extern bool park; // 4
+extern int selectedAuton;
+
 extern rPos mainPosition;

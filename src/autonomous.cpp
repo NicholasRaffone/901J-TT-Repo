@@ -174,19 +174,44 @@ void curvyboi(){//should be task but idk how
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
+void test(){
+  left_wheel.move_velocity(200);
+  pros::delay(500);
+}
+void test2(){
+  right_wheel.move_velocity(200);
+  pros::delay(500);
+}
 void autonomous() {
 
-while(true){
-  /*
-  RobotPosition = WheelTracker::track();
-  printf("X: %f\r\n",RobotPosition[0]);
-  printf("Y: %f\r\n",RobotPosition[1]);
-  printf("THETA: %f\r\n",RobotPosition[2]);
-  printf("LEFT ENCODER %d\r\n",LeftEncoder.get_value());
-  printf("RIGHT ENCODER %d\r\n",RightEncoder.get_value());
-  printf("Back ENCODER %d\r\n",BackEncoder.get_value());
-  pros::delay(1000);
-*/
+switch(selectedAuton){
+  case 10: test();
+    break;
+  case 11: test();
+    break;
+  case 12: test();
+    break;
+  case 13: test();
+    break;
+  case 20: test();
+    break;
+  case 21: test();
+    break;
+  case 22: test();
+    break;
+  case 23: test();
+    break;
+  case 30: test();
+    break;
+  case 31: test();
+    break;
+  case 32: test();
+    break;
+  case 33: test();
+    break;
+  default: test2();
+    break;
+
 }
 
 

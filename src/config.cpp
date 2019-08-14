@@ -28,8 +28,7 @@ okapi::ADIEncoder leftenc ('A','B',true);
 okapi::ADIEncoder rightenc ('C','D');
 okapi::ADIEncoder backenc ('E','F');
 
-bool blueSide = false; // 1
-bool farSide = false; // 2
-bool park = true; // 4
+int selectedAuton = 0;
+
 
 rPos mainPosition {0.0,0.0,0.0,0,0,0};

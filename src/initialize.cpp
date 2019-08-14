@@ -44,7 +44,6 @@ lv_obj_t * autonLabel;
 
 int screenNum = 0;
 int screenLoad [4] = {0,0,0,0};
-int selectedAuton = 0;
 char selectedAutonDesc [100];
 
 void updateBattery(){ //don't want to use task since might slow down brain too much
@@ -110,7 +109,8 @@ lv_style_t * createBasicStyle(lv_style_t style_temp, lv_color_t mainColor, lv_co
 }
 static lv_res_t btn_click_auton(lv_obj_t * btn){
   updateBattery();
-
+  selectedAuton = lv_obj_get_free_num(btn);
+  printf("%d\r\n", selectedAuton);
   lv_obj_t * tester = lv_obj_get_child(btn,NULL);
   char buffer[100];
   sprintf(buffer, "%s", lv_label_get_text(tester));
@@ -221,7 +221,7 @@ static lv_res_t btn_click_action_screen(lv_obj_t * btn) //function courtesy of t
       loadDefaultObj(mainScr);
       screenNum = 0;
     }
-    printf("test %i", screenNum);
+    printf("screen %i\r\n", screenNum);
 
     return LV_RES_OK;
 }
