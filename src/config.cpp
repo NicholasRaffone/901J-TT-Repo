@@ -31,4 +31,5 @@ okapi::ADIEncoder backenc ('E','F');
 bool blueSide = false; // 1
 bool farSide = false; // 2
 bool park = true; // 4
+
 rPos mainPosition {0.0,0.0,0.0,0,0,0};
