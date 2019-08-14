@@ -9,6 +9,14 @@ lv_obj_t * blueAutonButton;
 lv_obj_t * skillsAutonButton;
 lv_obj_t * debugButton;
 lv_obj_t * goBackButton;
+lv_obj_t * redAutonButtons [4];
+lv_obj_t * blueAutonButtons [4];
+lv_obj_t * skillsAutonButtons [4];
+
+
+
+
+
 
 lv_obj_t * batteryLabel;
 lv_obj_t * autonState;
@@ -27,7 +35,8 @@ lv_obj_t * blueScr = lv_obj_create(NULL,NULL);
 lv_obj_t * skillsScr = lv_obj_create(NULL,NULL);
 lv_obj_t * debugScr = lv_obj_create(NULL,NULL);
 lv_obj_t * mainScr = lv_obj_create(NULL,NULL);
-lv_obj_t * redAutonButtons [4];
+
+
 
 lv_obj_t * line1;
 lv_obj_t * testButton;
@@ -35,6 +44,8 @@ lv_obj_t * autonLabel;
 
 int screenNum = 0;
 int screenLoad [4] = {0,0,0,0};
+int selectedAuton = 0;
+char selectedAutonDesc [100];
 
 void updateBattery(){ //don't want to use task since might slow down brain too much
   char buffer[100];
@@ -98,7 +109,23 @@ lv_style_t * createBasicStyle(lv_style_t style_temp, lv_color_t mainColor, lv_co
 
 }
 static lv_res_t btn_click_auton(lv_obj_t * btn){
+  updateBattery();
 
+  lv_obj_t * tester = lv_obj_get_child(btn,NULL);
+  char buffer[100];
+  sprintf(buffer, "%s", lv_label_get_text(tester));
+  lv_label_set_text(autonLabel, buffer);
+
+
+
+
+    lv_obj_t * mbox1 = lv_mbox_create(lv_scr_act(), NULL);
+    lv_obj_set_size(mbox1, 450, 500);
+    lv_obj_align(mbox1, NULL, LV_ALIGN_CENTER, 0, -10);
+    sprintf(selectedAutonDesc, "%s has been selected", lv_label_get_text(tester));
+    lv_mbox_set_text(mbox1, selectedAutonDesc);
+    lv_mbox_start_auto_close(mbox1, 2000);
+  return LV_RES_OK;
 }
 
 
@@ -115,7 +142,7 @@ static lv_res_t btn_click_action_screen(lv_obj_t * btn) //function courtesy of t
       lv_obj_align(goBackButton, NULL, LV_ALIGN_OUT_LEFT_TOP, 340, 170); //set the position to top mid
       lv_obj_set_parent(goBackButton, redScr);
 
-      if (screenNum == 0 && screenLoad[0] == 0){
+      if (screenLoad[0] == 0){
 
         redAutonButtons[0] = createBtn(redScr,0,0,200,60,10, "RED 1");
         redAutonButtons[1] = createBtn(redScr,0,0,200,60,11, "RED 2");
@@ -128,27 +155,65 @@ static lv_res_t btn_click_action_screen(lv_obj_t * btn) //function courtesy of t
           lv_btn_set_action(redAutonButtons[i], LV_BTN_ACTION_CLICK, btn_click_auton); //set function to be called on button click
           lv_btn_set_style(redAutonButtons[i], LV_BTN_STYLE_REL, redButtonStyleREL); //set the relesed style
           lv_btn_set_style(redAutonButtons[i], LV_BTN_STYLE_PR, redButtonStylePR); //set the pressed style
-
         }
-
-
+        screenLoad[0] = 1;
       }
       screenNum = 1;
     } else if (id == 1){
       if (screenNum == 0){
         loadDefaultObj(blueScr);
+        lv_obj_align(goBackButton, NULL, LV_ALIGN_OUT_LEFT_TOP, 340, 170); //set the position to top mid
+        lv_obj_set_parent(goBackButton, blueScr);
+
+        if (screenLoad[1] == 0){
+
+          blueAutonButtons[0] = createBtn(blueScr,0,0,200,60,20, "BLUE 1");
+          blueAutonButtons[1] = createBtn(blueScr,0,0,200,60,21, "BLUE 2");
+          blueAutonButtons[2] = createBtn(blueScr,0,0,200,60,22, "BLUE 3");
+          blueAutonButtons[3] = createBtn(blueScr,0,0,200,60,23, "BLUE 4");
+
+          for (int i = 0; i < 4; i++){
+            if (i<2){lv_obj_align(blueAutonButtons[i], NULL, LV_ALIGN_OUT_LEFT_TOP, 210+260*i, 40); }
+            else if(i<4){lv_obj_align(blueAutonButtons[i], NULL, LV_ALIGN_OUT_LEFT_TOP, 210+260*(i-2), 105);}
+            lv_btn_set_action(blueAutonButtons[i], LV_BTN_ACTION_CLICK, btn_click_auton); //set function to be called on button click
+            lv_btn_set_style(blueAutonButtons[i], LV_BTN_STYLE_REL, blueButtonStyleREL); //set the relesed style
+            lv_btn_set_style(blueAutonButtons[i], LV_BTN_STYLE_PR, blueButtonStylePR); //set the pressed style
+          }
+          screenLoad[1] = 1;
+        }
         screenNum = 2;
       }
 
     } else if (id == 2){
       if (screenNum == 0){
         loadDefaultObj(skillsScr);
+        lv_obj_align(goBackButton, NULL, LV_ALIGN_OUT_LEFT_TOP, 340, 170); //set the position to top mid
+        lv_obj_set_parent(goBackButton, skillsScr);
+
+        if (screenLoad[2] == 0){
+
+          skillsAutonButtons[0] = createBtn(skillsScr,0,0,200,60,30, "SKILLS 1");
+          skillsAutonButtons[1] = createBtn(skillsScr,0,0,200,60,31, "SKILLS 2");
+          skillsAutonButtons[2] = createBtn(skillsScr,0,0,200,60,32, "SKILLS 3");
+          skillsAutonButtons[3] = createBtn(skillsScr,0,0,200,60,33, "SKILLS 4");
+
+          for (int i = 0; i < 4; i++){
+            if (i<2){lv_obj_align(skillsAutonButtons[i], NULL, LV_ALIGN_OUT_LEFT_TOP, 210+260*i, 40); }
+            else if(i<4){lv_obj_align(skillsAutonButtons[i], NULL, LV_ALIGN_OUT_LEFT_TOP, 210+260*(i-2), 105);}
+            lv_btn_set_action(skillsAutonButtons[i], LV_BTN_ACTION_CLICK, btn_click_auton); //set function to be called on button click
+            lv_btn_set_style(skillsAutonButtons[i], LV_BTN_STYLE_REL, skillsButtonStyleREL); //set the relesed style
+            lv_btn_set_style(skillsAutonButtons[i], LV_BTN_STYLE_PR, skillsButtonStylePR); //set the pressed style
+          }
+          screenLoad[2] = 1;
+        }
         screenNum = 3;
       }
 
     } else if (id == 3){
       if (screenNum == 0){
         loadDefaultObj(debugScr);
+        lv_obj_align(goBackButton, NULL, LV_ALIGN_OUT_LEFT_TOP, 340, 170); //set the position to top mid
+        lv_obj_set_parent(goBackButton, debugScr);
         screenNum = 4;
       }
 
