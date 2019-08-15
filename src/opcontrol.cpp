@@ -81,7 +81,7 @@ chassisUtil
 
 void trackPos(rPos& position) //Based off of 5225a E-bots Pilons APS code, https://github.com/nickmertin/5225A-2017-2018/blob/master/src/auto.c
 {
-  /*int currentL = leftenc.get();
+  int currentL = leftenc.get();
   int currentR = rightenc.get();
   int currentB = backenc.get();
 
@@ -127,7 +127,7 @@ void trackPos(rPos& position) //Based off of 5225a E-bots Pilons APS code, https
 	position.y += h2 * -sinP; // -sin(x) = sin(-x)
 	position.x += h2 * cosP; // cos(x) = cos(-x)
 
-	position.angle += angle;*/
+	position.angle += angle;
 }
 
 void position_task(void* param){

@@ -24,8 +24,8 @@ pros::Controller master (CONTROLLER_MASTER);
 //pros::ADIEncoder RightEncoder(RENC_TOP_PORT,RENC_BOT_PORT,true);
 //pros::ADIEncoder BackEncoder(BENC_TOP_PORT,BENC_BOT_PORT,true);
 
-okapi::ADIEncoder leftenc ('A','D',false);
-okapi::ADIEncoder rightenc ('C','B');
+okapi::ADIEncoder leftenc ('A','B',true);
+okapi::ADIEncoder rightenc ('C','D',true);
 okapi::ADIEncoder backenc ('E','F');
 
 int selectedAuton = 0;
