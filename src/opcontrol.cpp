@@ -41,7 +41,7 @@ okapi::MotorGroup group2 ({Motor(13,false,AbstractMotor::gearset::green),Motor(1
 
   okapi::ChassisScales scales ({4_in, 16.4_in});
 
-ThreeEncoderSkidSteerModel myChassis = ChassisModelFactory::create(
+/* ThreeEncoderSkidSteerModel myChassis = ChassisModelFactory::create(
   group1,
   group2,
   leftenc,
@@ -52,7 +52,7 @@ ThreeEncoderSkidSteerModel myChassis = ChassisModelFactory::create(
 );
 
 TimeUtil chassisUtil2 = TimeUtilFactory::withSettledUtilParams(50, 5, 100_ms);
-/*
+
 chassisUtil,
 std::shared_ptr<ThreeEncoderSkidSteerModel>(&myChassis),
 okapi::IterativePosPIDController::Gains{0.1,0.0001,0.001},
@@ -61,7 +61,7 @@ okapi::IterativePosPIDController::Gains{0.1,0.0001,0.001},
 AbstractMotor::gearset::green,
 scales
 std::unique_ptr<okapi::IterativePosPIDController>
-*/
+
 auto bruh = new IterativePosPIDController(0.01, 0.01, 0.01, 0,
                           chassisUtil);
 std::unique_ptr<Filter> iderivativeFilter = std::make_unique<PassthroughFilter>();
@@ -76,12 +76,12 @@ auto profileController = AsyncControllerFactory::motionProfile(
   scales,
 AbstractMotor::gearset::green,
 chassisUtil
-);
+); */
 
 
 void trackPos(rPos& position) //Based off of 5225a E-bots Pilons APS code, https://github.com/nickmertin/5225A-2017-2018/blob/master/src/auto.c
 {
-  int currentL = leftenc.get();
+  /*int currentL = leftenc.get();
   int currentR = rightenc.get();
   int currentB = backenc.get();
 
@@ -127,14 +127,14 @@ void trackPos(rPos& position) //Based off of 5225a E-bots Pilons APS code, https
 	position.y += h2 * -sinP; // -sin(x) = sin(-x)
 	position.x += h2 * cosP; // cos(x) = cos(-x)
 
-	position.angle += angle;
+	position.angle += angle;*/
 }
 
 void position_task(void* param){
 
-	leftenc.reset();
-	rightenc.reset();
-	backenc.reset();
+	//leftenc.reset();
+	//rightenc.reset();
+	//backenc.reset();
   while(true){
     trackPos(mainPosition);
 		//if ((int)pros::millis() % 50 == 0){

@@ -38,10 +38,13 @@ lv_obj_t * mainScr = lv_obj_create(NULL,NULL);
 lv_obj_t * line1;
 lv_obj_t * testButton;
 lv_obj_t * autonLabel;
+lv_obj_t * debugLabel [6];
+
 
 int screenNum = 0;
 int screenLoad [4] = {0,0,0,0};
 char selectedAutonDesc [100];
+bool isDebug = false;
 
 void updateBattery(){ //don't want to use task since might slow down brain too much, just updates label displaying battery percentage
   char buffer[100];
@@ -125,7 +128,29 @@ static lv_res_t btn_click_auton(lv_obj_t * btn){ //handles auton selection when 
   return LV_RES_OK;
 }
 
+void debug_task(void * p){
 
+    char buffer[100];
+    sprintf(buffer,"Xpos: %f",mainPosition.x);
+    lv_label_set_text(debugLabel [0], buffer);
+    sprintf(buffer,"Ypos: %f",mainPosition.y);
+    lv_label_set_text(debugLabel [1], buffer);
+    sprintf(buffer,"Angle: %f",mainPosition.angle);
+    lv_label_set_text(debugLabel [2], buffer);
+    sprintf(buffer,"l: %f",leftenc.get());
+    lv_label_set_text(debugLabel [3], buffer);
+    sprintf(buffer,"r: %f",rightenc.get());
+    lv_label_set_text(debugLabel [4], buffer);
+    sprintf(buffer,"b: %f",backenc.get());
+    lv_label_set_text(debugLabel [5], buffer);
+
+  /*printf("Xpos: %f\r\n",mainPosition.x);
+  printf("Ypos: %f\r\n",mainPosition.y);
+  printf("Angle: %f\r\n",mainPosition.angle);
+  printf("l: %f\r\n",leftenc.get());
+  printf("r: %f\r\n",rightenc.get());
+  printf("b: %f\r\n",backenc.get());*/
+}
 
 static lv_res_t btn_click_action_screen(lv_obj_t * btn) //handles screen changes
 {
@@ -211,11 +236,26 @@ static lv_res_t btn_click_action_screen(lv_obj_t * btn) //handles screen changes
         loadDefaultObj(debugScr);
         lv_obj_align(goBackButton, NULL, LV_ALIGN_OUT_LEFT_TOP, 340, 170); //set the position to top mid
         lv_obj_set_parent(goBackButton, debugScr);
+        if(screenLoad[3] == 0){
+
+
+          for (int i = 0; i < 6; i++){
+              debugLabel [i] =  lv_label_create(debugScr, NULL);
+              lv_label_set_text(debugLabel[i], "TEST");
+              lv_obj_align(debugLabel[i], NULL, LV_ALIGN_OUT_LEFT_TOP,50,40+20*i);
+          }
+          /*Modify the Label's text*/
+          //lv_label_set_text(debugLabel, "NO AUTON SELECTED");
+          //lv_obj_align(debugLabel, NULL, LV_ALIGN_CENTER,0,0);
+          lv_task_create(debug_task, 100, LV_TASK_PRIO_MID, NULL);
+        }
+        isDebug = true;
         screenNum = 4;
       }
 
     } else if (id == 4){ //go back button
       loadDefaultObj(mainScr);
+      isDebug = false;
       screenNum = 0;
     }
     printf("screen %i\r\n", screenNum);
@@ -224,6 +264,9 @@ static lv_res_t btn_click_action_screen(lv_obj_t * btn) //handles screen changes
 }
 
 void initialize() {/*Create a three buttons, color, side, display auton */
+  leftenc.reset();
+  rightenc.reset();
+  pros::delay(500);
     lv_scr_load(mainScr);
     autonState = drawRectangle( 0, 0, 210, 25, LV_COLOR_GRAY,LV_COLOR_WHITE);
 
