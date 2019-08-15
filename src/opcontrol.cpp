@@ -10,7 +10,7 @@ const float B_DIS_IN = 4.33070866;
 const float TICKS_PER_ROTATION =  360.0;
 const float  SPIN_TO_IN_LR = (WHEELDIAM * M_PI / TICKS_PER_ROTATION);
 const float  SPIN_TO_IN_S = (WHEELDIAM * M_PI / TICKS_PER_ROTATION);
-
+const int DEFAULTSLEWRATEINCREMENT = 10;
 
 
 
@@ -162,12 +162,105 @@ void position_task(void* param){
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
+ void brakeMotors(){//brake the base motors
+   left_wheel.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+   right_wheel.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+   left_chain.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+   right_chain.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+   left_wheel.move_velocity(0);
+   left_chain.move_velocity(0);
+   right_wheel.move_velocity(0);
+   right_chain.move_velocity(0);
+ }
+ void unBrakeMotors(){
+   left_wheel.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+   right_wheel.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+   left_chain.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+   right_chain.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+ }
+
+ void slewRateControl(pros::Motor *motor, int targetVelocity, int increment){
+   int currentVelocity = motor->get_target_velocity();
+   if (targetVelocity != 0){
+     if (currentVelocity != targetVelocity){
+       if (targetVelocity > currentVelocity){
+         currentVelocity += increment;
+       } else if (targetVelocity < currentVelocity){
+         currentVelocity -= increment;
+       }
+       if (std::abs(currentVelocity) > std::abs(targetVelocity)){
+         currentVelocity = targetVelocity;
+       }
+     }
+   } else {
+     currentVelocity = targetVelocity;
+   }
+   motor->move_velocity(currentVelocity);
+ }
+
+ void move_test(double yCoord){
+
+   int maxVelocity = 100;
+  const double goal = yCoord-mainPosition.y;
+  bool goalMet = false; bool oneTime = true;
+  int targetVelocity = 0;
+  double currentPosition = 0;
+  double error = 0;
+  double previous_error = goal;
+  double kP = 4;
+  double kI = 0.0004;
+  double kD = 0.01;
+  double integral = 0;
+  double derivative = 0;
+
+  if (yCoord < 0) {maxVelocity *= -1;}
+
+
+
+
+  while(!goalMet){
+
+
+    currentPosition = mainPosition.y;
+    error = goal - currentPosition;
+
+    if (std::abs(error) < 600){
+      integral += error;
+    }
+
+    derivative = error - previous_error;
+    previous_error = error;
+
+    targetVelocity = kP*error + kI*integral + kD*derivative;
+
+    if (targetVelocity > maxVelocity){
+      targetVelocity = maxVelocity;
+    }
+
+    slewRateControl(&left_wheel, targetVelocity, DEFAULTSLEWRATEINCREMENT);
+    slewRateControl(&left_chain, targetVelocity, DEFAULTSLEWRATEINCREMENT);
+    slewRateControl(&right_wheel, targetVelocity, DEFAULTSLEWRATEINCREMENT);
+    slewRateControl(&right_chain, targetVelocity, DEFAULTSLEWRATEINCREMENT);
+
+    if (std::abs(error) < 0.1){
+      goalMet = true;
+    }
+
+
+
+
+    pros::delay(10);
+  }
+
+  brakeMotors();
+}
+
 void opcontrol() {
   //std::string text("wheelTrack");
   //pros::Task punchTask(WheelTrack2,&text);
   std::string text("position");
   pros::Task punchTask(position_task,&text);
-
+  move_test(12.0);
   /*profileController.generatePath({
     Point{0_ft, 0_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
     Point{5_ft, 2_ft, -90_deg}}, // The next point in the profile, 3 feet forward
