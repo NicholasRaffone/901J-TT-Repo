@@ -313,7 +313,7 @@ void opcontrol() {
   //pros::Task punchTask(WheelTrack2,&text);
   std::string text("position");
   pros::Task punchTask(position_task,&text);
-  turn_PID(90.0);
+  //___int_least8_t_definedturn_PID(90.0);
   //move_test(12.0);
   /*profileController.generatePath({
     Point{0_ft, 0_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
@@ -364,7 +364,18 @@ void opcontrol() {
 			left_chain.move_velocity(left);
 			right_wheel.move_velocity(right);
 			right_chain.move_velocity(right);
+      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
+      //test
+      right_lift.move_velocity(-70);
+      left_lift.move_velocity(-70);
 
+    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
+      right_lift.move_velocity(70);
+      left_lift.move_velocity(70);
+    } else {
+      left_lift.move_velocity(0);
+      right_lift.move_velocity(0);
+    }
 
 			if(master.get_digital(pros::E_CONTROLLER_DIGITAL_X) != 0){
 				left_wheel.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
