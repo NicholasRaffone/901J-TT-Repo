@@ -3,6 +3,17 @@
 #include <math.h>
 #include <vector>
 #include "okapi/api.hpp"
+const float WHEELDIAM = 2.75;
+const float L_DIS_IN = 4.72440945;
+const float R_DIS_IN = 4.72440945;
+const float B_DIS_IN = 4.33070866;
+const float TICKS_PER_ROTATION =  360.0;
+const float  SPIN_TO_IN_LR = (WHEELDIAM * M_PI / TICKS_PER_ROTATION);
+const float  SPIN_TO_IN_S = (WHEELDIAM * M_PI / TICKS_PER_ROTATION);
+const int DEFAULTSLEWRATEINCREMENT = 10;
+
+
+
 
 /*TimeUtil profiledUtil = TimeUtilFactory::withSettledUtilParams(50, 5, 100_ms);
 
@@ -26,13 +37,11 @@ TimeUtil chassisUtil = TimeUtilFactory::withSettledUtilParams(50, 5, 250_ms);
 okapi::MotorGroup group1 ({Motor(17,true,AbstractMotor::gearset::green),Motor(18,false,AbstractMotor::gearset::green)});
 okapi::MotorGroup group2 ({Motor(13,false,AbstractMotor::gearset::green),Motor(15,true,AbstractMotor::gearset::green)});
 
-okapi::ADIEncoder leftenc ('A','B');
-okapi::ADIEncoder rightenc ('C','D');
-okapi::ADIEncoder backenc ('E','F');
 
-  okapi::ChassisScales scales ({2.75_in, 16.4_in});
 
-ThreeEncoderSkidSteerModel myChassis = ChassisModelFactory::create(
+  okapi::ChassisScales scales ({4_in, 16.4_in});
+
+/* ThreeEncoderSkidSteerModel myChassis = ChassisModelFactory::create(
   group1,
   group2,
   leftenc,
@@ -42,120 +51,104 @@ ThreeEncoderSkidSteerModel myChassis = ChassisModelFactory::create(
   12000.0
 );
 
+TimeUtil chassisUtil2 = TimeUtilFactory::withSettledUtilParams(50, 5, 100_ms);
+
+chassisUtil,
+std::shared_ptr<ThreeEncoderSkidSteerModel>(&myChassis),
+okapi::IterativePosPIDController::Gains{0.1,0.0001,0.001},
+okapi::IterativePosPIDController::Gains{0.1,0.0001,0.001},
+okapi::IterativePosPIDController::Gains{0.1,0.0001,0.001},
+AbstractMotor::gearset::green,
+scales
+std::unique_ptr<okapi::IterativePosPIDController>
+
+auto bruh = new IterativePosPIDController(0.01, 0.01, 0.01, 0,
+                          chassisUtil);
+std::unique_ptr<Filter> iderivativeFilter = std::make_unique<PassthroughFilter>();
+
+
+
 auto profileController = AsyncControllerFactory::motionProfile(
-  1.1,  // Maximum linear velocity of the Chassis in m/s
-  2.0,  // Maximum linear acceleration of the Chassis in m/s/s
-  10.0, // Maximum linear jerk of the Chassis in m/s/s/s
+  0.75,  // Maximum linear velocity of the Chassis in m/s
+  1.5,  // Maximum linear acceleration of the Chassis in m/s/s
+  7.5, // Maximum linear jerk of the Chassis in m/s/s/s
   std::shared_ptr<ThreeEncoderSkidSteerModel>(&myChassis),
   scales,
 AbstractMotor::gearset::green,
 chassisUtil
-);
+); */
 
 
-std::vector<float> d (3);
-
-void WheelTrack2 (void* param){
-
-  float wheelrad = 2.75;
-
-  float lencval = 0;
-  float rencval = 0;
-  float bencval = 0;
-
-  float prevl = 0;
-  float prevr = 0;
-  float prevb = 0;
-  float thetar = 90;//constant
-  float theta1;
-  float theta0 = 0;
-  float thetam;
-
-  float rdis = 4.72440945;
-  float ldis = 4.72440945;
-  float bdis= 4.33070866;
-
-  float dltheta = 0; //change in encoder angle
-  float drtheta = 0;
-  float dbtheta = 0;
-
-  float dl; //change in distance
-  float dr;
-  float ds;
-
-  float dtheta;
+void trackPos(rPos& position) //Based off of 5225a E-bots Pilons APS code, https://github.com/nickmertin/5225A-2017-2018/blob/master/src/auto.c
+{
+  int currentL = leftenc.get();
+  int currentR = rightenc.get();
+  int currentB = backenc.get();
 
 
+  float deltaL = (currentL - position.leftLast) * SPIN_TO_IN_LR;
+  float deltaR = (currentR - position.rightLast) * SPIN_TO_IN_LR;
+  float deltaB = (currentB - position.backLast) * SPIN_TO_IN_S;
 
-  std::vector<float> dtemp (3);
-  std::vector <float> d1 (3);
+  position.leftLast = currentL;
+  position.rightLast = currentR;
+  position.backLast = currentB;
 
-  float rad;
-  float angle;
-  float currentl;
-  float currentr;
-  float currentb;
+  float h; // The hypotenuse of the triangle formed by the middle of the robot on the starting position and ending position and the middle of the circle it travels around
+	float i; // Half on the angle that I've traveled
+	float h2; // The same as h but using the back instead of the side wheels
 
+	float angle = (deltaL - deltaR) / (L_DIS_IN + R_DIS_IN); // The angle that I've traveled
+  if (angle)
+	{
+		float r = deltaR / angle; // The radius of the circle the robot travel's around with the right side of the robot
+		i = angle / 2.0;
+		float sinI = sin(i);
+		h = ((r + R_DIS_IN) * sinI) * 2.0;
 
-  while (true){
-    currentl = LeftEncoder.get_value();
-    currentr = RightEncoder.get_value();
-    currentb = BackEncoder.get_value();
+		float r2 = deltaB / angle; // The radius of the circle the robot travel's around with the back of the robot
+		h2 = ((r2 + B_DIS_IN) * sinI) * 2.0;
+	}
+	else
+	{
+		h = deltaR;
+		i = 0;
 
-    dltheta = currentl - prevl;
-    drtheta = currentr - prevr;
-    dbtheta = currentb - prevb;
+		h2 = deltaB;
+	}
+  float p = i + position.angle; // The global ending angle of the robot
+	float cosP = cos(p);
+	float sinP = sin(p);
 
-    //distance traveled by each wheel
-    dl = ((dltheta)/360) * 2 *M_PI * wheelrad;
-    dr = ((drtheta)/360) * 2 *M_PI * wheelrad;
-    ds = ((dbtheta)/360) * 2 *M_PI * wheelrad;
+	// Update the global position
+	position.y += h * cosP;
+	position.x += h * sinP;
 
-    //update values
-    prevl = currentl;
-    prevr = currentr;
-    prevb = currentb;
+	position.y += h2 * -sinP; // -sin(x) = sin(-x)
+	position.x += h2 * cosP; // cos(x) = cos(-x)
 
-    theta1 = thetar + 180*((dl-dr)/(rdis+ldis))/M_PI;//convert angle to degrees and add to initial angle to find new angle
-
-    dtheta = theta1 - theta0; //change in angle
-    //if(dtheta == 0.0){//if only vertical movement add vertical component dr
-
-    //  dtemp.at(0) = ds;
-  //    dtemp.at(1) = dr;
-    //}
-      dtemp.at(0) = 2 * sin(dtheta/2) * (ds/dtheta + bdis);
-      dtemp.at(1) = 2 * sin(dtheta/2) * (dr/dtheta + rdis);
-
-
-    //calculate average orientation
-    thetam = (theta0 + dtheta)/2;
-
-    //convert position to polar
-    angle = atan(dtemp[1] / dtemp[0]);
-    rad = sqrt(dtemp[0] * dtemp[0] + dtemp[1] * dtemp[1]);
-
-    angle += -1 * thetam;
-
-    //convert back
-    dtemp[0] = rad * cos(angle);
-    dtemp[1] = rad * sin(angle);
-//}
-    //add position vector to old one
-    for(int i = 0; i < 2; i++){
-      d1[i] = d[i] + dtemp[i];
-    }
-
-      theta0 = theta1;
-
-      d[0] = d1[0];
-      d[1] = d1[1];
-      d1[2] = thetam;
-      //return new position
-      pros::delay(5);
-    }
+	position.angle += angle;
 }
 
+void position_task(void* param){
+
+	//leftenc.reset();
+	//rightenc.reset();
+	//backenc.reset();
+  while(true){
+    trackPos(mainPosition);
+		//if ((int)pros::millis() % 50 == 0){
+			/*printf("Xpos: %f\r\n",mainPosition.x);
+			printf("Ypos: %f\r\n",mainPosition.y);
+			printf("Angle: %f\r\n",mainPosition.angle);
+			printf("l: %f\r\n",leftenc.get());
+			printf("r: %f\r\n",rightenc.get());
+			printf("b: %f\r\n",backenc.get());*/
+
+		//}
+		pros::delay(10);
+  }
+}
 /**
  * Runs the operator control code. This function will be started in its own task
  * with the default priority and stack size whenever the robot is enabled via
@@ -169,29 +162,190 @@ void WheelTrack2 (void* param){
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
+ void brakeMotors(){//brake the base motors
+   left_wheel.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+   right_wheel.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+   left_chain.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+   right_chain.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+   left_wheel.move_velocity(0);
+   left_chain.move_velocity(0);
+   right_wheel.move_velocity(0);
+   right_chain.move_velocity(0);
+ }
+ void unBrakeMotors(){
+   left_wheel.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+   right_wheel.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+   left_chain.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+   right_chain.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+ }
+
+ void slewRateControl(pros::Motor *motor, int targetVelocity, int increment){
+   int currentVelocity = motor->get_target_velocity();
+   if (targetVelocity != 0){
+     if (currentVelocity != targetVelocity){
+       if (targetVelocity > currentVelocity){
+         currentVelocity += increment;
+       } else if (targetVelocity < currentVelocity){
+         currentVelocity -= increment;
+       }
+       if (std::abs(currentVelocity) > std::abs(targetVelocity)){
+         currentVelocity = targetVelocity;
+       }
+     }
+   } else {
+     currentVelocity = targetVelocity;
+   }
+   motor->move_velocity(currentVelocity);
+ }
+
+ void move_test(double yCoord){
+
+   int maxVelocity = 100;
+  const double goal = yCoord-mainPosition.y;
+  bool goalMet = false; bool oneTime = true;
+  int targetVelocity = 0;
+  double currentPosition = 0;
+  double error = 0;
+  double previous_error = goal;
+  double kP = 4;
+  double kI = 0.0004;
+  double kD = 0.01;
+  double integral = 0;
+  double derivative = 0;
+
+  if (yCoord < 0) {maxVelocity *= -1;}
+
+
+
+
+  while(!goalMet){
+
+
+    currentPosition = mainPosition.y;
+    error = goal - currentPosition;
+
+    if (std::abs(error) < 600){
+      integral += error;
+    }
+
+    derivative = error - previous_error;
+    previous_error = error;
+
+    targetVelocity = kP*error + kI*integral + kD*derivative;
+
+    if (targetVelocity > maxVelocity){
+      targetVelocity = maxVelocity;
+    }
+
+    slewRateControl(&left_wheel, targetVelocity, DEFAULTSLEWRATEINCREMENT);
+    slewRateControl(&left_chain, targetVelocity, DEFAULTSLEWRATEINCREMENT);
+    slewRateControl(&right_wheel, targetVelocity, DEFAULTSLEWRATEINCREMENT);
+    slewRateControl(&right_chain, targetVelocity, DEFAULTSLEWRATEINCREMENT);
+
+    if (std::abs(error) < 0.1){
+      goalMet = true;
+    }
+
+
+
+
+    pros::delay(10);
+  }
+
+  brakeMotors();
+}
+void turn_PID(float targetDegree){
+  int maxVelocity = 20;
+  const double degreeGoal = targetDegree;
+  bool goalMet = false;
+  int targetVelocity = 0;
+  int leftTarget = 0;
+  int rightTarget = 0;
+  double currentPosition = 0;
+  double error = 0;
+  double previous_error = degreeGoal;
+  double kP = 1;
+  double kI = 0.01;
+  double kD = 0.00;
+  double integral = 0;
+  double derivative = 0;
+  if(targetDegree<0){maxVelocity *= -1;}
+
+
+
+  while(!goalMet){
+    currentPosition = mainPosition.angle*180/M_PI;
+    error = degreeGoal - currentPosition;
+    printf("%f\r\n",currentPosition);
+    if (std::abs(error) < 1000){
+      integral += error;
+    }
+
+    derivative = error - previous_error;
+    previous_error = error;
+
+    targetVelocity = kP*error + kI*integral + kD*derivative;
+
+    if (std::abs(targetVelocity) > std::abs(maxVelocity)){
+      targetVelocity = maxVelocity;
+    }
+
+
+      leftTarget = targetVelocity;
+      rightTarget = -1*targetVelocity;
+
+
+    slewRateControl(&left_wheel, leftTarget, DEFAULTSLEWRATEINCREMENT);
+    slewRateControl(&left_chain, leftTarget, DEFAULTSLEWRATEINCREMENT);
+    slewRateControl(&right_wheel, rightTarget, DEFAULTSLEWRATEINCREMENT);
+    slewRateControl(&right_chain, rightTarget, DEFAULTSLEWRATEINCREMENT);
+
+    if (std::abs(error) < 6){
+      goalMet = true;
+    }
+
+    pros::delay(10);
+  }
+  brakeMotors();
+}
 void opcontrol() {
   //std::string text("wheelTrack");
   //pros::Task punchTask(WheelTrack2,&text);
-
-  profileController.generatePath({
+  std::string text("position");
+  pros::Task punchTask(position_task,&text);
+  turn_PID(90.0);
+  //move_test(12.0);
+  /*profileController.generatePath({
     Point{0_ft, 0_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
-    Point{4_ft, 3_ft, 0_deg}}, // The next point in the profile, 3 feet forward
+    Point{5_ft, 2_ft, -90_deg}}, // The next point in the profile, 3 feet forward
     "A" // Profile name
   );
   profileController.generatePath({
-    Point{4_ft, 3_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
-    Point{6_ft, -3_ft, -90_deg}}, // The next point in the profile, 3 feet forward
+    Point{-5_ft, -2_ft, 90_deg},  // Profile starting position, this will normally be (0, 0, 0)
+    Point{0_ft, 0_ft, 0_deg}}, // The next point in the profile, 3 feet forward
     "B" // Profile name
   );
-  profileController.generatePath({
-    Point{4_ft, 1_ft, 90_deg},  // Profile starting position, this will normally be (0, 0, 0)
-    Point{6_ft, 3_ft, 0_deg}}, // The next point in the profile, 3 feet forward
-    "C" // Profile name
-  );
+
   profileController.setTarget("A");
   profileController.waitUntilSettled();
-  profileController.setTarget("B");
+  profileController.setTarget("B",true);
   profileController.waitUntilSettled();
+*/
+  /*profileController.generatePath({
+    Point{5_ft, 2_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
+    Point{6_ft, 1_ft, 45_deg}}, // The next point in the profile, 3 feet forward
+    "B" // Profile name
+  );*/
+  /*profileController.generatePath({
+    Point{6_ft, 1_ft, 45_deg},  // Profile starting position, this will normally be (0, 0, 0)
+    Point{7_ft, 0_ft, 90_deg}}, // The next point in the profile, 3 feet forward
+    "C" // Profile name
+  );*/
+
+
+
+  //profileController.setTarget("C");
+  //profileController.waitUntilSettled();
   //profileController.setTarget("B");
 
   //profileController.waitUntilSettled();
@@ -199,10 +353,9 @@ void opcontrol() {
     //profileController.setTarget("C");
 
     //profileController.waitUntilSettled();
-
 		while (true) {
-			double power = 500*master.get_analog(ANALOG_LEFT_Y)/127;
-			double turn = 500*master.get_analog(ANALOG_RIGHT_X)/127;
+			double power = 200*master.get_analog(ANALOG_LEFT_Y)/127;
+			double turn = 200*master.get_analog(ANALOG_RIGHT_X)/127;
 			//int left = (int)(pow(((power + turn)/600.0),2.0)*600.0);
 			//int right = (int) (pow(((power - turn)/600.0),2.0)*600.0);
 			int left = power+turn;
@@ -229,7 +382,7 @@ void opcontrol() {
 				right_chain.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 			}
 
-      printf("THETA: %f",d[2]);
+
 
 			pros::delay(10);
 		}
