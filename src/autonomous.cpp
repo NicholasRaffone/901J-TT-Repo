@@ -184,7 +184,7 @@ void test2(){
   pros::delay(500);
 }
 
-void leftpid(int targetDegree, int maxvel){
+void liftpid(int targetDegree, int maxvel){
   left_lift.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
   right_lift.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
   const double degreeGoal = (targetDegree*LIFTGEARRATIO);

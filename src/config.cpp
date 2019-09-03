@@ -7,13 +7,8 @@ const int LEFT_WHEEL_PORT = 17; //17
 const int LEFT_CHAIN_PORT = 18; //18
 const int RIGHT_CHAIN_PORT = 13; //13
 const int RIGHT_WHEEL_PORT = 15; //15
-<<<<<<< HEAD
-const int LEFT_LIFT_PORT = 3; //4
-const int RIGHT_LIFT_PORT = 5; //4
-=======
 const int LEFT_LIFT_PORT = 8;
 const int RIGHT_LIFT_PORT = 9;
->>>>>>> ed7d49d6d62c947548f12902b04997adca67787e
 
 const char LENC_TOP_PORT = 'A';
 const char LENC_BOT_PORT = 'B';
@@ -26,13 +21,8 @@ pros::Motor left_wheel (LEFT_WHEEL_PORT, pros::E_MOTOR_GEARSET_18,true);//17
 pros::Motor right_wheel (RIGHT_WHEEL_PORT, pros::E_MOTOR_GEARSET_18, true);//15
 pros::Motor left_chain (LEFT_CHAIN_PORT, pros::E_MOTOR_GEARSET_18, false);//18
 pros::Motor right_chain (RIGHT_CHAIN_PORT, pros::E_MOTOR_GEARSET_18, false);//13
-<<<<<<< HEAD
-pros::Motor left_lift (LEFT_LIFT_PORT, pros::E_MOTOR_GEARSET_36, false);
-pros::Motor right_lift (RIGHT_LIFT_PORT, pros::E_MOTOR_GEARSET_36, true);
-=======
 pros::Motor left_lift (LEFT_LIFT_PORT,pros::E_MOTOR_GEARSET_36, false);
 pros::Motor right_lift (RIGHT_LIFT_PORT, pros:: E_MOTOR_GEARSET_36, false);
->>>>>>> ed7d49d6d62c947548f12902b04997adca67787e
 pros::Controller master (CONTROLLER_MASTER);
 //pros::ADIEncoder LeftEncoder(LENC_TOP_PORT,LENC_BOT_PORT,true);
 //pros::ADIEncoder RightEncoder(RENC_TOP_PORT,RENC_BOT_PORT,true);
