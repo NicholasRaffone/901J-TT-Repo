@@ -8,11 +8,17 @@ using namespace okapi;
 extern const int LEFT_WHEEL_PORT; //17
 extern const int LEFT_CHAIN_PORT; //18
 extern const int RIGHT_CHAIN_PORT; //13
+<<<<<<< HEAD
 extern const int RIGHT_WHEEL_PORT; //15extern const int RIGHT_WHEEL_PORT; //15
 extern const int LEFT_LIFT_PORT; //15
 extern const int RIGHT_LIFT_PORT; //15
 
 
+=======
+extern const int RIGHT_WHEEL_PORT; //15
+extern const int LEFT_LIFT_PORT;
+extern const int RIGHT_LIFT_PORT;
+>>>>>>> ed7d49d6d62c947548f12902b04997adca67787e
 extern const char LENC_TOP_PORT;
 extern const char LENC_BOT_PORT;
 extern const char RENC_TOP_PORT;
@@ -28,6 +34,8 @@ extern pros::Motor right_lift;
 extern pros::Motor left_lift;
 
 extern pros::Controller master;
+extern pros::Motor left_lift;
+extern pros::Motor right_lift;
 extern okapi::ADIEncoder leftenc;
 extern okapi::ADIEncoder rightenc;
 extern okapi::ADIEncoder backenc;
