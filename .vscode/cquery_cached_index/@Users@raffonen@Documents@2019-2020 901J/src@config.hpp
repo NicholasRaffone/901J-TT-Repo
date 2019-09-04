@@ -22,6 +22,9 @@ extern pros::Motor left_wheel;
 extern pros::Motor right_wheel;
 extern pros::Motor left_chain;
 extern pros::Motor right_chain;
+extern pros::Motor right_lift;
+extern pros::Motor left_lift;
+
 extern pros::Controller master;
 extern pros::Motor left_lift;
 extern pros::Motor right_lift;
