@@ -2,7 +2,7 @@
 #include "config.hpp"
 #include <math.h>
 #include <vector>
-#include "auton_functions.h"
+#include "auton_function.h"
 /*
 namespace WheelTracker{
   float wheelrad = 2.75;

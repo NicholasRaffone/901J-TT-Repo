@@ -3,7 +3,7 @@
 #include "auton_function.h"
 
 const int LIFTGEARRATIO = 5;
-
+/*
 void liftpid(int targetDegree, int maxvel){
   left_lift.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
   right_lift.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
@@ -57,3 +57,4 @@ void liftpid(int targetDegree, int maxvel){
   right_lift.move_velocity(0);
   left_lift.move_velocity(0);
 }
+*/

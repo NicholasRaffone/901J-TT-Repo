@@ -393,6 +393,14 @@ void opcontrol() {
 				right_chain.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 			}
 
+      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
+        intake.move_velocity(200);
+      } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
+        intake.move_velocity(-200);
+
+      } else {
+        intake.move_velocity(0);
+      }
 
 
 			pros::delay(10);

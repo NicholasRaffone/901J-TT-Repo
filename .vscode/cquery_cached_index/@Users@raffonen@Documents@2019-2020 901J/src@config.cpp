@@ -8,7 +8,8 @@ const int LEFT_CHAIN_PORT = 18; //18
 const int RIGHT_CHAIN_PORT = 13; //13
 const int RIGHT_WHEEL_PORT = 15; //15
 const int LEFT_LIFT_PORT = 8;
-const int RIGHT_LIFT_PORT = 9;
+const int RIGHT_LIFT_PORT = 10;
+const int INTAKE = 11;
 
 const char LENC_TOP_PORT = 'A';
 const char LENC_BOT_PORT = 'B';
@@ -24,6 +25,8 @@ pros::Motor right_chain (RIGHT_CHAIN_PORT, pros::E_MOTOR_GEARSET_18, false);//13
 pros::Motor left_lift (LEFT_LIFT_PORT,pros::E_MOTOR_GEARSET_36, false);
 pros::Motor right_lift (RIGHT_LIFT_PORT, pros:: E_MOTOR_GEARSET_36, false);
 pros::Controller master (CONTROLLER_MASTER);
+pros::Motor intake (INTAKE, pros::E_MOTOR_GEARSET_18, false);//13
+
 //pros::ADIEncoder LeftEncoder(LENC_TOP_PORT,LENC_BOT_PORT,true);
 //pros::ADIEncoder RightEncoder(RENC_TOP_PORT,RENC_BOT_PORT,true);
 //pros::ADIEncoder BackEncoder(BENC_TOP_PORT,BENC_BOT_PORT,true);

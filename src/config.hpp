@@ -11,6 +11,7 @@ extern const int RIGHT_CHAIN_PORT; //13
 extern const int RIGHT_WHEEL_PORT; //15
 extern const int LEFT_LIFT_PORT;
 extern const int RIGHT_LIFT_PORT;
+extern const int INTAKE;
 extern const char LENC_TOP_PORT;
 extern const char LENC_BOT_PORT;
 extern const char RENC_TOP_PORT;
@@ -24,6 +25,7 @@ extern pros::Motor left_chain;
 extern pros::Motor right_chain;
 extern pros::Motor right_lift;
 extern pros::Motor left_lift;
+extern pros::Motor intake;
 
 extern pros::Controller master;
 extern pros::Motor left_lift;
