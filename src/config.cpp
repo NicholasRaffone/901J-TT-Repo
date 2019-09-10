@@ -22,7 +22,7 @@ pros::Motor left_wheel (LEFT_WHEEL_PORT, pros::E_MOTOR_GEARSET_18,true);//17
 pros::Motor right_wheel (RIGHT_WHEEL_PORT, pros::E_MOTOR_GEARSET_18, true);//15
 pros::Motor left_chain (LEFT_CHAIN_PORT, pros::E_MOTOR_GEARSET_18, false);//18
 pros::Motor right_chain (RIGHT_CHAIN_PORT, pros::E_MOTOR_GEARSET_18, false);//13
-pros::Motor left_lift (LEFT_LIFT_PORT,pros::E_MOTOR_GEARSET_36, false);
+pros::Motor left_lift (LEFT_LIFT_PORT,pros::E_MOTOR_GEARSET_36, true);
 pros::Motor right_lift (RIGHT_LIFT_PORT, pros:: E_MOTOR_GEARSET_36, false);
 pros::Controller master (CONTROLLER_MASTER);
 pros::Motor intake (INTAKE, pros::E_MOTOR_GEARSET_18, false);//13
