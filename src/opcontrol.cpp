@@ -400,6 +400,7 @@ void opcontrol() {
         intake2.move_velocity(-200);
 
       } else {
+        intake.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
         intake1.move_velocity(0);
         intake2.move_velocity(0);
       }
@@ -409,7 +410,7 @@ void opcontrol() {
       } else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_B)){
         tilter.move_velocity(-70);
       } else{
-        tilter.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+        tilter.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
         tilter.move_velocity(0);
       }
 
