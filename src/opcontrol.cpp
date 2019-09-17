@@ -12,7 +12,11 @@ const float  SPIN_TO_IN_LR = (WHEELDIAM * M_PI / TICKS_PER_ROTATION);
 const float  SPIN_TO_IN_S = (WHEELDIAM * M_PI / TICKS_PER_ROTATION);
 const int DEFAULTSLEWRATEINCREMENT = 10;
 
+void lift_task(void* param){
+  while(true){
 
+  }
+}
 
 
 /*TimeUtil profiledUtil = TimeUtilFactory::withSettledUtilParams(50, 5, 100_ms);
@@ -392,15 +396,16 @@ void opcontrol() {
 				right_chain.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 			}
 
-      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
+      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
         intake1.move_velocity(200);
         intake2.move_velocity(200);
-      } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
+      } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
         intake1.move_velocity(-200);
         intake2.move_velocity(-200);
 
       } else {
-        intake.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+        intake1.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+        intake2.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
         intake1.move_velocity(0);
         intake2.move_velocity(0);
       }
