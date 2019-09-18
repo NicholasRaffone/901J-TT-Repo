@@ -12,7 +12,11 @@ const float  SPIN_TO_IN_LR = (WHEELDIAM * M_PI / TICKS_PER_ROTATION);
 const float  SPIN_TO_IN_S = (WHEELDIAM * M_PI / TICKS_PER_ROTATION);
 const int DEFAULTSLEWRATEINCREMENT = 10;
 
+void lift_task(void* param){
+  while(true){
 
+  }
+}
 
 
 /*TimeUtil profiledUtil = TimeUtilFactory::withSettledUtilParams(50, 5, 100_ms);
@@ -364,17 +368,16 @@ void opcontrol() {
 			left_chain.move_velocity(left);
 			right_wheel.move_velocity(right);
 			right_chain.move_velocity(right);
-      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
-      //test
-      right_lift.move_velocity(-70);
-      left_lift.move_velocity(-70);
 
-    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
-      right_lift.move_velocity(70);
-      left_lift.move_velocity(70);
+      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
+      //test
+      lift.move_velocity(-70);
+
+    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
+      lift.move_velocity(70);
     } else {
-      left_lift.move_velocity(0);
-      right_lift.move_velocity(0);
+      lift.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+      lift.move_velocity(0);
     }
 
 			if(master.get_digital(pros::E_CONTROLLER_DIGITAL_X) != 0){
@@ -393,6 +396,28 @@ void opcontrol() {
 				right_chain.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 			}
 
+      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
+        intake1.move_velocity(200);
+        intake2.move_velocity(200);
+      } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
+        intake1.move_velocity(-200);
+        intake2.move_velocity(-200);
+
+      } else {
+        intake1.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+        intake2.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+        intake1.move_velocity(0);
+        intake2.move_velocity(0);
+      }
+
+      if(master.get_digital(pros::E_CONTROLLER_DIGITAL_A)){
+        tilter.move_velocity(100);
+      } else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_B)){
+        tilter.move_velocity(-100);
+      } else{
+        tilter.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+        tilter.move_velocity(0);
+      }
 
 
 			pros::delay(10);
