@@ -10,7 +10,7 @@ const int RIGHT_WHEEL_PORT = 15; //15
 const int LIFT_PORT = 8;
 const int INTAKE1 = 11;
 const int INTAKE2 = 12;
-const int TILTERPORT = 13;
+const int TILTERPORT = 6;
 
 const char LENC_TOP_PORT = 'A';
 const char LENC_BOT_PORT = 'B';
@@ -23,10 +23,10 @@ pros::Motor left_wheel (LEFT_WHEEL_PORT, pros::E_MOTOR_GEARSET_18,true);//17
 pros::Motor right_wheel (RIGHT_WHEEL_PORT, pros::E_MOTOR_GEARSET_18, true);//15
 pros::Motor left_chain (LEFT_CHAIN_PORT, pros::E_MOTOR_GEARSET_18, false);//18
 pros::Motor right_chain (RIGHT_CHAIN_PORT, pros::E_MOTOR_GEARSET_18, false);//13
-pros::Motor lift (LIFT_PORT,pros::E_MOTOR_GEARSET_36, true);
+pros::Motor lift (LIFT_PORT,pros::E_MOTOR_GEARSET_36, false);
 pros::Controller master (CONTROLLER_MASTER);
 pros::Motor intake1 (INTAKE1, pros::E_MOTOR_GEARSET_18, false);//13
-pros::Motor intake2 (INTAKE2, pros::E_MOTOR_GEARSET_18, false);//13
+pros::Motor intake2 (INTAKE2, pros::E_MOTOR_GEARSET_18, true);//13
 pros::Motor tilter(TILTERPORT, pros::E_MOTOR_GEARSET_18, false);//13
 
 //pros::ADIEncoder LeftEncoder(LENC_TOP_PORT,LENC_BOT_PORT,true);
@@ -38,6 +38,8 @@ okapi::ADIEncoder rightenc ('C','D',true);
 okapi::ADIEncoder backenc ('E','F');
 
 int selectedAuton = 0;
+
+float deg=0;
 
 
 rPos mainPosition {0.0,0.0,0.0,0,0,0};

@@ -39,4 +39,6 @@ extern okapi::ADIEncoder backenc;
 
 extern int selectedAuton;
 
+extern float deg;
+
 extern rPos mainPosition;
