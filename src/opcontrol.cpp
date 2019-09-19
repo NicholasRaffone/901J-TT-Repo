@@ -426,11 +426,11 @@ void opcontrol() {
 			right_wheel.move_velocity(right);
 			right_chain.move_velocity(right);
 
-      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
+      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
       //test
       lift.move_velocity(-70);
 
-    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
+    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
       lift.move_velocity(70);
     } else {
       lift.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
@@ -467,12 +467,14 @@ void opcontrol() {
         intake2.move_velocity(0);
       }
 
-      if(master.get_digital(pros::E_CONTROLLER_DIGITAL_B)){
-        tilter.move_velocity(200);
-      } else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_A)){
-        tilter.move_velocity(-200);
+
+      if(master.get_digital(pros::E_CONTROLLER_DIGITAL_A)){
+        tilter.move_velocity(100);
+      } else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_B)){
+        tilter.move_velocity(-100);
+
       } else{
-        tilter.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+        tilter.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
         tilter.move_velocity(0);
       }
 
