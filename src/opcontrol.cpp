@@ -454,10 +454,10 @@ void opcontrol() {
 			}
 
       if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
-        intake1.move_velocity(200);
+        intake1.move_velocity(-200);
         intake2.move_velocity(200);
       } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
-        intake1.move_velocity(-200);
+        intake1.move_velocity(200);
         intake2.move_velocity(-200);
 
       } else {

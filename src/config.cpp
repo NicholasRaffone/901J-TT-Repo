@@ -25,7 +25,7 @@ pros::Motor left_chain (LEFT_CHAIN_PORT, pros::E_MOTOR_GEARSET_18, false);//18
 pros::Motor right_chain (RIGHT_CHAIN_PORT, pros::E_MOTOR_GEARSET_18, false);//13
 pros::Motor lift (LIFT_PORT,pros::E_MOTOR_GEARSET_36, false);
 pros::Controller master (CONTROLLER_MASTER);
-pros::Motor intake1 (INTAKE1, pros::E_MOTOR_GEARSET_18, false);//13
+pros::Motor intake1 (INTAKE1, pros::E_MOTOR_GEARSET_18, true);//13
 pros::Motor intake2 (INTAKE2, pros::E_MOTOR_GEARSET_18, true);//13
 pros::Motor tilter(TILTERPORT, pros::E_MOTOR_GEARSET_18, false);//13
 
