@@ -131,7 +131,7 @@ static lv_res_t btn_click_auton(lv_obj_t * btn){ //handles auton selection when 
 void debug_task(void * p){
 
     char buffer[100];
-    sprintf(buffer,"Xpos: %f",mainPosition.x);
+    sprintf(buffer,"Tilter motor: %f",tilter.get_actual_velocity());
     lv_label_set_text(debugLabel [0], buffer);
     sprintf(buffer,"Ypos: %f",mainPosition.y);
     lv_label_set_text(debugLabel [1], buffer);

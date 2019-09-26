@@ -162,23 +162,6 @@ void position_task(void* param){
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
- void brakeMotors(){//brake the base motors
-   left_wheel.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-   right_wheel.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-   left_chain.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-   right_chain.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-   left_wheel.move_velocity(0);
-   left_chain.move_velocity(0);
-   right_wheel.move_velocity(0);
-   right_chain.move_velocity(0);
- }
- void unBrakeMotors(){
-   left_wheel.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-   right_wheel.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-   left_chain.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-   right_chain.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
- }
-
 
 
  void move_test(double yCoord){
@@ -292,63 +275,23 @@ void turn_PID(float targetDegree){
   brakeMotors();
 }
 
-void lift_PID(float targetDegree, int maxVelocity){
-  lift.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
 
-  const double degreeGoal = (targetDegree*7);
-  bool goalMet = false;
-  bool limitStart = false;
-  int targetVelocity = 0;
-  double currentPosition = 0;
-  double error = 0;
-  double previous_error = degreeGoal;
-  double kP = 0.8;
-  double kI = 0.0025;
-  double kD = 0.001;
-  double integral = 0;
-  double derivative = 0;
-
-  deg = 0;
-
-  if (targetDegree < 0) {maxVelocity *= -1;}
-
-  lift.tare_position();
-
-
-  while(!goalMet){
-    currentPosition = lift.get_position();
-    error = degreeGoal - currentPosition;
-
-    if (std::abs(error) < 100){
-      integral += error;
-    }
-
-    derivative = error - previous_error;
-    previous_error = error;
-
-    targetVelocity = kP*error + kI*integral + kD*derivative;
-
-    if (targetVelocity > maxVelocity){
-      targetVelocity = maxVelocity;
-    }
-
-    slewRateControl(&lift, targetVelocity, DEFAULTSLEWRATEINCREMENT);
-
-    if (std::abs(error) < 4){
-      goalMet = true;
-    }
-    deg = lift.get_position();
-
-    pros::delay(10);
-  }
-  lift.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-  lift.move_velocity(0);
-}
-
-void lift_task(void* param){
+void tilter_task(void* param){
   while(true){
     if(master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)){
-      lift_PID(-300,6000);
+      tilter_PID(365,120);
+    }
+    if(master.get_digital(pros::E_CONTROLLER_DIGITAL_A)){
+      slewRateControl(&tilter,80,10);
+      intake1.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+      intake2.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+    } else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_B)){
+      slewRateControl(&tilter,-80,10);
+      intake1.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+      intake2.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+    } else{
+      tilter.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+      slewRateControl(&tilter,0,10);
     }
     pros::delay(8);
   }
@@ -356,8 +299,8 @@ void lift_task(void* param){
 void opcontrol() {
   //std::string text("wheelTrack");
   //pros::Task punchTask(WheelTrack2,&text);
-  std::string text("lift");
-  pros::Task task(lift_task,&text);
+  std::string text("tilter");
+  pros::Task task(tilter_task,&text);
   //___int_least8_t_definedturn_PID(90.0);
   //move_test(12.0);
   /*profileController.generatePath({
@@ -454,18 +397,7 @@ void opcontrol() {
       }
 
 
-      if(master.get_digital(pros::E_CONTROLLER_DIGITAL_A)){
-        slewRateControl(&tilter,80,10);
-        intake1.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-        intake2.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-      } else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_B)){
-        slewRateControl(&tilter,-80,10);
-        intake1.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-        intake2.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-      } else{
-        tilter.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-        slewRateControl(&tilter,0,10);
-      }
+
 
 
 			pros::delay(10);
