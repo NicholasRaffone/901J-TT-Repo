@@ -3,6 +3,7 @@
 #include <math.h>
 #include <vector>
 #include "okapi/api.hpp"
+#include "auton_function.h"
 const float WHEELDIAM = 2.75;
 const float L_DIS_IN = 4.72440945;
 const float R_DIS_IN = 4.72440945;
@@ -178,24 +179,7 @@ void position_task(void* param){
    right_chain.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
  }
 
- void slewRateControl(pros::Motor *motor, int targetVelocity, int increment){
-   int currentVelocity = motor->get_target_velocity();
-   if (targetVelocity != 0){
-     if (currentVelocity != targetVelocity){
-       if (targetVelocity > currentVelocity){
-         currentVelocity += increment;
-       } else if (targetVelocity < currentVelocity){
-         currentVelocity -= increment;
-       }
-       if (std::abs(currentVelocity) > std::abs(targetVelocity)){
-         currentVelocity = targetVelocity;
-       }
-     }
-   } else {
-     currentVelocity = targetVelocity;
-   }
-   motor->move_velocity(currentVelocity);
- }
+
 
  void move_test(double yCoord){
 
@@ -454,28 +438,33 @@ void opcontrol() {
 			}
 
       if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
-        intake1.move_velocity(-200);
-        intake2.move_velocity(200);
-      } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
-        intake1.move_velocity(200);
-        intake2.move_velocity(-200);
-
-      } else {
+        intake1.move_velocity(-150);
+        intake2.move_velocity(150);
         intake1.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
         intake2.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+      } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
+        intake1.move_velocity(150);
+        intake2.move_velocity(-150);
+        intake1.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+        intake2.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+      } else {
+
         intake1.move_velocity(0);
         intake2.move_velocity(0);
       }
 
 
       if(master.get_digital(pros::E_CONTROLLER_DIGITAL_A)){
-        tilter.move_velocity(100);
+        slewRateControl(&tilter,80,10);
+        intake1.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+        intake2.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
       } else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_B)){
-        tilter.move_velocity(-100);
-
+        slewRateControl(&tilter,-80,10);
+        intake1.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+        intake2.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
       } else{
         tilter.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-        tilter.move_velocity(0);
+        slewRateControl(&tilter,0,10);
       }
 
 

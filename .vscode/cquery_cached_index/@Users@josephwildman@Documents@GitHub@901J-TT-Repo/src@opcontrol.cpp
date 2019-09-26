@@ -3,6 +3,7 @@
 #include <math.h>
 #include <vector>
 #include "okapi/api.hpp"
+#include "auton_function.h"
 const float WHEELDIAM = 2.75;
 const float L_DIS_IN = 4.72440945;
 const float R_DIS_IN = 4.72440945;
@@ -12,11 +13,6 @@ const float  SPIN_TO_IN_LR = (WHEELDIAM * M_PI / TICKS_PER_ROTATION);
 const float  SPIN_TO_IN_S = (WHEELDIAM * M_PI / TICKS_PER_ROTATION);
 const int DEFAULTSLEWRATEINCREMENT = 10;
 
-void lift_task(void* param){
-  while(true){
-
-  }
-}
 
 
 /*TimeUtil profiledUtil = TimeUtilFactory::withSettledUtilParams(50, 5, 100_ms);
@@ -183,24 +179,7 @@ void position_task(void* param){
    right_chain.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
  }
 
- void slewRateControl(pros::Motor *motor, int targetVelocity, int increment){
-   int currentVelocity = motor->get_target_velocity();
-   if (targetVelocity != 0){
-     if (currentVelocity != targetVelocity){
-       if (targetVelocity > currentVelocity){
-         currentVelocity += increment;
-       } else if (targetVelocity < currentVelocity){
-         currentVelocity -= increment;
-       }
-       if (std::abs(currentVelocity) > std::abs(targetVelocity)){
-         currentVelocity = targetVelocity;
-       }
-     }
-   } else {
-     currentVelocity = targetVelocity;
-   }
-   motor->move_velocity(currentVelocity);
- }
+
 
  void move_test(double yCoord){
 
@@ -312,11 +291,73 @@ void turn_PID(float targetDegree){
   }
   brakeMotors();
 }
+
+void lift_PID(float targetDegree, int maxVelocity){
+  lift.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+
+  const double degreeGoal = (targetDegree*7);
+  bool goalMet = false;
+  bool limitStart = false;
+  int targetVelocity = 0;
+  double currentPosition = 0;
+  double error = 0;
+  double previous_error = degreeGoal;
+  double kP = 0.8;
+  double kI = 0.0025;
+  double kD = 0.001;
+  double integral = 0;
+  double derivative = 0;
+
+  deg = 0;
+
+  if (targetDegree < 0) {maxVelocity *= -1;}
+
+  lift.tare_position();
+
+
+  while(!goalMet){
+    currentPosition = lift.get_position();
+    error = degreeGoal - currentPosition;
+
+    if (std::abs(error) < 100){
+      integral += error;
+    }
+
+    derivative = error - previous_error;
+    previous_error = error;
+
+    targetVelocity = kP*error + kI*integral + kD*derivative;
+
+    if (targetVelocity > maxVelocity){
+      targetVelocity = maxVelocity;
+    }
+
+    slewRateControl(&lift, targetVelocity, DEFAULTSLEWRATEINCREMENT);
+
+    if (std::abs(error) < 4){
+      goalMet = true;
+    }
+    deg = lift.get_position();
+
+    pros::delay(10);
+  }
+  lift.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+  lift.move_velocity(0);
+}
+
+void lift_task(void* param){
+  while(true){
+    if(master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)){
+      lift_PID(-300,6000);
+    }
+    pros::delay(8);
+  }
+}
 void opcontrol() {
   //std::string text("wheelTrack");
   //pros::Task punchTask(WheelTrack2,&text);
-  std::string text("position");
-  pros::Task punchTask(position_task,&text);
+  std::string text("lift");
+  pros::Task task(lift_task,&text);
   //___int_least8_t_definedturn_PID(90.0);
   //move_test(12.0);
   /*profileController.generatePath({
@@ -397,26 +438,33 @@ void opcontrol() {
 			}
 
       if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
-        intake1.move_velocity(200);
-        intake2.move_velocity(200);
-      } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
-        intake1.move_velocity(-200);
-        intake2.move_velocity(-200);
-
-      } else {
+        intake1.move_velocity(-150);
+        intake2.move_velocity(150);
         intake1.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
         intake2.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+      } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
+        intake1.move_velocity(150);
+        intake2.move_velocity(-150);
+        intake1.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+        intake2.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+      } else {
+
         intake1.move_velocity(0);
         intake2.move_velocity(0);
       }
 
+
       if(master.get_digital(pros::E_CONTROLLER_DIGITAL_A)){
-        tilter.move_velocity(100);
+        slewRateControl(&tilter,80,10);
+        intake1.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+        intake2.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
       } else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_B)){
-        tilter.move_velocity(-100);
+        slewRateControl(&tilter,-80,10);
+        intake1.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+        intake2.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
       } else{
         tilter.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-        tilter.move_velocity(0);
+        slewRateControl(&tilter,0,10);
       }
 
 

@@ -2,7 +2,7 @@
 #include "config.hpp"
 #include "auton_function.h"
 
-const int LIFTGEARRATIO = 5;
+const int LIFTGEARRATIO = 7;
 
 /*
 void liftpid(int targetDegree, int maxvel){
@@ -59,3 +59,21 @@ void liftpid(int targetDegree, int maxvel){
   left_lift.move_velocity(0);
 }
 */
+void slewRateControl(pros::Motor *motor, int targetVelocity, int increment){
+  int currentVelocity = motor->get_target_velocity();
+  if (targetVelocity != 0){
+    if (currentVelocity != targetVelocity){
+      if (targetVelocity > currentVelocity){
+        currentVelocity += increment;
+      } else if (targetVelocity < currentVelocity){
+        currentVelocity -= increment;
+      }
+      if (std::abs(currentVelocity) > std::abs(targetVelocity)){
+        currentVelocity = targetVelocity;
+      }
+    }
+  } else {
+    currentVelocity = targetVelocity;
+  }
+  motor->move_velocity(currentVelocity);
+}
