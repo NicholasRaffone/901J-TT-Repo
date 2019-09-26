@@ -11,7 +11,7 @@ void liftpid(int targetDegree, int maxvel){
   const double degreeGoal = (targetDegree*LIFTGEARRATIO);
 
   bool goalMet = false;
-  int targetVelocity = 0;
+  int targetVelocity = 0;ns
   double currentPosition = 0;
   double followPosition = 0;
   double error = 0;
@@ -76,6 +76,55 @@ void slewRateControl(pros::Motor *motor, int targetVelocity, int increment){
     currentVelocity = targetVelocity;
   }
   motor->move_velocity(currentVelocity);
+}
+
+void lift_PID(float targetDegree, int maxVelocity)
+{
+  const double degreeGoal = (targetDegree*7);
+  bool goalMet = false;
+  bool limitStart = false;
+  int targetVelocity = 0;
+  double currentPosition = 0;
+  double error = 0;
+  double previous_error = degreeGoal;
+  double kP = 0.25;
+  double kI = 0.0025;
+  double kD = 0.001;
+  double integral = 0;
+  double derivative = 0;
+
+  deg = 0;
+
+  if (targetDegree < 0) {maxVelocity *= -1;}
+
+  lift.tare_position();
+
+
+  while(!goalMet){
+    currentPosition = lift.get_position();
+    error = degreeGoal - currentPosition;
+
+    if (std::abs(error) < 100){
+      integral += error;
+    }
+    derivative = error - previous_error;
+    previous_error = error;
+
+    targetVelocity = kP*error + kI*integral + kD*derivative;
+
+    if (targetVelocity > maxVelocity){
+      targetVelocity = maxVelocity;
+    }
+
+    slewRateControl(&lift, targetVelocity, DEFAULTSLEWRATEINCREMENT);
+
+    if (std::abs(error) < 4){
+      goalMet = true;
+    }
+    deg = lift.get_position();
+
+    pros::delay(10);
+  }
 }
 
 void tilter_PID(float targetDegree, int maxVelocity){

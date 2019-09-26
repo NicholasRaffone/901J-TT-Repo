@@ -3,7 +3,7 @@
 #include "auton_function.h"
 
 const int LIFTGEARRATIO = 7;
-
+const int DEFAULTSLEWRATEINCREMENT = 10;
 /*
 void liftpid(int targetDegree, int maxvel){
   left_lift.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
@@ -11,7 +11,7 @@ void liftpid(int targetDegree, int maxvel){
   const double degreeGoal = (targetDegree*LIFTGEARRATIO);
 
   bool goalMet = false;
-  int targetVelocity = 0;
+  int targetVelocity = 0;ns
   double currentPosition = 0;
   double followPosition = 0;
   double error = 0;
@@ -76,4 +76,130 @@ void slewRateControl(pros::Motor *motor, int targetVelocity, int increment){
     currentVelocity = targetVelocity;
   }
   motor->move_velocity(currentVelocity);
+}
+
+void lift_PID(float targetDegree, int maxVelocity)
+{
+  const double degreeGoal = (targetDegree*7);
+  bool goalMet = false;
+  bool limitStart = false;
+  int targetVelocity = 0;
+  double currentPosition = 0;
+  double error = 0;
+  double previous_error = degreeGoal;
+  double kP = 0.25;
+  double kI = 0.0025;
+  double kD = 0.001;
+  double integral = 0;
+  double derivative = 0;
+
+  deg = 0;
+
+  if (targetDegree < 0) {maxVelocity *= -1;}
+
+  lift.tare_position();
+
+
+  while(!goalMet){
+    currentPosition = lift.get_position();
+    error = degreeGoal - currentPosition;
+
+    if (std::abs(error) < 100){
+      integral += error;
+    }
+    derivative = error - previous_error;
+    previous_error = error;
+
+    targetVelocity = kP*error + kI*integral + kD*derivative;
+
+    if (targetVelocity > maxVelocity){
+      targetVelocity = maxVelocity;
+    }
+
+    slewRateControl(&lift, targetVelocity, DEFAULTSLEWRATEINCREMENT);
+
+    if (std::abs(error) < 4){
+      goalMet = true;
+    }
+    deg = lift.get_position();
+
+    pros::delay(10);
+  }
+}
+
+void tilter_PID(float targetDegree, int maxVelocity){
+  intake1.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+  intake2.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+  tilter.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+
+  const double degreeGoal = (targetDegree*7);
+  bool goalMet = false;
+  bool limitStart = false;
+  int targetVelocity = 0;
+  double currentPosition = 0;
+  double error = 0;
+  double previous_error = degreeGoal;
+  double kP = 0.25;
+  double kI = 0.0025;
+  double kD = 0.001;
+  double integral = 0;
+  double derivative = 0;
+
+  deg = 0;
+
+  if (targetDegree < 0) {maxVelocity *= -1;}
+
+  tilter.tare_position();
+
+
+  while(!goalMet){
+    currentPosition = tilter.get_position();
+    error = degreeGoal - currentPosition;
+
+    if (std::abs(error) < 100){
+      integral += error;
+    }
+      if (std::abs(error) < 700){
+    intake1.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+    intake2.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+  }
+    derivative = error - previous_error;
+    previous_error = error;
+
+    targetVelocity = kP*error + kI*integral + kD*derivative;
+
+    if (targetVelocity > maxVelocity){
+      targetVelocity = maxVelocity;
+    }
+
+    slewRateControl(&tilter, targetVelocity, DEFAULTSLEWRATEINCREMENT);
+
+    if (std::abs(error) < 4){
+      goalMet = true;
+    }
+    deg = tilter.get_position();
+
+    pros::delay(10);
+  }
+  tilter.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+  tilter.move_velocity(0);
+  intake1.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+  intake2.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+}
+
+void brakeMotors(){//brake the base motors
+  left_wheel.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+  right_wheel.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+  left_chain.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+  right_chain.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+  left_wheel.move_velocity(0);
+  left_chain.move_velocity(0);
+  right_wheel.move_velocity(0);
+  right_chain.move_velocity(0);
+}
+void unBrakeMotors(){
+  left_wheel.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+  right_wheel.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+  left_chain.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+  right_chain.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 }
