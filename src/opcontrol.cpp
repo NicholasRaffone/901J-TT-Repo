@@ -292,8 +292,10 @@ void turn_PID(float targetDegree){
   brakeMotors();
 }
 
-void lift_PID(float targetDegree, int maxVelocity){
-  lift.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+void tilter_PID(float targetDegree, int maxVelocity){
+  intake1.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+  intake2.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+  tilter.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
 
   const double degreeGoal = (targetDegree*7);
   bool goalMet = false;
@@ -312,17 +314,20 @@ void lift_PID(float targetDegree, int maxVelocity){
 
   if (targetDegree < 0) {maxVelocity *= -1;}
 
-  lift.tare_position();
+  tilter.tare_position();
 
 
   while(!goalMet){
-    currentPosition = lift.get_position();
+    currentPosition = tilter.get_position();
     error = degreeGoal - currentPosition;
 
     if (std::abs(error) < 100){
       integral += error;
     }
-
+      if (std::abs(error) < 1000){
+    intake1.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    intake2.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+  }
     derivative = error - previous_error;
     previous_error = error;
 
@@ -332,23 +337,25 @@ void lift_PID(float targetDegree, int maxVelocity){
       targetVelocity = maxVelocity;
     }
 
-    slewRateControl(&lift, targetVelocity, DEFAULTSLEWRATEINCREMENT);
+    slewRateControl(&tilter, targetVelocity, DEFAULTSLEWRATEINCREMENT);
 
     if (std::abs(error) < 4){
       goalMet = true;
     }
-    deg = lift.get_position();
+    deg = tilter.get_position();
 
     pros::delay(10);
   }
-  lift.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-  lift.move_velocity(0);
+  tilter.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+  tilter.move_velocity(0);
+  intake1.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+  intake2.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
 }
 
-void lift_task(void* param){
+void tilter_task(void* param){
   while(true){
     if(master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)){
-      lift_PID(-300,6000);
+      tilter_PID(300,6000);
     }
     pros::delay(8);
   }
@@ -356,8 +363,8 @@ void lift_task(void* param){
 void opcontrol() {
   //std::string text("wheelTrack");
   //pros::Task punchTask(WheelTrack2,&text);
-  std::string text("lift");
-  pros::Task task(lift_task,&text);
+  std::string text("tilter");
+  pros::Task task(tilter_task,&text);
   //___int_least8_t_definedturn_PID(90.0);
   //move_test(12.0);
   /*profileController.generatePath({
