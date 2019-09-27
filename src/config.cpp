@@ -10,7 +10,7 @@ const int RIGHT_WHEEL_PORT = 15; //15
 const int LIFT_PORT = 8;
 const int INTAKE1 = 11;
 const int INTAKE2 = 12;
-const int TILTERPORT = 6;
+const int TILTERPORT = 7;
 
 const char LENC_TOP_PORT = 'A';
 const char LENC_BOT_PORT = 'B';
