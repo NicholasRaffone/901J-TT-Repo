@@ -279,9 +279,9 @@ void lift_task(void* param){
   while(true){
 
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
-    lift_PID(-150,120);
+    lift_PID(-50,120);
   } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
-    lift_PID(150,120);
+    lift_PID(50,120);
   } else {
     lift.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     lift.move_velocity(0);
@@ -291,27 +291,22 @@ void lift_task(void* param){
 }
 
 void tilter_task(void* param){
-  if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
+  while (true){
+  if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A)){
   tilter_PID(170,120);
-} else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
+} else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_B)){
   tilter_PID(-170,120);
+} else{
+  tilter.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+  tilter.move_velocity(0);
+}
     if(master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)){
-      tilter_PID(365,120);
+      tilter_PID(355,120);
     }
-    if(master.get_digital(pros::E_CONTROLLER_DIGITAL_A)){
-      slewRateControl(&tilter,80,10);
-      intake1.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-      intake2.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-    } else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_B)){
-      slewRateControl(&tilter,-80,10);
-      intake1.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-      intake2.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-    } else{
-      tilter.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-      slewRateControl(&tilter,0,10);
-    }
+
     pros::delay(8);
-  }
+
+}
 }
 void opcontrol() {
   //std::string text("wheelTrack");
