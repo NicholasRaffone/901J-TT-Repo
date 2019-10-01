@@ -280,9 +280,10 @@ void lift_task(void* param){
 
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
       lift.move_velocity(-100);
-
+      tilter.move_velocity(-25);
   } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
     lift.move_velocity(100);
+    tilter.move_velocity(25);
   } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)){
       lift_PID(-50,120);
   } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)){
@@ -299,9 +300,9 @@ void lift_task(void* param){
 void tilter_task(void* param){
   while (true){
   if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A)){
-  tilter_PID(170,120);
+  tilter.move_velocity(50);
 } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_B)){
-  tilter_PID(-170,120);
+  tilter.move_velocity(-50);
 } else{
   tilter.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
   tilter.move_velocity(0);
