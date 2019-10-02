@@ -78,7 +78,7 @@ void slewRateControl(pros::Motor *motor, int targetVelocity, int increment){
   motor->move_velocity(currentVelocity);
 }
 
-void lift_PID(float targetDegree, int maxVelocity)
+void lift_PID(float targetDegree, int maxVelocity, int delay = 1)
 {
   const double degreeGoal = (targetDegree*7);
   bool goalMet = false;
@@ -98,7 +98,7 @@ void lift_PID(float targetDegree, int maxVelocity)
   if (targetDegree < 0) {maxVelocity *= -1;}
 
   lift.tare_position();
-
+  pros::delay(delay);
 
   while(!goalMet){
     currentPosition = lift.get_position();
@@ -127,7 +127,7 @@ void lift_PID(float targetDegree, int maxVelocity)
   }
 }
 
-void tilter_PID(float targetDegree, int maxVelocity){
+void tilter_PID(float targetDegree, int maxVelocity, double kp){
   intake1.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
   intake2.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
   tilter.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
@@ -139,7 +139,7 @@ void tilter_PID(float targetDegree, int maxVelocity){
   double currentPosition = 0;
   double error = 0;
   double previous_error = degreeGoal;
-  double kP = 0.25;
+  double kP = 0.1;
   double kI = 0.0025;
   double kD = 0.001;
   double integral = 0;
@@ -159,7 +159,7 @@ void tilter_PID(float targetDegree, int maxVelocity){
     if (std::abs(error) < 100){
       integral += error;
     }
-      if (std::abs(error) < 700){
+      if (std::abs(error) < 1100){
     intake1.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
     intake2.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
   }
