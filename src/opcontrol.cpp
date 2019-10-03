@@ -316,7 +316,7 @@ void tilter_task(void* param){
   tilter.move_velocity(0);
 }
     if(master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)){
-      tilter_PID(200,90,(double)0.06);
+      tilter_PID(300,100,(double)0.08);
     }
 
     pros::delay(8);

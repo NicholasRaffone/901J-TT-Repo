@@ -78,7 +78,7 @@ void slewRateControl(pros::Motor *motor, int targetVelocity, int increment){
   motor->move_velocity(currentVelocity);
 }
 
-void lift_PID(float targetDegree, int maxVelocity, int delay = 1)
+void lift_PID(float targetDegree, int maxVelocity, int delay)
 {
   const double degreeGoal = (targetDegree*7);
   bool goalMet = false;
