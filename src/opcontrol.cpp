@@ -304,19 +304,19 @@ void tilter_task(void* param){
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
       //lift.move_velocity(-100);
       //tilter.move_velocity(-25);
-      tilter_PID(90,200,0.3);
+      tilter_PID(100,100,(double)0.5);
       //lift_PID(-200,120);
   }
   if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A)){
   tilter.move_velocity(50);
 } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_B)){
-  tilter.move_velocity(-50);
+  tilter.move_velocity(-100);
 } else{
   tilter.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
   tilter.move_velocity(0);
 }
     if(master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)){
-      tilter_PID(355,120,0.1);
+      tilter_PID(200,90,(double)0.06);
     }
 
     pros::delay(8);

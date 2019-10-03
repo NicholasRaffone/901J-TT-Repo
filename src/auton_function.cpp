@@ -139,7 +139,7 @@ void tilter_PID(float targetDegree, int maxVelocity, double kp){
   double currentPosition = 0;
   double error = 0;
   double previous_error = degreeGoal;
-  double kP = 0.1;
+  double kP = kp;
   double kI = 0.0025;
   double kD = 0.001;
   double integral = 0;
