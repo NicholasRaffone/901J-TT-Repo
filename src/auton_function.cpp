@@ -87,7 +87,7 @@ void lift_PID(float targetDegree, int maxVelocity, int delay)
   double currentPosition = 0;
   double error = 0;
   double previous_error = degreeGoal;
-  double kP = 0.25;
+  double kP = 0.2;
   double kI = 0.0025;
   double kD = 0.001;
   double integral = 0;
@@ -127,7 +127,7 @@ void lift_PID(float targetDegree, int maxVelocity, int delay)
   }
 }
 
-void tilter_PID(float targetDegree, int maxVelocity, double kp){
+void tilter_PID(float targetDegree, int maxVelocity, double kp,int delay){
   intake1.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
   intake2.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
   tilter.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
@@ -151,7 +151,7 @@ void tilter_PID(float targetDegree, int maxVelocity, double kp){
 
   tilter.tare_position();
 
-
+pros::delay(delay);
   while(!goalMet){
     currentPosition = tilter.get_position();
     error = degreeGoal - currentPosition;
