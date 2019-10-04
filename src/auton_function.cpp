@@ -87,7 +87,7 @@ void lift_PID(float targetDegree, int maxVelocity, int delay)
   double currentPosition = 0;
   double error = 0;
   double previous_error = degreeGoal;
-  double kP = 0.2;
+  double kP = 0.15;
   double kI = 0.0025;
   double kD = 0.001;
   double integral = 0;
