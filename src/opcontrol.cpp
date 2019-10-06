@@ -276,6 +276,7 @@ void turn_PID(float targetDegree){
 }
 
 void lift_task(void* param){
+  
   while(true){
 
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) && master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
