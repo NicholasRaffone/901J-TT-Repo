@@ -276,13 +276,13 @@ void turn_PID(float targetDegree){
 }
 
 void lift_task(void* param){
-  
+
   while(true){
 
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) && master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
-      lift_PID(-250,40,0);
+      lift_PID(-270,40,0);
   } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)&&master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
-    lift_PID(250,40,0);
+    lift_PID(270,40,0);
   } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)&& master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
       lift.move_velocity(-100);
   } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)&&master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
