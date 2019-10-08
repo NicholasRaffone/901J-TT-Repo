@@ -93,7 +93,6 @@ void lift_PID(float targetDegree, int maxVelocity, int delay)
   double integral = 0;
   double derivative = 0;
 
-  deg = 0;
 
   if (targetDegree < 0) {maxVelocity *= -1;}
 
@@ -121,7 +120,6 @@ void lift_PID(float targetDegree, int maxVelocity, int delay)
     if (std::abs(error) < 4){
       goalMet = true;
     }
-    deg = lift.get_position();
 
     pros::delay(10);
   }

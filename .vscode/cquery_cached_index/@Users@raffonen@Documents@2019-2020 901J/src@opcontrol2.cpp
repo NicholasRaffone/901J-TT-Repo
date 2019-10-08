@@ -398,12 +398,12 @@ void opcontrol() {
 				right_chain.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 			}
 
-      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2) && !master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) && !master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
+      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1) && !master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) && !master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
         intake1.move_velocity(-650);
         intake2.move_velocity(650);
         intake1.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
         intake2.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-      } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)&& !master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) && !master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
+      } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)&& !master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) && !master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
         intake1.move_velocity(650);
         intake2.move_velocity(-650);
         intake1.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
