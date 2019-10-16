@@ -83,7 +83,6 @@ void trackPos(rPos& position) //Based off of 5225a E-bots Pilons APS code, https
   int currentR = rightenc.get();
   int currentB = backenc.get();
 
-
   float deltaL = (currentL - position.leftLast) * SPIN_TO_IN_LR;
   float deltaR = (currentR - position.rightLast) * SPIN_TO_IN_LR;
   float deltaB = (currentB - position.backLast) * SPIN_TO_IN_S;
@@ -111,9 +110,9 @@ void trackPos(rPos& position) //Based off of 5225a E-bots Pilons APS code, https
 	{
 		h = deltaR;
 		i = 0;
-
 		h2 = deltaB;
 	}
+
   float p = i + position.angle; // The global ending angle of the robot
 	float cosP = cos(p);
 	float sinP = sin(p);
@@ -239,8 +238,8 @@ void turn_PID(float targetDegree){
   double error = 0;
   double previous_error = degreeGoal;
   double kP = 1;
-  double kI = 0.01;
-  double kD = 0.00;
+  double kI = 0.001;
+  double kD = 0.01;
   double integral = 0;
   double derivative = 0;
   if(targetDegree<0){maxVelocity *= -1;}
@@ -314,20 +313,21 @@ void tilter_task(void* param){
     } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_B)){
     tilter.move_velocity(-100);
     } else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_X)){
-    tilter_PID(130,100,(double)0.5,0);
+    tilter_PID(65,100,(double)0.5,0);
     }
     else{
     tilter.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     tilter.move_velocity(0);
     }
     if(master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)){
-        tilter_PID(330,100,(double)0.1,0);
+        tilter_PID(165,100,(double)0.1,0);
     }
 
     pros::delay(8);
 
 }
 }
+
 void opcontrol() {
   //std::string text("wheelTrack");
   //pros::Task punchTask(WheelTrack2,&text);
@@ -378,10 +378,10 @@ void opcontrol() {
 		while (true) {
 			double power = 200*master.get_analog(ANALOG_LEFT_Y)/127;
 			double turn = 200*master.get_analog(ANALOG_RIGHT_X)/127;
-			//int left = (int)(pow(((power + turn)/600.0),2.0)*600.0);
-			//int right = (int) (pow(((power - turn)/600.0),2.0)*600.0);
-			int left = power+turn;
-			int right = power-turn;
+			int left = (int)(pow(((power + turn)/200.0),2.0)*200.0);
+			int right = (int) (pow(((power - turn)/200.0),2.0)*200.0);
+			//int left = power+turn;
+			//int right = power-turn;
 			left_wheel.move_velocity(left);
 			left_chain.move_velocity(left);
 			right_wheel.move_velocity(right);
@@ -405,13 +405,13 @@ void opcontrol() {
 			}
 
       if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2) && !master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) && !master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
-        intake1.move_velocity(-650);
-        intake2.move_velocity(650);
+        intake1.move_velocity(100);
+        intake2.move_velocity(100);
         intake1.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
         intake2.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
       } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)&& !master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) && !master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
-        intake1.move_velocity(650);
-        intake2.move_velocity(-650);
+        intake1.move_velocity(100);
+        intake2.move_velocity(-100);
         intake1.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
         intake2.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
       } else {
