@@ -11,7 +11,7 @@ const float B_DIS_IN = 4.33070866;
 const float TICKS_PER_ROTATION =  360.0;
 const float  SPIN_TO_IN_LR = (WHEELDIAM * M_PI / TICKS_PER_ROTATION);
 const float  SPIN_TO_IN_S = (WHEELDIAM * M_PI / TICKS_PER_ROTATION);
-const int DEFAULTSLEWRATEINCREMENT = 10;
+//___int_least16_t_definedconst int DEFAULTSLEWRATEINCREMENT = 10;
 
 
 
@@ -337,9 +337,9 @@ void opcontrol() {
   pros::Task task2(tilter_task,&text);
   //___int_least8_t_definedturn_PID(90.0);
   //move_test(12.0);
-  /*profileController.generatePath({
+  profileController.generatePath({
     Point{0_ft, 0_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
-    Point{5_ft, 2_ft, -90_deg}}, // The next point in the profile, 3 feet forward
+    Point{4_ft, 2_ft, 0_deg}}, // The next point in the profile, 3 feet forward
     "A" // Profile name
   );
   profileController.generatePath({
@@ -348,11 +348,11 @@ void opcontrol() {
     "B" // Profile name
   );
 
-  profileController.setTarget("A");
-  profileController.waitUntilSettled();
-  profileController.setTarget("B",true);
-  profileController.waitUntilSettled();
-*/
+  //profileController.setTarget("A",true);
+  //profileController.waitUntilSettled();
+  //profileController.setTarget("B",true);
+  //profileController.waitUntilSettled();
+
   /*profileController.generatePath({
     Point{5_ft, 2_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
     Point{6_ft, 1_ft, 45_deg}}, // The next point in the profile, 3 feet forward
