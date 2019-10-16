@@ -138,8 +138,8 @@ void tilter_PID(float targetDegree, int maxVelocity, double kp,int delay){
   double error = 0;
   double previous_error = degreeGoal;
   double kP = kp;
-  double kI = 0.0025;
-  double kD = 0.001;
+  double kI = 0.003;
+  double kD = 0.005;
   double integral = 0;
   double derivative = 0;
 
@@ -200,4 +200,11 @@ void unBrakeMotors(){
   right_wheel.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
   left_chain.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
   right_chain.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+}
+
+void deploy(){
+  tilter_PID(175,100,(double)0.1,0);
+  lift_PID(-500,70,0);
+  lift_PID(500,70,0);
+  tilter_PID(-175,200,(double)0.1,0);
 }
