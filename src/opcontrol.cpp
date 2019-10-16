@@ -11,7 +11,7 @@ const float B_DIS_IN = 4.33070866;
 const float TICKS_PER_ROTATION =  360.0;
 const float  SPIN_TO_IN_LR = (WHEELDIAM * M_PI / TICKS_PER_ROTATION);
 const float  SPIN_TO_IN_S = (WHEELDIAM * M_PI / TICKS_PER_ROTATION);
-//const int DEFAULTSLEWRATEINCREMENT = 10;
+const int DEFAULTSLEWRATEINCREMENT = 10;
 
 
 
@@ -37,11 +37,9 @@ TimeUtil chassisUtil = TimeUtilFactory::withSettledUtilParams(50, 5, 250_ms);
 okapi::MotorGroup group1 ({Motor(17,true,AbstractMotor::gearset::green),Motor(18,false,AbstractMotor::gearset::green)});
 okapi::MotorGroup group2 ({Motor(13,false,AbstractMotor::gearset::green),Motor(15,true,AbstractMotor::gearset::green)});
 
+okapi::ChassisScales scales ({4_in, 16.4_in});
 
-
-  okapi::ChassisScales scales ({4_in, 16.4_in});
-
-/* ThreeEncoderSkidSteerModel myChassis = ChassisModelFactory::create(
+ThreeEncoderSkidSteerModel myChassis = ChassisModelFactory::create(
   group1,
   group2,
   leftenc,
@@ -52,7 +50,7 @@ okapi::MotorGroup group2 ({Motor(13,false,AbstractMotor::gearset::green),Motor(1
 );
 
 TimeUtil chassisUtil2 = TimeUtilFactory::withSettledUtilParams(50, 5, 100_ms);
-
+/*
 chassisUtil,
 std::shared_ptr<ThreeEncoderSkidSteerModel>(&myChassis),
 okapi::IterativePosPIDController::Gains{0.1,0.0001,0.001},
@@ -61,7 +59,7 @@ okapi::IterativePosPIDController::Gains{0.1,0.0001,0.001},
 AbstractMotor::gearset::green,
 scales
 std::unique_ptr<okapi::IterativePosPIDController>
-
+*/
 auto bruh = new IterativePosPIDController(0.01, 0.01, 0.01, 0,
                           chassisUtil);
 std::unique_ptr<Filter> iderivativeFilter = std::make_unique<PassthroughFilter>();
@@ -76,7 +74,7 @@ auto profileController = AsyncControllerFactory::motionProfile(
   scales,
 AbstractMotor::gearset::green,
 chassisUtil
-); */
+);
 
 
 void trackPos(rPos& position) //Based off of 5225a E-bots Pilons APS code, https://github.com/nickmertin/5225A-2017-2018/blob/master/src/auto.c
@@ -164,10 +162,12 @@ void position_task(void* param){
  */
 
 
- void move_test(double yCoord){
+ void move_straight_rel_test(double xCoord, double yCoord){
 
-   int maxVelocity = 100;
-  const double goal = yCoord-mainPosition.y;
+  int maxVelocity = 200;
+  bool isX = false;
+  double target = 0.0;
+  double goal = 0.0;
   bool goalMet = false; bool oneTime = true;
   int targetVelocity = 0;
   double currentPosition = 0;
@@ -179,15 +179,25 @@ void position_task(void* param){
   double integral = 0;
   double derivative = 0;
 
-  if (yCoord < 0) {maxVelocity *= -1;}
+  if (xCoord != 0.0){
+    goal = yCoord-mainPosition.y;
+    target = yCoord;
+  } else {
+    goal = xCoord-mainPosition.x;
+    target = xCoord;
+    isX = true;
+  }
 
-
-
+  if (target < 0) {maxVelocity *= -1;}
 
   while(!goalMet){
 
+    if(isX){
+      currentPosition = mainPosition.x;
+    } else{
+      currentPosition = mainPosition.y;
+    }
 
-    currentPosition = mainPosition.y;
     error = goal - currentPosition;
 
     if (std::abs(error) < 600){
@@ -212,14 +222,12 @@ void position_task(void* param){
       goalMet = true;
     }
 
-
-
-
     pros::delay(10);
   }
 
   brakeMotors();
 }
+
 void turn_PID(float targetDegree){
   int maxVelocity = 20;
   const double degreeGoal = targetDegree;
@@ -236,8 +244,6 @@ void turn_PID(float targetDegree){
   double integral = 0;
   double derivative = 0;
   if(targetDegree<0){maxVelocity *= -1;}
-
-
 
   while(!goalMet){
     currentPosition = mainPosition.angle*180/M_PI;
@@ -279,7 +285,7 @@ void lift_task(void* param){
 
   while(true){
 
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) && master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
+  if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) && master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
       lift_PID(-270,40,0);
   } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)&&master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
     lift_PID(270,40,0);
@@ -298,24 +304,24 @@ void lift_task(void* param){
 void tilter_task(void* param){
   while (true){
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)&& master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
-      //tilter_PID(100,100,(double)0.5,0);
-  } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)&& master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
-    //tilter_PID(100,100,(double)0.5,500);
-  }
+        //tilter_PID(100,100,(double)0.5,0);
+    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)&& master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
+      //tilter_PID(100,100,(double)0.5,500);
+    }
 
-  if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A)){
-  tilter.move_velocity(50);
-} else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_B)){
-  tilter.move_velocity(-100);
-} else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_X)){
-  tilter_PID(130,100,(double)0.2,0);
-}
-else{
-  tilter.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-  tilter.move_velocity(0);
-}
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A)){
+    tilter.move_velocity(50);
+    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_B)){
+    tilter.move_velocity(-100);
+    } else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_X)){
+    tilter_PID(130,100,(double)0.5,0);
+    }
+    else{
+    tilter.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    tilter.move_velocity(0);
+    }
     if(master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)){
-      tilter_PID(325,100,(double)0.08,0);
+        tilter_PID(330,100,(double)0.1,0);
     }
 
     pros::delay(8);
