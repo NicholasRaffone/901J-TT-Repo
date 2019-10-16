@@ -204,7 +204,7 @@ void unBrakeMotors(){
 
 void deploy(){
   tilter_PID(175,100,(double)0.1,0);
-  lift_PID(-500,70,0);
-  lift_PID(500,70,0);
-  tilter_PID(-175,200,(double)0.1,0);
+  //lift_PID(-500,70,0);
+  //lift_PID(500,70,0);
+  //tilter_PID(-175,200,(double)0.1,0);
 }
