@@ -37,7 +37,7 @@ TimeUtil chassisUtil = TimeUtilFactory::withSettledUtilParams(50, 5, 250_ms);
 okapi::MotorGroup group1 ({Motor(17,true,AbstractMotor::gearset::green),Motor(18,false,AbstractMotor::gearset::green)});
 okapi::MotorGroup group2 ({Motor(13,false,AbstractMotor::gearset::green),Motor(15,true,AbstractMotor::gearset::green)});
 
-okapi::ChassisScales scales ({4_in, 16.4_in});
+okapi::ChassisScales scales ({4_in, 14.9606_in});
 
 ThreeEncoderSkidSteerModel myChassis = ChassisModelFactory::create(
   group1,
@@ -67,9 +67,9 @@ std::unique_ptr<Filter> iderivativeFilter = std::make_unique<PassthroughFilter>(
 
 
 auto profileController = AsyncControllerFactory::motionProfile(
-  0.75,  // Maximum linear velocity of the Chassis in m/s
-  1.5,  // Maximum linear acceleration of the Chassis in m/s/s
-  7.5, // Maximum linear jerk of the Chassis in m/s/s/s
+  0.5,  // Maximum linear velocity of the Chassis in m/s
+  1.0,  // Maximum linear acceleration of the Chassis in m/s/s
+  4.0, // Maximum linear jerk of the Chassis in m/s/s/s
   std::shared_ptr<ThreeEncoderSkidSteerModel>(&myChassis),
   scales,
 AbstractMotor::gearset::green,
@@ -309,19 +309,18 @@ void tilter_task(void* param){
     }
 
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A)){
-    tilter.move_velocity(50);
+    tilter.move_velocity(25);
     } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_B)){
-    tilter.move_velocity(-100);
+    tilter.move_velocity(-200);
     } else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_X)){
-    tilter_PID(65,100,(double)0.5,0);
+    } else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)){
+            tilter_PID(320,60,(double)0.05,0);
     }
     else{
     tilter.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     tilter.move_velocity(0);
     }
-    if(master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)){
-        tilter_PID(165,100,(double)0.1,0);
-    }
+
 
     pros::delay(8);
 
@@ -331,13 +330,15 @@ void tilter_task(void* param){
 void opcontrol() {
   //std::string text("wheelTrack");
   //pros::Task punchTask(WheelTrack2,&text);
+  //deploy();
+
   std::string text("tilter");
   std::string texttwo("lift");
   pros::Task task(lift_task,&texttwo);
   pros::Task task2(tilter_task,&text);
   //___int_least8_t_definedturn_PID(90.0);
   //move_test(12.0);
-  profileController.generatePath({
+  /**profileController.generatePath({
     Point{0_ft, 0_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
     Point{4_ft, 2_ft, 0_deg}}, // The next point in the profile, 3 feet forward
     "A" // Profile name
@@ -346,9 +347,9 @@ void opcontrol() {
     Point{-5_ft, -2_ft, 90_deg},  // Profile starting position, this will normally be (0, 0, 0)
     Point{0_ft, 0_ft, 0_deg}}, // The next point in the profile, 3 feet forward
     "B" // Profile name
-  );
+  );**/
 
-  //profileController.setTarget("A",true);
+  //profileController.setTarget("A",false);
   //profileController.waitUntilSettled();
   //profileController.setTarget("B",true);
   //profileController.waitUntilSettled();
@@ -380,8 +381,12 @@ void opcontrol() {
 			double turn = 200*master.get_analog(ANALOG_RIGHT_X)/127;
 			int left = (int)(pow(((power + turn)/200.0),2.0)*200.0);
 			int right = (int) (pow(((power - turn)/200.0),2.0)*200.0);
-			//int left = power+turn;
-			//int right = power-turn;
+			if(power+turn < 0){
+        left *=-1;
+      }
+      if(power - turn < 0){
+        right*=-1;
+      }
 			left_wheel.move_velocity(left);
 			left_chain.move_velocity(left);
 			right_wheel.move_velocity(right);
@@ -405,7 +410,7 @@ void opcontrol() {
 			}
 
       if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2) && !master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) && !master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
-        intake1.move_velocity(100);
+        intake1.move_velocity(-100);
         intake2.move_velocity(100);
         intake1.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
         intake2.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);

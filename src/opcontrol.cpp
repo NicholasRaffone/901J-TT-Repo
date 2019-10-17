@@ -313,7 +313,6 @@ void tilter_task(void* param){
     } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_B)){
     tilter.move_velocity(-200);
     } else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_X)){
-    deploy();
     } else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)){
             tilter_PID(320,60,(double)0.05,0);
     }
@@ -331,6 +330,8 @@ void tilter_task(void* param){
 void opcontrol() {
   //std::string text("wheelTrack");
   //pros::Task punchTask(WheelTrack2,&text);
+  //deploy();
+
   std::string text("tilter");
   std::string texttwo("lift");
   pros::Task task(lift_task,&texttwo);
