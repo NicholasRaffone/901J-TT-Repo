@@ -89,7 +89,7 @@ void lift_PID(float targetDegree, int maxVelocity, int delay)
   double previous_error = degreeGoal;
   double kP = 0.15;
   double kI = 0.0025;
-  double kD = 0.001;
+  double kD = 0.003;
   double integral = 0;
   double derivative = 0;
 
@@ -117,7 +117,7 @@ void lift_PID(float targetDegree, int maxVelocity, int delay)
 
     slewRateControl(&lift, targetVelocity, DEFAULTSLEWRATEINCREMENT);
 
-    if (std::abs(error) < 4){
+    if (std::abs(error) < 12){
       goalMet = true;
     }
 
@@ -203,11 +203,13 @@ void unBrakeMotors(){
 }
 
 void deploy(){
-  tilter_PID(120,100,(double)0.3,0);
+  tilter_PID(140,100,(double)0.2,0);
   printf("bruh");
-  lift_PID(-240,70,0);
+  lift_PID(-280,80,0);
   pros::delay(400);
-  lift_PID(230,70,0);
+  lift_PID(100,80,0);
+  lift_PID(-50,80,0);
+  lift_PID(200,80,0);
 
   //lift_PID(500,70,0);
   //tilter_PID(-175,200,(double)0.1,0);

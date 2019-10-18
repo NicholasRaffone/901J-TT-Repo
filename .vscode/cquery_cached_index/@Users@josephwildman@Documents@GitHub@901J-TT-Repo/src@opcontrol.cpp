@@ -330,7 +330,7 @@ void tilter_task(void* param){
 void opcontrol() {
   //std::string text("wheelTrack");
   //pros::Task punchTask(WheelTrack2,&text);
-  //deploy();
+  deploy();
 
   std::string text("tilter");
   std::string texttwo("lift");
