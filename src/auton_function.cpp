@@ -203,14 +203,12 @@ void unBrakeMotors(){
 }
 
 void deploy(){
-  tilter_PID(140,100,(double)0.2,0);
+  tilter_PID(75,100,(double)0.2,0);
   printf("bruh");
   lift_PID(-280,80,0);
   pros::delay(400);
-  lift_PID(100,80,0);
-  lift_PID(-50,80,0);
   lift_PID(200,80,0);
-
+  
   //lift_PID(500,70,0);
   //tilter_PID(-175,200,(double)0.1,0);
 }
