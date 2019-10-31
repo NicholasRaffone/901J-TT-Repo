@@ -78,7 +78,7 @@ void slewRateControl(pros::Motor *motor, int targetVelocity, int increment){
   motor->move_velocity(currentVelocity);
 }
 
-void lift_PID(float targetDegree, int maxVelocity, int delay)
+void lift_PID(float targetDegree, int maxVelocity, int delay, int multi)
 {
   const double degreeGoal = (targetDegree*7);
   bool goalMet = false;
@@ -100,6 +100,13 @@ void lift_PID(float targetDegree, int maxVelocity, int delay)
   pros::delay(delay);
 
   while(!goalMet){
+    if(multi == 1){
+      intake1.move_velocity(-100);
+      intake2.move_velocity(100);
+    } else{
+      intake1.move_velocity(0);
+      intake2.move_velocity(0);
+    }
     currentPosition = lift.get_position();
     error = degreeGoal - currentPosition;
 
@@ -205,10 +212,10 @@ void unBrakeMotors(){
 void deploy(){
   tilter_PID(75,100,(double)0.2,0);
   printf("bruh");
-  lift_PID(-280,80,0);
+  lift_PID(-200,80,0,0);
   tilter_PID(30,100,(double)0.2,0);
   pros::delay(400);
-  lift_PID(200,80,0);
+  lift_PID(150,80,0,1);
 
   //lift_PID(500,70,0);
   //tilter_PID(-175,200,(double)0.1,0);
