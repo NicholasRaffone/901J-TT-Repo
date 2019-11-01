@@ -133,7 +133,7 @@ void position_task(void* param){
 	//rightenc.reset();
 	//backenc.reset();
   while(true){
-    trackPos(mainPosition);
+    //trackPos(mainPosition);
 		//if ((int)pros::millis() % 50 == 0){
 			/*printf("Xpos: %f\r\n",mainPosition.x);
 			printf("Ypos: %f\r\n",mainPosition.y);
@@ -285,13 +285,13 @@ void lift_task(void* param){
   while(true){
 
   if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) && master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
-      lift_PID(-270,40,0);
+      lift_PID(-300,90,400,0);
   } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)&&master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
-    lift_PID(270,40,0);
+    lift_PID(-250,90,400,0);
   } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)&& master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
-      lift.move_velocity(-100);
+      lift.move_velocity(-200);
   } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)&&master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
-    lift.move_velocity(100);
+    lift.move_velocity(200);
   } else {
     lift.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     lift.move_velocity(0);
@@ -303,9 +303,9 @@ void lift_task(void* param){
 void tilter_task(void* param){
   while (true){
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)&& master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
-        //tilter_PID(100,100,(double)0.5,0);
+        tilter_PID(115,100,(double)0.5,0);
     } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)&& master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
-      //tilter_PID(100,100,(double)0.5,500);
+      tilter_PID(115,100,(double)0.5,0);
     }
 
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A)){
