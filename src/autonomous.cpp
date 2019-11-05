@@ -175,11 +175,31 @@ void curvyboi(){//should be task but idk how
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-void test(){
-  left_wheel.move_velocity(200);
-  pros::delay(500);
-}
+ void position_task(void* param){
+
+ 	leftenc.reset();
+ 	rightenc.reset();
+ 	backenc.reset();
+   while(true){
+     trackPos(mainPosition);
+ 		if ((int)pros::millis() % 50 == 0){
+ 			printf("Xpos: %f\r\n",mainPosition.x);
+ 			printf("Ypos: %f\r\n",mainPosition.y);
+ 			printf("Angle: %f\r\n",mainPosition.angle);
+ 			printf("l: %f\r\n",leftenc.get());
+ 			printf("r: %f\r\n",rightenc.get());
+ 			printf("b: %f\r\n",backenc.get());
+
+ 		}
+ 		pros::delay(10);
+   }
+ }
 void test2(){
+  std::string text("wheelTrack");
+  pros::Task main_pos(position_task,&text);
+  move_straight_rel_test(0, 10.0);
+}
+void test(){
   right_wheel.move_velocity(200);
   pros::delay(500);
 }

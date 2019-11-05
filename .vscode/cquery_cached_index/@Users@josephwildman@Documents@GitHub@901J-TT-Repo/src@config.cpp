@@ -34,9 +34,9 @@ pros::Motor tilter(TILTERPORT, pros::E_MOTOR_GEARSET_36, false);//13
 //pros::ADIEncoder RightEncoder(RENC_TOP_PORT,RENC_BOT_PORT,true);
 //pros::ADIEncoder BackEncoder(BENC_TOP_PORT,BENC_BOT_PORT,true);
 
-okapi::ADIEncoder leftenc ('A','B',false);
-okapi::ADIEncoder rightenc ('C','D',true);
-okapi::ADIEncoder backenc ('E','F');
+okapi::ADIEncoder leftenc ('A','B',true);
+okapi::ADIEncoder rightenc ('G','H',true);
+okapi::ADIEncoder backenc ('D','F');
 
 int selectedAuton = 0;
 

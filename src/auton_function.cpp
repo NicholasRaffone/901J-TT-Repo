@@ -4,6 +4,13 @@
 
 const int LIFTGEARRATIO = 7;
 const int DEFAULTSLEWRATEINCREMENT = 10;
+const float WHEELDIAM = 2.75;
+const float L_DIS_IN = 4.72440945;
+const float R_DIS_IN = 4.72440945;
+const float B_DIS_IN = 4.33070866;
+const float TICKS_PER_ROTATION =  360.0;
+const float  SPIN_TO_IN_LR = (WHEELDIAM * M_PI / TICKS_PER_ROTATION);
+const float  SPIN_TO_IN_S = (WHEELDIAM * M_PI / TICKS_PER_ROTATION);
 /*
 void liftpid(int targetDegree, int maxvel){
   left_lift.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
@@ -59,6 +66,56 @@ void liftpid(int targetDegree, int maxvel){
   left_lift.move_velocity(0);
 }
 */
+void trackPos(rPos& position) //Based off of 5225a E-bots Pilons APS code, https://github.com/nickmertin/5225A-2017-2018/blob/master/src/auto.c
+{
+  int currentL = leftenc.get();
+  int currentR = rightenc.get();
+  int currentB = backenc.get();
+
+  float deltaL = (currentL - position.leftLast) * SPIN_TO_IN_LR;
+  float deltaR = (currentR - position.rightLast) * SPIN_TO_IN_LR;
+  float deltaB = (currentB - position.backLast) * SPIN_TO_IN_S;
+
+  position.leftLast = currentL;
+  position.rightLast = currentR;
+  position.backLast = currentB;
+
+  float h; // The hypotenuse of the triangle formed by the middle of the robot on the starting position and ending position and the middle of the circle it travels around
+	float i; // Half on the angle that I've traveled
+	float h2; // The same as h but using the back instead of the side wheels
+
+	float angle = (deltaL - deltaR) / (L_DIS_IN + R_DIS_IN); // The angle that I've traveled
+  if (angle)
+	{
+		float r = deltaR / angle; // The radius of the circle the robot travel's around with the right side of the robot
+		i = angle / 2.0;
+		float sinI = sin(i);
+		h = ((r + R_DIS_IN) * sinI) * 2.0;
+
+		float r2 = deltaB / angle; // The radius of the circle the robot travel's around with the back of the robot
+		h2 = ((r2 + B_DIS_IN) * sinI) * 2.0;
+	}
+	else
+	{
+		h = deltaR;
+		i = 0;
+		h2 = deltaB;
+	}
+
+  float p = i + position.angle; // The global ending angle of the robot
+	float cosP = cos(p);
+	float sinP = sin(p);
+
+	// Update the global position
+	position.y += h * cosP;
+	position.x += h * sinP;
+
+	position.y += h2 * -sinP; // -sin(x) = sin(-x)
+	position.x += h2 * cosP; // cos(x) = cos(-x)
+
+	position.angle += angle;
+}
+
 void slewRateControl(pros::Motor *motor, int targetVelocity, int increment){
   int currentVelocity = motor->get_target_velocity();
   if (targetVelocity != 0){
@@ -192,6 +249,72 @@ pros::delay(delay);
   intake2.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
 }
 
+void move_straight_rel_test(double xCoord, double yCoord){
+
+ int maxVelocity = 200;
+ bool isX = false;
+ double target = 0.0;
+ double goal = 0.0;
+ bool goalMet = false; bool oneTime = true;
+ int targetVelocity = 0;
+ double currentPosition = 0;
+ double error = 0;
+ double previous_error = goal;
+ double kP = 4;
+ double kI = 0.0004;
+ double kD = 0.01;
+ double integral = 0;
+ double derivative = 0;
+
+ if (xCoord != 0.0){
+   goal = yCoord-mainPosition.y;
+   target = yCoord;
+ } else {
+   goal = xCoord-mainPosition.x;
+   target = xCoord;
+   isX = true;
+ }
+
+ if (target < 0) {maxVelocity *= -1;}
+
+ while(!goalMet){
+
+   if(isX){
+     currentPosition = mainPosition.x;
+   } else{
+     currentPosition = mainPosition.y;
+   }
+
+   error = goal - currentPosition;
+
+   if (std::abs(error) < 600){
+     integral += error;
+   }
+
+   derivative = error - previous_error;
+   previous_error = error;
+
+   targetVelocity = kP*error + kI*integral + kD*derivative;
+
+   if (targetVelocity > maxVelocity){
+     targetVelocity = maxVelocity;
+   }
+   targetVelocity *= -1;
+   slewRateControl(&left_wheel, targetVelocity, DEFAULTSLEWRATEINCREMENT);
+   slewRateControl(&left_chain, targetVelocity, DEFAULTSLEWRATEINCREMENT);
+   slewRateControl(&right_wheel, targetVelocity, DEFAULTSLEWRATEINCREMENT);
+   slewRateControl(&right_chain, targetVelocity, DEFAULTSLEWRATEINCREMENT);
+
+   if (std::abs(error) < 0.1){
+     goalMet = true;
+   }
+
+   pros::delay(10);
+ }
+
+ brakeMotors();
+}
+
 void brakeMotors(){//brake the base motors
   left_wheel.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
   right_wheel.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
@@ -210,9 +333,10 @@ void unBrakeMotors(){
 }
 
 void deploy(){
-  tilter_PID(75,100,(double)0.2,0);
+  tilter_PID(80,100,(double)0.2,0);
+
   printf("bruh");
-  lift_PID(-170,90,0,0);
+  lift_PID(-160,90,0,0);
   tilter_PID(20,100,(double)0.2,0);
   pros::delay(200);
   lift_PID(100,90,0,1);
