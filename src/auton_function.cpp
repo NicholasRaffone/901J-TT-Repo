@@ -249,9 +249,16 @@ pros::delay(delay);
   intake2.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
 }
 
-void move_straight_rel_test(double xCoord, double yCoord){
-
- int maxVelocity = 200;
+void move_straight_rel_test(double xCoord, int maxVel, int multi){
+  if(multi == 1){
+    intake1.move_velocity(-100);
+    intake2.move_velocity(100);
+  } else{
+    intake1.move_velocity(0);
+    intake2.move_velocity(0);
+  }
+ const double degreeGoal = (xCoord/(1.375*2*M_PI))*TICKS_PER_ROTATION;
+ int maxVelocity = maxVel;
  bool isX = false;
  double target = 0.0;
  double goal = 0.0;
@@ -260,32 +267,20 @@ void move_straight_rel_test(double xCoord, double yCoord){
  double currentPosition = 0;
  double error = 0;
  double previous_error = goal;
- double kP = 4;
- double kI = 0.0004;
- double kD = 0.01;
+ double kP = 0.3;
+ double kI = 0.0005;
+ double kD = 0.005;
  double integral = 0;
  double derivative = 0;
 
- if (xCoord != 0.0){
-   goal = yCoord-mainPosition.y;
-   target = yCoord;
- } else {
-   goal = xCoord-mainPosition.x;
-   target = xCoord;
-   isX = true;
- }
+ target = degreeGoal;
 
  if (target < 0) {maxVelocity *= -1;}
 
  while(!goalMet){
 
-   if(isX){
-     currentPosition = mainPosition.x;
-   } else{
-     currentPosition = mainPosition.y;
-   }
-
-   error = goal - currentPosition;
+   currentPosition = (leftenc.get()+rightenc.get())/2;
+   error = target - currentPosition;
 
    if (std::abs(error) < 600){
      integral += error;
@@ -296,16 +291,16 @@ void move_straight_rel_test(double xCoord, double yCoord){
 
    targetVelocity = kP*error + kI*integral + kD*derivative;
 
-   if (targetVelocity > maxVelocity){
+   if (abs(targetVelocity) > abs(maxVelocity)){
      targetVelocity = maxVelocity;
    }
-   targetVelocity *= -1;
+
    slewRateControl(&left_wheel, targetVelocity, DEFAULTSLEWRATEINCREMENT);
    slewRateControl(&left_chain, targetVelocity, DEFAULTSLEWRATEINCREMENT);
    slewRateControl(&right_wheel, targetVelocity, DEFAULTSLEWRATEINCREMENT);
    slewRateControl(&right_chain, targetVelocity, DEFAULTSLEWRATEINCREMENT);
 
-   if (std::abs(error) < 0.1){
+   if (std::abs(error) < 2){
      goalMet = true;
    }
 
@@ -313,6 +308,8 @@ void move_straight_rel_test(double xCoord, double yCoord){
  }
 
  brakeMotors();
+ intake1.move_velocity(0);
+ intake2.move_velocity(0);
 }
 
 void brakeMotors(){//brake the base motors
@@ -341,7 +338,7 @@ void deploy(){
   pros::delay(200);
   lift_PID(100,90,0,1);
   lift.move_velocity(200);
-  pros::delay(500);
+  pros::delay(800);
   lift.move_velocity(0);
 
 

@@ -3,6 +3,14 @@
 #include <math.h>
 #include <vector>
 #include "auton_function.h"
+#include "okapi/api.hpp"
+const float WHEELDIAM = 2.75;
+const float L_DIS_IN = 4.72440945;
+const float R_DIS_IN = 4.72440945;
+const float B_DIS_IN = 4.33070866;
+const float TICKS_PER_ROTATION =  360.0;
+const float  SPIN_TO_IN_LR = (WHEELDIAM * M_PI / TICKS_PER_ROTATION);
+const float  SPIN_TO_IN_S = (WHEELDIAM * M_PI / TICKS_PER_ROTATION);
 /*
 namespace WheelTracker{
   float wheelrad = 2.75;
@@ -194,10 +202,97 @@ void curvyboi(){//should be task but idk how
  		pros::delay(10);
    }
  }
+ using namespace okapi;
+
+ TimeUtil chassisUtil = TimeUtilFactory::withSettledUtilParams(50, 5, 250_ms);
+
+
+ okapi::MotorGroup group1 ({Motor(17,true,AbstractMotor::gearset::green),Motor(18,false,AbstractMotor::gearset::green)});
+ okapi::MotorGroup group2 ({Motor(13,false,AbstractMotor::gearset::green),Motor(15,true,AbstractMotor::gearset::green)});
+
+ okapi::ChassisScales scales ({4_in, 14.9606_in});
+
+ ThreeEncoderSkidSteerModel myChassis = ChassisModelFactory::create(
+   group1,
+   group2,
+   leftenc,
+   rightenc,
+   backenc,
+   200.0, // 4 inch wheels, 12.5 inch wheelbase width
+   12000.0
+ );
+
+ TimeUtil chassisUtil2 = TimeUtilFactory::withSettledUtilParams(50, 5, 100_ms);
+ /*
+ chassisUtil,
+ std::shared_ptr<ThreeEncoderSkidSteerModel>(&myChassis),
+ okapi::IterativePosPIDController::Gains{0.1,0.0001,0.001},
+ okapi::IterativePosPIDController::Gains{0.1,0.0001,0.001},
+ okapi::IterativePosPIDController::Gains{0.1,0.0001,0.001},
+ AbstractMotor::gearset::green,
+ scales
+ std::unique_ptr<okapi::IterativePosPIDController>
+ */
+ auto bruh = new IterativePosPIDController(0.01, 0.01, 0.01, 0,
+                           chassisUtil);
+ std::unique_ptr<Filter> iderivativeFilter = std::make_unique<PassthroughFilter>();
+
+
+
+ auto profileController = AsyncControllerFactory::motionProfile(
+   0.5,  // Maximum linear velocity of the Chassis in m/s
+   1.0,  // Maximum linear acceleration of the Chassis in m/s/s
+   4.0, // Maximum linear jerk of the Chassis in m/s/s/s
+   std::shared_ptr<ThreeEncoderSkidSteerModel>(&myChassis),
+   scales,
+ AbstractMotor::gearset::green,
+ chassisUtil
+ );
+
+
 void test2(){
-  std::string text("wheelTrack");
-  pros::Task main_pos(position_task,&text);
-  move_straight_rel_test(0, 10.0);
+  //std::string text("wheelTrack");
+  //pros::Task main_pos(position_task,&text);
+  /**profileController.generatePath({
+    Point{0_ft, 0_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
+    Point{4_ft, 2_ft, 0_deg}}, // The next point in the profile, 3 feet forward
+    "A" // Profile name
+  );
+  profileController.generatePath({
+    Point{-5_ft, -2_ft, 90_deg},  // Profile starting position, this will normally be (0, 0, 0)
+    Point{0_ft, 0_ft, 0_deg}}, // The next point in the profile, 3 feet forward
+    "B" // Profile name
+  );**/
+
+  //profileController.setTarget("A",false);
+  //profileController.waitUntilSettled();
+  //profileController.setTarget("B",true);
+  //profileController.waitUntilSettled();
+  profileController.generatePath({
+    Point{0_ft, 0_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
+    Point{1.8_ft, -2_ft, 67_deg}}, // The next point in the profile, 3 feet forward
+    "A" // Profile name
+  );
+  brakeMotors();
+  deploy();
+  unBrakeMotors();
+  tilter.move_velocity(-30);
+  move_straight_rel_test(45, 100, 1);
+  tilter.move_velocity(0);
+  intake1.move_velocity(-100);
+  intake2.move_velocity(100);
+  profileController.setTarget("A",true);
+  profileController.waitUntilSettled();
+  intake1.move_velocity(0);
+  intake2.move_velocity(0);
+  move_straight_rel_test(31, 100, 0);
+  intake1.move_velocity(100);
+  intake2.move_velocity(-100);
+  pros::delay(400);
+  intake1.move_velocity(0);
+  intake2.move_velocity(0);
+    tilter_PID(360,82,(double)0.05,0);
+    move_straight_rel_test(-10, 100, 0);
 }
 void test(){
   right_wheel.move_velocity(200);
