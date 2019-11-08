@@ -250,6 +250,9 @@ pros::delay(delay);
 }
 
 void move_straight_rel_test(double xCoord, int maxVel, int multi){
+  leftenc.reset();
+  rightenc.reset();
+
   if(multi == 1){
     intake1.move_velocity(-100);
     intake2.move_velocity(100);
@@ -312,6 +315,64 @@ void move_straight_rel_test(double xCoord, int maxVel, int multi){
  intake2.move_velocity(0);
 }
 
+void turn_PID(float targetDegree){
+  leftenc.reset();
+  float turn_constant = 2.6;
+  int maxVelocity = 80;
+  const double degreeGoal = targetDegree*turn_constant;
+  bool goalMet = false;
+  int targetVelocity = 0;
+  int leftTarget = 0;
+  int rightTarget = 0;
+  double currentPosition = 0;
+  double error = 0;
+  double previous_error = degreeGoal;
+  double kP = 0.4;
+  double kI = 0.003;
+  double kD = 0.001;
+  double integral = 0;
+  double derivative = 0;
+  if(targetDegree<0){maxVelocity *= -1;}
+
+
+  while(!goalMet){
+
+      currentPosition = leftenc.get();
+
+    error = degreeGoal - currentPosition;
+    printf("%f\r\n",currentPosition);
+    if (std::abs(error) < 100){
+      integral += error;
+    }
+
+    derivative = error - previous_error;
+    previous_error = error;
+
+    targetVelocity = kP*error + kI*integral + kD*derivative;
+
+    if (std::abs(targetVelocity) > std::abs(maxVelocity)){
+      targetVelocity = maxVelocity;
+    }
+
+
+      leftTarget = targetVelocity;
+      rightTarget = -1*targetVelocity;
+
+
+    slewRateControl(&left_wheel, leftTarget, DEFAULTSLEWRATEINCREMENT);
+    slewRateControl(&left_chain, leftTarget, DEFAULTSLEWRATEINCREMENT);
+    slewRateControl(&right_wheel, rightTarget, DEFAULTSLEWRATEINCREMENT);
+    slewRateControl(&right_chain, rightTarget, DEFAULTSLEWRATEINCREMENT);
+
+    if (std::abs(error) < 4){
+      goalMet = true;
+    }
+
+    pros::delay(10);
+  }
+  brakeMotors();
+}
+
 void brakeMotors(){//brake the base motors
   left_wheel.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
   right_wheel.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
@@ -330,10 +391,10 @@ void unBrakeMotors(){
 }
 
 void deploy(){
-  tilter_PID(80,100,(double)0.2,0);
+  tilter_PID(85,100,(double)0.2,0);
 
   printf("bruh");
-  lift_PID(-160,90,0,0);
+  lift_PID(-175,90,0,0);
   tilter_PID(20,100,(double)0.2,0);
   pros::delay(200);
   lift_PID(100,90,0,1);

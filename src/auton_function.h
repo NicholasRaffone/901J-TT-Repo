@@ -13,3 +13,4 @@ void move_straight_rel_test(double xCoord, int maxVel, int multi);
 void brakeMotors();
 void unBrakeMotors();
 void deploy();
+void turn_PID(float targetDegree);

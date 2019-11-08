@@ -270,10 +270,13 @@ void test2(){
   //profileController.waitUntilSettled();
   profileController.generatePath({
     Point{0_ft, 0_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
-    Point{1.8_ft, -2_ft, 67_deg}}, // The next point in the profile, 3 feet forward
+    Point{2_ft, -2_ft, 65_deg}}, // The next point in the profile, 3 feet forward
     "A" // Profile name
   );
-  brakeMotors();
+  turn_PID(90);
+  turn_PID(-90);
+
+  /*brakeMotors();
   deploy();
   unBrakeMotors();
   tilter.move_velocity(-30);
@@ -285,14 +288,14 @@ void test2(){
   profileController.waitUntilSettled();
   intake1.move_velocity(0);
   intake2.move_velocity(0);
-  move_straight_rel_test(31, 100, 0);
+  move_straight_rel_test(28.5, 100, 0);
   intake1.move_velocity(100);
   intake2.move_velocity(-100);
   pros::delay(400);
   intake1.move_velocity(0);
   intake2.move_velocity(0);
-    tilter_PID(360,82,(double)0.05,0);
-    move_straight_rel_test(-10, 100, 0);
+    tilter_PID(360,100,(double)0.2,0);
+    move_straight_rel_test(-10, 100, 0);*/
 }
 void test(){
   right_wheel.move_velocity(200);
