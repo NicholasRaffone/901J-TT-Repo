@@ -239,6 +239,9 @@ pros::delay(delay);
     if (std::abs(error) < 4){
       goalMet = true;
     }
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A)){
+      goalMet = true;
+    }
     deg = tilter.get_position();
 
     pros::delay(10);

@@ -166,7 +166,7 @@ static lv_res_t btn_click_action_screen(lv_obj_t * btn) //handles screen changes
 
       if (screenLoad[0] == 0){ //if page hasn't been previously loaded
 
-        redAutonButtons[0] = createBtn(redScr,0,0,200,60,10, "RED 1"); //auton selection buttons
+        redAutonButtons[0] = createBtn(redScr,0,0,200,60,10, "RED UNPROC"); //auton selection buttons
         redAutonButtons[1] = createBtn(redScr,0,0,200,60,11, "RED 2");
         redAutonButtons[2] = createBtn(redScr,0,0,200,60,12, "RED 3");
         redAutonButtons[3] = createBtn(redScr,0,0,200,60,13, "RED 4");

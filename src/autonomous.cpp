@@ -248,7 +248,13 @@ void curvyboi(){//should be task but idk how
  AbstractMotor::gearset::green,
  chassisUtil
  );
-
+void intake_task(void* param){
+  intake1.move_velocity(100);
+  intake2.move_velocity(-100);
+  pros::delay(400);
+  intake1.move_velocity(0);
+  intake2.move_velocity(0);
+}
 
 void test2(){
   //std::string text("wheelTrack");
@@ -273,41 +279,90 @@ void test2(){
     Point{2_ft, -2_ft, 65_deg}}, // The next point in the profile, 3 feet forward
     "A" // Profile name
   );
-  turn_PID(90);
-  turn_PID(-90);
+  //turn_PID(90);
+  //turn_PID(-90);
 
-  /*brakeMotors();
+  brakeMotors();
   deploy();
   unBrakeMotors();
   tilter.move_velocity(-30);
-  move_straight_rel_test(45, 100, 1);
+  move_straight_rel_test(44, 100, 1);
   tilter.move_velocity(0);
   intake1.move_velocity(-100);
   intake2.move_velocity(100);
   profileController.setTarget("A",true);
   profileController.waitUntilSettled();
+
   intake1.move_velocity(0);
   intake2.move_velocity(0);
-  move_straight_rel_test(28.5, 100, 0);
+  std::string texttwo("intake");
+  pros::Task task(intake_task,&texttwo);
+  move_straight_rel_test(28, 110, 0);
   intake1.move_velocity(100);
   intake2.move_velocity(-100);
-  pros::delay(400);
+  pros::delay(150);
   intake1.move_velocity(0);
   intake2.move_velocity(0);
-    tilter_PID(360,100,(double)0.2,0);
-    move_straight_rel_test(-10, 100, 0);*/
+
+    tilter_PID(390,100,(double)0.3,0);
+
+    pros::delay(300);
+    brakeMotors();
+    pros::delay(100);
+    unBrakeMotors();
+
+    move_straight_rel_test(-10, 100, 0);
 }
 void test(){
   right_wheel.move_velocity(200);
   pros::delay(500);
 }
+void red_unproc(){
+  profileController.generatePath({
+    Point{0_ft, 0_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
+    Point{1.8_ft, 2_ft, -65_deg}}, // The next point in the profile, 3 feet forward
+    "A" // Profile name
+  );
+  //turn_PID(90);
+  //turn_PID(-90);
 
+  brakeMotors();
+  deploy();
+  unBrakeMotors();
+  tilter.move_velocity(-30);
+  move_straight_rel_test(44, 100, 1);
+  tilter.move_velocity(0);
+  intake1.move_velocity(-100);
+  intake2.move_velocity(100);
+  profileController.setTarget("A",true);
+  profileController.waitUntilSettled();
+
+  intake1.move_velocity(0);
+  intake2.move_velocity(0);
+  std::string texttwo("intake");
+  pros::Task task(intake_task,&texttwo);
+  move_straight_rel_test(29.8, 120, 0);
+  intake1.move_velocity(100);
+  intake2.move_velocity(-100);
+  pros::delay(150);
+  intake1.move_velocity(0);
+  intake2.move_velocity(0);
+
+    tilter_PID(390,100,(double)0.3,0);
+
+    pros::delay(300);
+    brakeMotors();
+    pros::delay(100);
+    unBrakeMotors();
+
+    move_straight_rel_test(-10, 100, 0);
+}
 
 
 void autonomous() {
 
 switch(selectedAuton){
-  case 10: test();
+  case 10: red_unproc();
     break;
   case 11: test();
     break;

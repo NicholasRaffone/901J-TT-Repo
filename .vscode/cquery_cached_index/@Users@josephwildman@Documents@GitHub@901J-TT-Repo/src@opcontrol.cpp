@@ -96,58 +96,7 @@ chassisUtil
 
 
 
-void turn_PID(float targetDegree){
-  int maxVelocity = 20;
-  const double degreeGoal = targetDegree;
-  bool goalMet = false;
-  int targetVelocity = 0;
-  int leftTarget = 0;
-  int rightTarget = 0;
-  double currentPosition = 0;
-  double error = 0;
-  double previous_error = degreeGoal;
-  double kP = 1;
-  double kI = 0.001;
-  double kD = 0.01;
-  double integral = 0;
-  double derivative = 0;
-  if(targetDegree<0){maxVelocity *= -1;}
 
-  while(!goalMet){
-    currentPosition = mainPosition.angle*180/M_PI;
-    error = degreeGoal - currentPosition;
-    printf("%f\r\n",currentPosition);
-    if (std::abs(error) < 1000){
-      integral += error;
-    }
-
-    derivative = error - previous_error;
-    previous_error = error;
-
-    targetVelocity = kP*error + kI*integral + kD*derivative;
-
-    if (std::abs(targetVelocity) > std::abs(maxVelocity)){
-      targetVelocity = maxVelocity;
-    }
-
-
-      leftTarget = targetVelocity;
-      rightTarget = -1*targetVelocity;
-
-
-    slewRateControl(&left_wheel, leftTarget, DEFAULTSLEWRATEINCREMENT);
-    slewRateControl(&left_chain, leftTarget, DEFAULTSLEWRATEINCREMENT);
-    slewRateControl(&right_wheel, rightTarget, DEFAULTSLEWRATEINCREMENT);
-    slewRateControl(&right_chain, rightTarget, DEFAULTSLEWRATEINCREMENT);
-
-    if (std::abs(error) < 6){
-      goalMet = true;
-    }
-
-    pros::delay(10);
-  }
-  brakeMotors();
-}
 
 void lift_task(void* param){
 
@@ -183,7 +132,7 @@ void tilter_task(void* param){
     tilter.move_velocity(-200);
     } else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_X)){
     } else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)){
-            tilter_PID(325,82,(double)0.04,0);
+            tilter_PID(330,80,(double)0.05,0);
     }
     else{
     tilter.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
@@ -284,8 +233,8 @@ void opcontrol() {
         intake1.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
         intake2.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
       } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)&& !master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) && !master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
-        intake1.move_velocity(100);
-        intake2.move_velocity(-100);
+        intake1.move_velocity(75);
+        intake2.move_velocity(-75);
         intake1.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
         intake2.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
       } else {

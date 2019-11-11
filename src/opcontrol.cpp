@@ -132,7 +132,7 @@ void tilter_task(void* param){
     tilter.move_velocity(-200);
     } else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_X)){
     } else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)){
-            tilter_PID(325,82,(double)0.04,0);
+            tilter_PID(330,80,(double)0.05,0);
     }
     else{
     tilter.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
@@ -233,8 +233,8 @@ void opcontrol() {
         intake1.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
         intake2.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
       } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)&& !master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) && !master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
-        intake1.move_velocity(100);
-        intake2.move_velocity(-100);
+        intake1.move_velocity(75);
+        intake2.move_velocity(-75);
         intake1.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
         intake2.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
       } else {
