@@ -320,8 +320,8 @@ void move_straight_rel_test(double xCoord, int maxVel, int multi){
 
 void turn_PID(float targetDegree){
   leftenc.reset();
-  float turn_constant = 2.6;
-  int maxVelocity = 80;
+  float turn_constant = 2.4;
+  int maxVelocity = 70;
   const double degreeGoal = targetDegree*turn_constant;
   bool goalMet = false;
   int targetVelocity = 0;
@@ -330,8 +330,8 @@ void turn_PID(float targetDegree){
   double currentPosition = 0;
   double error = 0;
   double previous_error = degreeGoal;
-  double kP = 0.4;
-  double kI = 0.003;
+  double kP = 0.78;
+  double kI = 0.002;
   double kD = 0.001;
   double integral = 0;
   double derivative = 0;
@@ -392,7 +392,21 @@ void unBrakeMotors(){
   left_chain.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
   right_chain.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 }
+void move_align(float targetDistance, int velocity){
+   const double degreeGoal = (targetDistance/(2*2*M_PI))*TICKS_PER_ROTATION;
+   left_wheel.tare_position();
+   if (targetDistance < 0){
+     velocity *= -1;
+   }
+   left_wheel.move_velocity(velocity);
+   left_chain.move_velocity(velocity);
+   right_wheel.move_velocity(velocity);
+   right_chain.move_velocity(velocity);
 
+  while (std::abs(left_wheel.get_position()) < degreeGoal) {
+    pros::delay(5);
+  }
+}
 void deploy(){
   tilter_PID(85,100,(double)0.2,0);
 

@@ -167,7 +167,7 @@ static lv_res_t btn_click_action_screen(lv_obj_t * btn) //handles screen changes
       if (screenLoad[0] == 0){ //if page hasn't been previously loaded
 
         redAutonButtons[0] = createBtn(redScr,0,0,200,60,10, "RED UNPROC"); //auton selection buttons
-        redAutonButtons[1] = createBtn(redScr,0,0,200,60,11, "RED 2");
+        redAutonButtons[1] = createBtn(redScr,0,0,200,60,11, "RED PROC");
         redAutonButtons[2] = createBtn(redScr,0,0,200,60,12, "RED 3");
         redAutonButtons[3] = createBtn(redScr,0,0,200,60,13, "RED 4");
 
@@ -189,8 +189,8 @@ static lv_res_t btn_click_action_screen(lv_obj_t * btn) //handles screen changes
 
         if (screenLoad[1] == 0){
 
-          blueAutonButtons[0] = createBtn(blueScr,0,0,200,60,20, "BLUE 1");
-          blueAutonButtons[1] = createBtn(blueScr,0,0,200,60,21, "BLUE 2");
+          blueAutonButtons[0] = createBtn(blueScr,0,0,200,60,20, "BLUE UNPROC");
+          blueAutonButtons[1] = createBtn(blueScr,0,0,200,60,21, "BLUE PROC");
           blueAutonButtons[2] = createBtn(blueScr,0,0,200,60,22, "BLUE 3");
           blueAutonButtons[3] = createBtn(blueScr,0,0,200,60,23, "BLUE 4");
 
@@ -214,7 +214,7 @@ static lv_res_t btn_click_action_screen(lv_obj_t * btn) //handles screen changes
 
         if (screenLoad[2] == 0){
 
-          skillsAutonButtons[0] = createBtn(skillsScr,0,0,200,60,30, "SKILLS 1");
+          skillsAutonButtons[0] = createBtn(skillsScr,0,0,200,60,30, "MAIN SKILLS");
           skillsAutonButtons[1] = createBtn(skillsScr,0,0,200,60,31, "SKILLS 2");
           skillsAutonButtons[2] = createBtn(skillsScr,0,0,200,60,32, "SKILLS 3");
           skillsAutonButtons[3] = createBtn(skillsScr,0,0,200,60,33, "SKILLS 4");

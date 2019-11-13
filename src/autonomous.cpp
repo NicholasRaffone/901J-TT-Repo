@@ -255,8 +255,11 @@ void intake_task(void* param){
   intake1.move_velocity(0);
   intake2.move_velocity(0);
 }
+void deploy_task(void* param){
+  move_align(-6.5,80);
+}
 
-void test2(){
+void blue_unproc(){
   //std::string text("wheelTrack");
   //pros::Task main_pos(position_task,&text);
   /**profileController.generatePath({
@@ -286,7 +289,7 @@ void test2(){
   deploy();
   unBrakeMotors();
   tilter.move_velocity(-30);
-  move_straight_rel_test(44, 100, 1);
+  move_straight_rel_test(44, 110, 1);
   tilter.move_velocity(0);
   intake1.move_velocity(-100);
   intake2.move_velocity(100);
@@ -297,7 +300,7 @@ void test2(){
   intake2.move_velocity(0);
   std::string texttwo("intake");
   pros::Task task(intake_task,&texttwo);
-  move_straight_rel_test(28, 110, 0);
+  move_straight_rel_test(28, 150, 0);
   intake1.move_velocity(100);
   intake2.move_velocity(-100);
   pros::delay(150);
@@ -317,16 +320,17 @@ void test(){
   right_wheel.move_velocity(200);
   pros::delay(500);
 }
-void red_unproc(){
+void skills_auton(){
   profileController.generatePath({
     Point{0_ft, 0_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
-    Point{1.8_ft, 2_ft, -65_deg}}, // The next point in the profile, 3 feet forward
+    Point{2_ft, -2_ft, 65_deg}}, // The next point in the profile, 3 feet forward
     "A" // Profile name
   );
   //turn_PID(90);
   //turn_PID(-90);
-
-  brakeMotors();
+  move_align(4,80);
+  std::string text("deploy");
+  pros::Task task(deploy_task,&text);
   deploy();
   unBrakeMotors();
   tilter.move_velocity(-30);
@@ -340,8 +344,53 @@ void red_unproc(){
   intake1.move_velocity(0);
   intake2.move_velocity(0);
   std::string texttwo("intake");
+  pros::Task task3(intake_task,&texttwo);
+  move_straight_rel_test(28, 100, 0);
+  intake1.move_velocity(100);
+  intake2.move_velocity(-100);
+  pros::delay(200);
+  intake1.move_velocity(0);
+  intake2.move_velocity(0);
+
+    tilter_PID(385,70,(double)0.13,0);
+
+    pros::delay(300);
+    move_align(1.5,50);
+    brakeMotors();
+    pros::delay(100);
+    unBrakeMotors();
+
+    move_straight_rel_test(-10, 100, 0);
+    turn_PID(120);
+    move_straight_rel_test(-40, 100, 1);
+
+
+}
+void red_unproc(){
+  profileController.generatePath({
+    Point{0_ft, 0_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
+    Point{1.8_ft, 2_ft, -65_deg}}, // The next point in the profile, 3 feet forward
+    "A" // Profile name
+  );
+  //turn_PID(90);
+  //turn_PID(-90);
+
+  brakeMotors();
+  deploy();
+  unBrakeMotors();
+  tilter.move_velocity(-30);
+  move_straight_rel_test(44, 110, 1);
+  tilter.move_velocity(0);
+  intake1.move_velocity(-100);
+  intake2.move_velocity(100);
+  profileController.setTarget("A",true);
+  profileController.waitUntilSettled();
+
+  intake1.move_velocity(0);
+  intake2.move_velocity(0);
+  std::string texttwo("intake");
   pros::Task task(intake_task,&texttwo);
-  move_straight_rel_test(29.8, 120, 0);
+  move_straight_rel_test(29.8, 150, 0);
   intake1.move_velocity(100);
   intake2.move_velocity(-100);
   pros::delay(150);
@@ -358,21 +407,122 @@ void red_unproc(){
     move_straight_rel_test(-10, 100, 0);
 }
 
+void blue_proc(){
+  profileController.generatePath({
+    Point{0_ft, 0_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
+    Point{0.8_ft, 2.5_ft, -90_deg}}, // The next point in the profile, 3 feet forward
+    "A" // Profile name
+  );
+  //turn_PID(90);
+  //turn_PID(-90);
 
+  move_align(4,80);
+
+  std::string text("deploy");
+  pros::Task task(deploy_task,&text);
+  deploy();
+
+
+  unBrakeMotors();
+  tilter.move_velocity(-30);
+  move_straight_rel_test(34, 120, 1);
+  tilter.move_velocity(0);
+  intake1.move_velocity(-100);
+  intake2.move_velocity(100);
+  //profileController.setTarget("A",true);
+  //profileController.waitUntilSettled();
+  move_straight_rel_test(-30, 180, 1);
+  pros::delay(200);
+  turn_PID(91);
+  pros::delay(200);
+  intake1.move_velocity(0);
+  intake2.move_velocity(0);
+  std::string texttwo("intake");
+  pros::Task task2(intake_task,&texttwo);
+  move_straight_rel_test(20, 150, 0);
+  intake1.move_velocity(100);
+  intake2.move_velocity(-100);
+  pros::delay(150);
+  intake1.move_velocity(0);
+  intake2.move_velocity(0);
+
+    tilter_PID(390,100,(double)0.3,0);
+
+    pros::delay(50);
+    move_align(1.5,50);
+    //move_align(1.5,-50);
+
+    brakeMotors();
+    pros::delay(100);
+    unBrakeMotors();
+
+    move_straight_rel_test(-10, 100, 0);
+}
+void red_proc(){
+  profileController.generatePath({
+    Point{0_ft, 0_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
+    Point{0.8_ft, 2.5_ft, -90_deg}}, // The next point in the profile, 3 feet forward
+    "A" // Profile name
+  );
+  //turn_PID(90);
+  //turn_PID(-90);
+
+  move_align(4,80);
+
+  std::string text("deploy");
+  pros::Task task4(deploy_task,&text);
+  deploy();
+
+
+  unBrakeMotors();
+  tilter.move_velocity(-30);
+  move_straight_rel_test(34, 120, 1);
+  tilter.move_velocity(0);
+  intake1.move_velocity(-100);
+  intake2.move_velocity(100);
+  //profileController.setTarget("A",true);
+  //profileController.waitUntilSettled();
+  move_straight_rel_test(-30, 180, 1);
+  pros::delay(200);
+  turn_PID(-91);
+  pros::delay(200);
+  intake1.move_velocity(0);
+  intake2.move_velocity(0);
+  std::string texttwo("intake");
+  pros::Task task2(intake_task,&texttwo);
+  move_straight_rel_test(20, 150, 0);
+  intake1.move_velocity(100);
+  intake2.move_velocity(-100);
+  pros::delay(150);
+  intake1.move_velocity(0);
+  intake2.move_velocity(0);
+
+    tilter_PID(390,100,(double)0.3,0);
+
+    pros::delay(50);
+    move_align(1.5,50);
+    //move_align(1.5,-50);
+
+    brakeMotors();
+    pros::delay(100);
+    unBrakeMotors();
+
+    move_straight_rel_test(-10, 100, 0);
+}
 void autonomous() {
 
 switch(selectedAuton){
   case 10: red_unproc();
     break;
-  case 11: test();
+  case 11: red_proc();
     break;
   case 12: test();
     break;
   case 13: test();
     break;
-  case 20: test();
+  case 20: blue_unproc();
     break;
-  case 21: test();
+  case 21: blue_proc();
     break;
   case 22: test();
     break;
@@ -386,7 +536,7 @@ switch(selectedAuton){
     break;
   case 33: test();
     break;
-  default: test2();
+  default: test();
     break;
 
 }
