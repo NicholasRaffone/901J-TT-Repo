@@ -1,4 +1,4 @@
-#include "main.h"
+ #include "main.h"
 #include "config.hpp"
 #include <math.h>
 #include <vector>
@@ -202,11 +202,10 @@ void curvyboi(){//should be task but idk how
  		pros::delay(10);
    }
  }
+
  using namespace okapi;
 
  TimeUtil chassisUtil = TimeUtilFactory::withSettledUtilParams(50, 5, 250_ms);
-
-
  okapi::MotorGroup group1 ({Motor(17,true,AbstractMotor::gearset::green),Motor(18,false,AbstractMotor::gearset::green)});
  okapi::MotorGroup group2 ({Motor(13,false,AbstractMotor::gearset::green),Motor(15,true,AbstractMotor::gearset::green)});
 
@@ -223,21 +222,9 @@ void curvyboi(){//should be task but idk how
  );
 
  TimeUtil chassisUtil2 = TimeUtilFactory::withSettledUtilParams(50, 5, 100_ms);
- /*
- chassisUtil,
- std::shared_ptr<ThreeEncoderSkidSteerModel>(&myChassis),
- okapi::IterativePosPIDController::Gains{0.1,0.0001,0.001},
- okapi::IterativePosPIDController::Gains{0.1,0.0001,0.001},
- okapi::IterativePosPIDController::Gains{0.1,0.0001,0.001},
- AbstractMotor::gearset::green,
- scales
- std::unique_ptr<okapi::IterativePosPIDController>
- */
  auto bruh = new IterativePosPIDController(0.01, 0.01, 0.01, 0,
                            chassisUtil);
  std::unique_ptr<Filter> iderivativeFilter = std::make_unique<PassthroughFilter>();
-
-
 
  auto profileController = AsyncControllerFactory::motionProfile(
    0.5,  // Maximum linear velocity of the Chassis in m/s
