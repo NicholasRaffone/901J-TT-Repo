@@ -310,7 +310,7 @@ void test(){
 void skills_auton(){
   profileController.generatePath({
     Point{0_ft, 0_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
-    Point{2_ft, -2_ft, 65_deg}}, // The next point in the profile, 3 feet forward
+    Point{2_ft, -2.2_ft, 65_deg}}, // The next point in the profile, 3 feet forward
     "A" // Profile name
   );
   //turn_PID(90);
@@ -321,7 +321,7 @@ void skills_auton(){
   deploy();
   unBrakeMotors();
   tilter.move_velocity(-30);
-  move_straight_rel_test(44, 100, 1);
+  move_straight_rel_test(46, 100, 1);
   tilter.move_velocity(0);
   intake1.move_velocity(-100);
   intake2.move_velocity(100);
@@ -332,7 +332,7 @@ void skills_auton(){
   intake2.move_velocity(0);
   std::string texttwo("intake");
   pros::Task task3(intake_task,&texttwo);
-  move_straight_rel_test(28, 100, 0);
+  move_straight_rel_test(28.4, 100, 0);
   intake1.move_velocity(100);
   intake2.move_velocity(-100);
   pros::delay(200);
@@ -342,14 +342,19 @@ void skills_auton(){
     tilter_PID(385,70,(double)0.13,0);
 
     pros::delay(300);
-    move_align(1.5,50);
+    move_align(3,30);
     brakeMotors();
     pros::delay(100);
     unBrakeMotors();
 
-    move_straight_rel_test(-10, 100, 0);
-    turn_PID(120);
-    move_straight_rel_test(-40, 100, 1);
+    move_straight_rel_test(-12, 100, 0);
+    tilter.move_velocity(-30);
+    turn_PID(60);
+    tilter.move_velocity(0);
+    move_align(-15,80);
+    move_straight_rel_test(6,100,0);
+    turn_PID(90);
+    move_straight_rel_test(12,100,1);
 
 
 }
@@ -515,7 +520,7 @@ switch(selectedAuton){
     break;
   case 23: test();
     break;
-  case 30: test();
+  case 30: skills_auton();
     break;
   case 31: test();
     break;

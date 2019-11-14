@@ -330,8 +330,8 @@ void turn_PID(float targetDegree){
   double currentPosition = 0;
   double error = 0;
   double previous_error = degreeGoal;
-  double kP = 0.78;
-  double kI = 0.002;
+  double kP = 0.75;
+  double kI = 0.001;
   double kD = 0.001;
   double integral = 0;
   double derivative = 0;
