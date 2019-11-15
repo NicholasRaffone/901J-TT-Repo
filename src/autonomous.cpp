@@ -238,7 +238,7 @@ void curvyboi(){//should be task but idk how
 void intake_task(void* param){
   intake1.move_velocity(100);
   intake2.move_velocity(-100);
-  pros::delay(400);
+  pros::delay(450);
   intake1.move_velocity(0);
   intake2.move_velocity(0);
 }
@@ -287,13 +287,12 @@ void blue_unproc(){
   intake2.move_velocity(0);
   std::string texttwo("intake");
   pros::Task task(intake_task,&texttwo);
-  move_straight_rel_test(28, 150, 0);
-  intake1.move_velocity(100);
-  intake2.move_velocity(-100);
-  pros::delay(150);
+  move_straight_rel_test(28.5, 150, 0);
+  lift.move_velocity(-30);
+  pros::delay(250);
   intake1.move_velocity(0);
   intake2.move_velocity(0);
-
+  lift.move_velocity(0);
     tilter_PID(390,100,(double)0.3,0);
 
     pros::delay(300);
@@ -321,7 +320,7 @@ void skills_auton(){
   deploy();
   unBrakeMotors();
   tilter.move_velocity(-30);
-  move_straight_rel_test(46, 100, 1);
+  move_straight_rel_test(46, 60, 1);
   tilter.move_velocity(0);
   intake1.move_velocity(-100);
   intake2.move_velocity(100);
@@ -332,29 +331,34 @@ void skills_auton(){
   intake2.move_velocity(0);
   std::string texttwo("intake");
   pros::Task task3(intake_task,&texttwo);
-  move_straight_rel_test(28.4, 100, 0);
-  intake1.move_velocity(100);
-  intake2.move_velocity(-100);
+  move_straight_rel_test(29.5, 60, 0);
+
+  lift.move_velocity(-40);
+
   pros::delay(200);
   intake1.move_velocity(0);
   intake2.move_velocity(0);
+    lift.move_velocity(0);
 
-    tilter_PID(385,70,(double)0.13,0);
+    tilter_PID(400,40,(double)0.16,0);
 
     pros::delay(300);
-    move_align(3,30);
+
+    left_wheel.move_velocity(20);
+    left_chain.move_velocity(20);
+    right_wheel.move_velocity(20);
+    right_chain.move_velocity(20);
+    pros::delay(300);
+    left_wheel.move_velocity(0);
+    left_chain.move_velocity(0);
+    right_wheel.move_velocity(0);
+    right_chain.move_velocity(0);
     brakeMotors();
-    pros::delay(100);
+    pros::delay(1000);
     unBrakeMotors();
 
     move_straight_rel_test(-12, 100, 0);
-    tilter.move_velocity(-30);
-    turn_PID(60);
-    tilter.move_velocity(0);
-    move_align(-15,80);
-    move_straight_rel_test(6,100,0);
-    turn_PID(90);
-    move_straight_rel_test(12,100,1);
+
 
 
 }
@@ -383,15 +387,16 @@ void red_unproc(){
   std::string texttwo("intake");
   pros::Task task(intake_task,&texttwo);
   move_straight_rel_test(29.8, 150, 0);
-  intake1.move_velocity(100);
-  intake2.move_velocity(-100);
-  pros::delay(150);
+
+  lift.move_velocity(-30);
+  pros::delay(250);
+  lift.move_velocity(0);
   intake1.move_velocity(0);
   intake2.move_velocity(0);
 
     tilter_PID(390,100,(double)0.3,0);
 
-    pros::delay(300);
+    pros::delay(200);
     brakeMotors();
     pros::delay(100);
     unBrakeMotors();
@@ -528,7 +533,7 @@ switch(selectedAuton){
     break;
   case 33: test();
     break;
-  default: test();
+  default: red_unproc();
     break;
 
 }
