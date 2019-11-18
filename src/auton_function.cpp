@@ -414,7 +414,7 @@ void deploy(){
   lift_PID(-175,90,0,0);
   tilter_PID(20,100,(double)0.2,0);
   pros::delay(200);
-  lift_PID(100,90,0,1);
+  lift_PID(100,90,0,0);
   lift.move_velocity(200);
   pros::delay(800);
   lift.move_velocity(0);
