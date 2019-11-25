@@ -411,8 +411,8 @@ void deploy(){
   tilter_PID(85,100,(double)0.2,0);
 
   printf("bruh");
-  lift_PID(-175,90,0,0);
-  tilter_PID(20,100,(double)0.2,0);
+  lift_PID(-160,90,0,0);
+  tilter_PID(10,100,(double)0.2,0);
   pros::delay(200);
   lift_PID(100,90,0,0);
   lift.move_velocity(200);

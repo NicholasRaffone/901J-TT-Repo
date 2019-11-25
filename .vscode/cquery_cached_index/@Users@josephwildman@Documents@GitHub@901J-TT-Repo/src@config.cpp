@@ -9,8 +9,8 @@ const int LEFT_CHAIN_PORT = 18; //18
 const int RIGHT_CHAIN_PORT = 13; //13
 const int RIGHT_WHEEL_PORT = 15; //15
 const int LIFT_PORT = 8;
-const int INTAKE1 = 11;
-const int INTAKE2 = 19;
+const int INTAKE1 = 5;
+const int INTAKE2 = 10;
 const int TILTERPORT = 7;
 
 const char LENC_TOP_PORT = 'A';

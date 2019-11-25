@@ -105,7 +105,7 @@ void lift_task(void* param){
   if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) && master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
       lift_PID(-340,90,450,0);
   } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)&&master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
-    lift_PID(-280,90,450,0);
+    lift_PID(-308,100,200,0);
   } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)&& master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
       lift.move_velocity(-200);
   } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)&&master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
@@ -148,7 +148,7 @@ void tilter_task(void* param){
 void opcontrol() {
   //std::string text("wheelTrack");
   //pros::Task punchTask(WheelTrack2,&text);
-  deploy();
+
 
   std::string text("tilter");
   std::string texttwo("lift");
