@@ -407,17 +407,27 @@ void move_align(float targetDistance, int velocity){
     pros::delay(5);
   }
 }
+void deploy_task(void* param){
+  lift_PID(-75,90,0,200);
+
+  //tilter_PID(10,100,(double)0.2,0);
+
+  intake1.move_velocity(100);
+  intake2.move_velocity(-100);
+  pros::delay(200);
+  lift.move_velocity(200);
+  pros::delay(500);
+  lift.move_velocity(0);
+  intake1.move_velocity(0);
+  intake2.move_velocity(-0);
+}
 void deploy(){
+  std::string text("deploy");
+  pros::Task task4(deploy_task,&text);
+
   tilter_PID(85,100,(double)0.2,0);
 
-  printf("bruh");
-  lift_PID(-160,90,0,0);
-  tilter_PID(10,100,(double)0.2,0);
-  pros::delay(200);
-  lift_PID(100,90,0,0);
-  lift.move_velocity(200);
-  pros::delay(800);
-  lift.move_velocity(0);
+
 
 
   //lift_PID(500,70,0);
