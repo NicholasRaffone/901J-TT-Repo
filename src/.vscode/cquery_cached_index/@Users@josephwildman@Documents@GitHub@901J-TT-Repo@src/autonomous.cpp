@@ -266,7 +266,7 @@ void blue_unproc(){
   //profileController.waitUntilSettled();
   profileController.generatePath({
     Point{0_ft, 0_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
-    Point{2.2_ft, -2_ft, 70_deg}}, // The next point in the profile, 3 feet forward
+    Point{2.4_ft, -2_ft, 65_deg}}, // The next point in the profile, 3 feet forward
     "A" // Profile name
   );
   //turn_PID(90);
@@ -279,7 +279,7 @@ void blue_unproc(){
   deploy();
   tilter.move_velocity(-30);
   pros::delay(300);
-  move_straight_rel_test(44, 80, 1);
+  move_straight_rel_test(44, 90, 1);
   tilter.move_velocity(0);
   intake1.move_velocity(-100);
   intake2.move_velocity(100);
@@ -290,14 +290,13 @@ void blue_unproc(){
   intake2.move_velocity(0);
   std::string texttwo("intake");
   pros::Task task(intake_task,&texttwo);
-  move_straight_rel_test(28, 170, 0);
+  move_straight_rel_test(28.5, 170, 0);
   lift.move_velocity(-50);
   pros::delay(150);
   intake1.move_velocity(0);
   intake2.move_velocity(0);
   lift.move_velocity(0);
-    tilter_PID(365,50,(double)0.15,0);
-    move_align(1,20);
+    tilter_PID(350,45,(double)0.15,0);
 
 
     brakeMotors();
