@@ -251,8 +251,8 @@
         "upload_options": {
             "compress_bin": true,
             "description": "jaden",
-            "remote_name": "901J comp",
-            "slot": 1
+            "remote_name": "SKILLS",
+            "slot": 2
         }
     }
 }

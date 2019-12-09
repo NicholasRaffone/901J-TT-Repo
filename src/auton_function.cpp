@@ -202,7 +202,7 @@ void tilter_PID(float targetDegree, int maxVelocity, double kp,int delay){
   double error = 0;
   double previous_error = degreeGoal;
   double kP = kp;
-  double kI = 0.003;
+  double kI = 0.001;
   double kD = 0.005;
   double integral = 0;
   double derivative = 0;
@@ -218,7 +218,7 @@ pros::delay(delay);
     currentPosition = tilter.get_position();
     error = degreeGoal - currentPosition;
 
-    if (std::abs(error) < 100){
+    if (std::abs(error) < 80){
       integral += error;
     }
       if (std::abs(error) < 1100){
@@ -320,9 +320,15 @@ void move_straight_rel_test(double xCoord, int maxVel, int multi){
 
 void turn_PID(float targetDegree){
   leftenc.reset();
-  float turn_constant = 2.4;
+  float turn_constant_right = 2.4;
+  float turn_constant_left = 2.42;
   int maxVelocity = 70;
-  const double degreeGoal = targetDegree*turn_constant;
+  double degreeGoal;
+  if (targetDegree > 0){
+    degreeGoal = targetDegree*turn_constant_right;
+  } else {
+    degreeGoal = targetDegree*turn_constant_left;
+  }
   bool goalMet = false;
   int targetVelocity = 0;
   int leftTarget = 0;
@@ -331,7 +337,7 @@ void turn_PID(float targetDegree){
   double error = 0;
   double previous_error = degreeGoal;
   double kP = 0.75;
-  double kI = 0.001;
+  double kI = 0.0005;
   double kD = 0.001;
   double integral = 0;
   double derivative = 0;

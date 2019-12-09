@@ -266,7 +266,7 @@ void blue_unproc(){
   //profileController.waitUntilSettled();
   profileController.generatePath({
     Point{0_ft, 0_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
-    Point{2.2_ft, -2_ft, 70_deg}}, // The next point in the profile, 3 feet forward
+    Point{2.3_ft, -2_ft, 66_deg}}, // The next point in the profile, 3 feet forward
     "A" // Profile name
   );
   //turn_PID(90);
@@ -279,7 +279,7 @@ void blue_unproc(){
   deploy();
   tilter.move_velocity(-30);
   pros::delay(300);
-  move_straight_rel_test(44, 80, 1);
+  move_straight_rel_test(43, 80, 1);
   tilter.move_velocity(0);
   intake1.move_velocity(-100);
   intake2.move_velocity(100);
@@ -314,7 +314,7 @@ void skills_auton(){
 
   profileController.generatePath({
     Point{0_ft, 0_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
-    Point{2.2_ft, -2_ft, 70_deg}}, // The next point in the profile, 3 feet forward
+    Point{2.3_ft, -2_ft, 66_deg}}, // The next point in the profile, 3 feet forward
     "A" // Profile name
   );
   //turn_PID(90);
@@ -327,7 +327,7 @@ void skills_auton(){
   deploy();
   tilter.move_velocity(-30);
   pros::delay(300);
-  move_straight_rel_test(44, 60, 1);
+  move_straight_rel_test(44, 50, 1);
   tilter.move_velocity(0);
   intake1.move_velocity(-100);
   intake2.move_velocity(100);
@@ -338,12 +338,12 @@ void skills_auton(){
   intake2.move_velocity(0);
   std::string texttwo("intake");
   pros::Task task(intake_task,&texttwo);
-  move_straight_rel_test(28.2, 170, 0);
+  move_straight_rel_test(28.2, 150, 0);
 
   intake1.move_velocity(0);
   intake2.move_velocity(0);
   lift.move_velocity(0);
-    tilter_PID(370,40,(double)0.15,0);
+    tilter_PID(370,50,(double)0.15,0);
     move_align(1.5,30);
 
 
@@ -357,7 +357,7 @@ void skills_auton(){
 void red_unproc(){
   profileController.generatePath({
     Point{0_ft, 0_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
-    Point{1.8_ft, 2_ft, -65_deg}}, // The next point in the profile, 3 feet forward
+    Point{2_ft, 2_ft, -65_deg}}, // The next point in the profile, 3 feet forward
     "A" // Profile name
   );
   //turn_PID(90);
@@ -380,7 +380,7 @@ void red_unproc(){
   intake2.move_velocity(0);
   std::string texttwo("intake");
   pros::Task task(intake_task,&texttwo);
-  move_straight_rel_test(29.7, 170, 0);
+  move_straight_rel_test(28.3, 170, 0);
 
   lift.move_velocity(-40);
   pros::delay(150);
@@ -391,7 +391,7 @@ void red_unproc(){
     tilter_PID(365,50,(double)0.15,0);
 
 
-    move_align(1.5,30);
+    move_align(.5,30);
     move_straight_rel_test(-10, 170, 0);
 }
 
@@ -428,7 +428,7 @@ void blue_proc(){
   turn_PID(89);
   std::string texttwo("intake");
   pros::Task task2(intake_task,&texttwo);
-  move_straight_rel_test(22.4, 150, 1);
+  move_straight_rel_test(22.5, 150, 1);
   /*intake1.move_velocity(51);
   intake2.move_velocity(-51);
   pros::delay(500);
@@ -469,7 +469,7 @@ void red_proc(){
   intake2.move_velocity(100);
   //profileController.setTarget("A",true);
   //profileController.waitUntilSettled();
-  move_straight_rel_test(-28, 170, 1);
+  move_straight_rel_test(-29.7, 170, 1);
   pros::delay(200);
   turn_PID(-96);
   pros::delay(200);
@@ -477,7 +477,7 @@ void red_proc(){
   intake2.move_velocity(0);
   std::string texttwo("intake");
   pros::Task task2(intake_task,&texttwo);
-  move_straight_rel_test(22.2, 150, 0);
+  move_straight_rel_test(22.5, 150, 0);
 
   intake1.move_velocity(0);
   intake2.move_velocity(0);
