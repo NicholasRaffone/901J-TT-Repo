@@ -191,7 +191,7 @@ static lv_res_t btn_click_action_screen(lv_obj_t * btn) //handles screen changes
 
           blueAutonButtons[0] = createBtn(blueScr,0,0,200,60,20, "BLUE UNPROC");
           blueAutonButtons[1] = createBtn(blueScr,0,0,200,60,21, "BLUE PROC");
-          blueAutonButtons[2] = createBtn(blueScr,0,0,200,60,22, "BLUE 3");
+          blueAutonButtons[2] = createBtn(blueScr,0,0,200,60,22, "BLUE TEST UNPROC");
           blueAutonButtons[3] = createBtn(blueScr,0,0,200,60,23, "BLUE 4");
 
           for (int i = 0; i < 4; i++){

@@ -488,6 +488,29 @@ void red_proc(){
 
     move_straight_rel_test(-10, 100, 0);
 }
+
+void blue_unproc_test(){
+  profileController.generatePath({
+    Point{0_ft, 0_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
+    Point{-0.8_ft, -3.5_ft, 0_deg}}, // The next point in the profile, 3 feet forward
+    "A" // Profile name
+  );
+  deploy();
+  unBrakeMotors();
+  tilter.move_velocity(-30);
+  move_straight_rel_test(40, 80, 1);
+  tilter.move_velocity(0);
+  intake1.move_velocity(-100);
+  intake2.move_velocity(100);
+  //profileController.setTarget("A",true);
+  //profileController.waitUntilSettled();
+  pros::delay(200);
+  intake1.move_velocity(0);
+  intake2.move_velocity(0);
+  profileController.setTarget("A",true);
+  profileController.waitUntilSettled();
+}
+
 void autonomous() {
 
 switch(selectedAuton){
@@ -503,7 +526,7 @@ switch(selectedAuton){
     break;
   case 21: blue_proc();
     break;
-  case 22: test();
+  case 22: blue_unproc_test();
     break;
   case 23: test();
     break;
