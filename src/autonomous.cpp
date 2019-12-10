@@ -227,9 +227,9 @@ void curvyboi(){//should be task but idk how
  std::unique_ptr<Filter> iderivativeFilter = std::make_unique<PassthroughFilter>();
 
  auto profileController = AsyncControllerFactory::motionProfile(
-   0.5,  // Maximum linear velocity of the Chassis in m/s
-   1.0,  // Maximum linear acceleration of the Chassis in m/s/s
-   4.0, // Maximum linear jerk of the Chassis in m/s/s/s
+   1.0,  // Maximum linear velocity of the Chassis in m/s
+   1.2,  // Maximum linear acceleration of the Chassis in m/s/s
+   5.0, // Maximum linear jerk of the Chassis in m/s/s/s
    std::shared_ptr<ThreeEncoderSkidSteerModel>(&myChassis),
    scales,
  AbstractMotor::gearset::green,
@@ -492,31 +492,34 @@ void red_proc(){
 void blue_unproc_test(){
   profileController.generatePath({
     Point{0_ft, 0_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
-    Point{3.4_ft, 1.7_ft, 0_deg}}, // The next point in the profile, 3 feet forward
+    Point{3.6_ft, 2.3_ft, 0_deg}}, // The next point in the profile, 3 feet forward
     "A" // Profile name
   );
   deploy();
   unBrakeMotors();
   tilter.move_velocity(-30);
-  move_straight_rel_test(40, 90, 1);
+  move_straight_rel_test(42, 115, 1);
   tilter.move_velocity(0);
   intake1.move_velocity(-100);
   intake2.move_velocity(100);
   //profileController.setTarget("A",true);
   //profileController.waitUntilSettled();
-  pros::delay(200);
-  intake1.move_velocity(0);
-  intake2.move_velocity(0);
+
+
   profileController.setTarget("A",true);
   profileController.waitUntilSettled();
-  move_straight_rel_test(40, 90, 1);
-  intake1.move_velocity(-100);
-  intake2.move_velocity(100);
-  //profileController.setTarget("A",true);
-  //profileController.waitUntilSettled();
-  pros::delay(200);
   intake1.move_velocity(0);
   intake2.move_velocity(0);
+  move_straight_rel_test(43, 92, 1);
+  //intake1.move_velocity(-100);
+  //intake2.move_velocity(100);
+  move_straight_rel_test(-30, 150, 1);
+  //profileController.setTarget("A",true);
+  //profileController.waitUntilSettled();
+  //pros::delay(200);
+  //intake1.move_velocity(0);
+  //intake2.move_velocity(0);
+
 }
 
 void autonomous() {
