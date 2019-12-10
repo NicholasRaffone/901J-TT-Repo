@@ -273,7 +273,7 @@ void move_straight_rel_test(double xCoord, int maxVel, int multi){
  double currentPosition = 0;
  double error = 0;
  double previous_error = goal;
- double kP = 0.3;
+ double kP = 0.27;
  double kI = 0.0005;
  double kD = 0.005;
  double integral = 0;

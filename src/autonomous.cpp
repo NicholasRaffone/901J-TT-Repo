@@ -242,6 +242,14 @@ void intake_task(void* param){
   intake1.move_velocity(0);
   intake2.move_velocity(0);
 }
+void intake_task2(void* param){
+  intake1.move_velocity(51);
+  intake2.move_velocity(-51);
+  pros::delay(620);
+  intake1.move_velocity(0);
+  intake2.move_velocity(0);
+  tilter_PID(330,80,(double)0.07,0);
+}
 void deploy_task(void* param){
   move_align(-6.5,80);
 }
@@ -492,7 +500,7 @@ void red_proc(){
 void blue_unproc_test(){
   profileController.generatePath({
     Point{0_ft, 0_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
-    Point{3.6_ft, 2.3_ft, 0_deg}}, // The next point in the profile, 3 feet forward
+    Point{3.6_ft, 3.2_ft, 0_deg}}, // The next point in the profile, 3 feet forward
     "A" // Profile name
   );
   deploy();
@@ -513,7 +521,13 @@ void blue_unproc_test(){
   move_straight_rel_test(43, 92, 1);
   //intake1.move_velocity(-100);
   //intake2.move_velocity(100);
-  move_straight_rel_test(-30, 150, 1);
+  move_straight_rel_test(-24.5, 130, 1);
+  pros::delay(100);
+  turn_PID(-137);
+  std::string texttwo("intake");
+  pros::Task task(intake_task2,&texttwo);
+  move_straight_rel_test(9.75, 90, 0);
+
   //profileController.setTarget("A",true);
   //profileController.waitUntilSettled();
   //pros::delay(200);
