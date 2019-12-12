@@ -254,9 +254,8 @@ intake1.move_velocity(0);
 intake2.move_velocity(0);
 }
 void intake_task2(void* param){
-  tilter_PID(403,80,(double)0.07,0);
-  move_straight_rel_test(0.6, 100, 0);
-  move_straight_rel_test(-5.5, 200, 0);
+  tilter_PID(403,80,(double)0.07,2);
+
 
 }
 void deploy_task(void* param){
@@ -534,7 +533,7 @@ void blue_unproc_test(){
   pros::delay(50);
   std::string textsmth("intake");
   pros::Task task2(turn_task,&textsmth);
-  turn_PID(-140);
+  turn_PID(-143);
   std::string texttwo("intake");
   pros::Task task(intake_task2,&texttwo);
   move_straight_rel_test(9.62, 100, 0);
