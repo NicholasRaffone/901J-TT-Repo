@@ -508,7 +508,7 @@ void red_proc(){
 void blue_unproc_test(){
   profileController.generatePath({
     Point{0_ft, 0_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
-    Point{3.6_ft, 3.25_ft, 0_deg}}, // The next point in the profile, 3 feet forward
+    Point{3.55_ft, 3.28_ft, 0_deg}}, // The next point in the profile, 3 feet forward
     "A" // Profile name
   );
   deploy();
@@ -533,11 +533,19 @@ void blue_unproc_test(){
   pros::delay(50);
   std::string textsmth("intake");
   pros::Task task2(turn_task,&textsmth);
-  turn_PID(-143);
+  turn_PID(-144);
   std::string texttwo("intake");
   pros::Task task(intake_task2,&texttwo);
   move_straight_rel_test(9.62, 100, 0);
-
+  pros::delay(400);
+  left_wheel.move_velocity(30);
+  left_chain.move_velocity(30);
+  right_wheel.move_velocity(30);
+  right_chain.move_velocity(30);
+  pros::delay(400);
+  brakeMotors();
+  unBrakeMotors();
+  move_straight_rel_test(-20.5, 200, 0);
   //pros::delay
   //move_straight_rel_test(-5, 90, 0);
   //profileController.setTarget("A",true);
@@ -575,7 +583,7 @@ switch(selectedAuton){
     break;
   case 33: test();
     break;
-  default: red_unproc();
+  default: blue_unproc_test();
     break;
 
 }

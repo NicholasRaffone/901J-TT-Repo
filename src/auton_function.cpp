@@ -189,8 +189,7 @@ void lift_PID(float targetDegree, int maxVelocity, int delay, int multi)
   }
 }
 void auton_tilt(void* param){
-  move_align(1,30);
-  move_straight_rel_test(-5.5, 200, 0);
+
 }
 void move_straight_rel_test(double xCoord, int maxVel, int multi){
   leftenc.reset();
