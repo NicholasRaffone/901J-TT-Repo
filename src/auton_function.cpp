@@ -224,7 +224,7 @@ void move_straight_rel_test(double xCoord, int maxVel, int multi){
 
  while(!goalMet){
 
-   currentPosition = (leftenc.get()+rightenc.get())/2;
+   currentPosition = (leftenc.get());
    error = target - currentPosition;
 
    if (std::abs(error) < 600){

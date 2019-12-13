@@ -132,7 +132,7 @@ void tilter_task(void* param){
     tilter.move_velocity(-200);
     } else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_X)){
     } else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)){
-            tilter_PID(330,80,(double)0.07,0);
+            tilter_PID(330,80,(double)0.06,0);
     }
     else{
     tilter.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);

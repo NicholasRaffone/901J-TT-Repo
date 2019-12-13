@@ -247,14 +247,15 @@ void intake_task(void* param){
   intake2.move_velocity(0);
 }
 void turn_task(void* param){
-intake1.move_velocity(60);
-intake2.move_velocity(-60);
-pros::delay(650);
+intake1.move_velocity(50);
+intake2.move_velocity(-50);
+pros::delay(700);
 intake1.move_velocity(0);
 intake2.move_velocity(0);
 }
 void intake_task2(void* param){
-  tilter_PID(403,80,(double)0.07,2);
+  pros::delay(100);
+  tilter_PID(403,80,(double)0.07,0);
 
 
 }
@@ -508,7 +509,7 @@ void red_proc(){
 void blue_unproc_test(){
   profileController.generatePath({
     Point{0_ft, 0_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
-    Point{3.55_ft, 3.28_ft, 0_deg}}, // The next point in the profile, 3 feet forward
+    Point{3.55_ft, 3.3_ft, 0_deg}}, // The next point in the profile, 3 feet forward
     "A" // Profile name
   );
   deploy();
@@ -536,13 +537,13 @@ void blue_unproc_test(){
   turn_PID(-144);
   std::string texttwo("intake");
   pros::Task task(intake_task2,&texttwo);
-  move_straight_rel_test(9.62, 100, 0);
+  move_straight_rel_test(9.64, 100, 0);
   pros::delay(400);
-  left_wheel.move_velocity(30);
-  left_chain.move_velocity(30);
-  right_wheel.move_velocity(30);
-  right_chain.move_velocity(30);
-  pros::delay(400);
+  left_wheel.move_velocity(29);
+  left_chain.move_velocity(29);
+  right_wheel.move_velocity(29);
+  right_chain.move_velocity(29);
+  pros::delay(500);
   brakeMotors();
   unBrakeMotors();
   move_straight_rel_test(-20.5, 200, 0);
