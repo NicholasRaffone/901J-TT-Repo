@@ -247,9 +247,9 @@ void intake_task(void* param){
   intake2.move_velocity(0);
 }
 void turn_task(void* param){
-intake1.move_velocity(40);
-intake2.move_velocity(-40);
-pros::delay(750);
+intake1.move_velocity(50);
+intake2.move_velocity(-50);
+pros::delay(700);
 intake1.move_velocity(0);
 intake2.move_velocity(0);
 }
