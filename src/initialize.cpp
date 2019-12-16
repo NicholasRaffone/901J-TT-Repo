@@ -192,7 +192,7 @@ static lv_res_t btn_click_action_screen(lv_obj_t * btn) //handles screen changes
           blueAutonButtons[0] = createBtn(blueScr,0,0,200,60,20, "BLUE UNPROC");
           blueAutonButtons[1] = createBtn(blueScr,0,0,200,60,21, "BLUE PROC");
           blueAutonButtons[2] = createBtn(blueScr,0,0,200,60,22, "BLUE TEST UNPROC");
-          blueAutonButtons[3] = createBtn(blueScr,0,0,200,60,23, "BLUE 4");
+          blueAutonButtons[3] = createBtn(blueScr,0,0,200,60,23, "BLUE TEST PROC");
 
           for (int i = 0; i < 4; i++){
             if (i<2){lv_obj_align(blueAutonButtons[i], NULL, LV_ALIGN_OUT_LEFT_TOP, 210+260*i, 40); }
