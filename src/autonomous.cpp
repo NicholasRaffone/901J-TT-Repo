@@ -249,7 +249,7 @@ void intake_task(void* param){
 void turn_task(void* param){
 intake1.move_velocity(50);
 intake2.move_velocity(-50);
-pros::delay(700);
+pros::delay(800);
 intake1.move_velocity(0);
 intake2.move_velocity(0);
 }
@@ -304,10 +304,10 @@ void blue_unproc(){
   pros::delay(50);
   std::string textsmth("intake");
   pros::Task task2(turn_task,&textsmth);
-  turn_PID(-142.5);
+  turn_PID(-148);
   std::string texttwo("intake");
   pros::Task task(intake_task2,&texttwo);
-  move_straight_rel_test(11.5, 100, 0);
+  move_straight_rel_test(11.92, 100, 0);
   pros::delay(400);
   left_wheel.move_velocity(29);
   left_chain.move_velocity(29);
@@ -339,14 +339,14 @@ void red_unproc_test(){
   tilter.move_velocity(0);
   //intake1.move_velocity(-100);
   //intake2.move_velocity(100);
-  move_straight_rel_test(-25.5, 130, 1);
+  move_straight_rel_test(-25, 130, 1);
   pros::delay(50);
   std::string textsmth("intake");
   pros::Task task2(turn_task,&textsmth);
-  turn_PID(142.5);
+  turn_PID(131.5);
   std::string texttwo("intake");
   pros::Task task(intake_task2,&texttwo);
-  move_straight_rel_test(11.5, 100, 0);
+  move_straight_rel_test(12.3, 100, 0);
   pros::delay(400);
   left_wheel.move_velocity(29);
   left_chain.move_velocity(29);
@@ -527,14 +527,14 @@ void red_proc(){
   pros::delay(200);
   intake1.move_velocity(0);
   intake2.move_velocity(0);
-  std::string texttwo("intake");
-  pros::Task task2(intake_task,&texttwo);
-  move_straight_rel_test(22.5, 150, 0);
+  std::string textsmth("intake");
+  pros::Task task2(turn_task,&textsmth);
+  move_straight_rel_test(22, 150, 0);
 
   intake1.move_velocity(0);
   intake2.move_velocity(0);
 
-    tilter_PID(360,50,(double)0.15,0);
+    tilter_PID(362,50,(double)0.15,0);
 
     move_align(1,30);
 
@@ -603,7 +603,7 @@ void red_proc_test(){
   //profileController.waitUntilSettled();
   //move_straight_rel_test(-30, 180, 1);
   pros::delay(200);
-  turn_PID(-124);
+  turn_PID(-111);
   //std::string textsmth("intake");
   //pros::Task task2(turn_task,&textsmth);
   pros::delay(200);
@@ -611,7 +611,7 @@ void red_proc_test(){
   pros::delay(200);
   std::string textsmth("intake");
   pros::Task task2(turn_task,&textsmth);
-  turn_PID(-10);
+  turn_PID(-4);
   pros::delay(200);
   std::string texttwo("intake");
   pros::Task taskthree(intake_task2,&texttwo);
@@ -633,7 +633,7 @@ void autonomous() {
 switch(selectedAuton){
   case 10: red_unproc_test();
     break;
-  case 11: red_proc_test();
+  case 11: red_proc();
     break;
   case 12: test();
     break;
@@ -655,7 +655,7 @@ switch(selectedAuton){
     break;
   case 33: test();
     break;
-  default: red_unproc_test();
+  default: red_proc();
     break;
 
 }
