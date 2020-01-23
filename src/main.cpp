@@ -85,7 +85,7 @@ void autonomous() {
 	 float l = leftenc.get_value();
 	 float r = leftenc.get_value();
 	 while(true){
-		 if(i%1000==0){
+		 if(i%10000==0){
 			 printf("Left: %f\n", (l-leftenc.get_value()));
 			 printf("Right: %f\n", (r-rightenc.get_value()));
 		 }
@@ -102,12 +102,12 @@ void opcontrol() {
 
 	auto chassis = ChassisControllerBuilder().withMotors(group1, group2) // left motor is 1, right motor is 2 (reversed)
 	    // green gearset, 4 inch wheel diameter, 11.5 inch wheelbase
-	    .withDimensions(AbstractMotor::gearset::green, {{3.25_in, 14.5_in}, imev5GreenTPR})
+	    .withDimensions(AbstractMotor::gearset::green, {{3.25_in, 15_in}, imev5GreenTPR})
 			.withMaxVelocity(80.0)
 	    // left encoder in ADI ports A & B, right encoder in ADI ports C & D (reversed)
-	    .withSensors(ADIEncoder{'A', 'B'}, ADIEncoder{'C', 'D'})
+	    .withSensors(ADIEncoder{'D', 'C'}, ADIEncoder{'G', 'H'})
 	    // specify the tracking wheels diameter (3 in), track (7 in), and TPR (360)
-	    .withOdometry({{2.75_in, 5_in}, quadEncoderTPR}, StateMode::CARTESIAN)
+	    .withOdometry({{2.75_in, 7.204724_in}, quadEncoderTPR}, StateMode::FRAME_TRANSFORMATION)
 	    .buildOdometry();
 
 	// set the state to zero
@@ -115,15 +115,12 @@ void opcontrol() {
 	// turn 45 degrees and drive approximately 1.4 ft
 	//chassis->moveDistance(12_in);
 	//chassis->turnToAngle(90_deg);
-
-	//chassis->moveDistance(12_in);
-	//chassis->turnToAngle(90_deg);
-	//chassis->driveToPoint({4_in, 4_in});
-	//pros::delay(1000);
-	//chassis->driveToPoint({0_in, 12_in});
+	chassis->driveToPoint({4_in, 4_in});
+	pros::delay(1000);
+	//chassis->driveToPoint({4_in, 8_in});
 	//chassis->driveToPoint({0_in, 0_in});
 	// turn approximately 45 degrees to end up at 90 degrees
-	//chassis->turnToAngle(90_deg);
+	chassis->turnToAngle(90_deg);
 	// turn approximately -90 degrees to face {5_ft, 0_ft} which is to the north of the robot
 	//chassis->turnToPoint({5_ft, 0_ft});
 }
