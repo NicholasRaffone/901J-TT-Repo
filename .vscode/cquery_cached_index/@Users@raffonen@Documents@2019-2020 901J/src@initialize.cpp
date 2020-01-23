@@ -131,18 +131,18 @@ static lv_res_t btn_click_auton(lv_obj_t * btn){ //handles auton selection when 
 void debug_task(void * p){
 
     char buffer[100];
-    sprintf(buffer,"Tilter motor: %f",tilter.get_actual_velocity());
+    sprintf(buffer,"X pos: %f",mainPosition.x);
     lv_label_set_text(debugLabel [0], buffer);
     sprintf(buffer,"Ypos: %f",mainPosition.y);
     lv_label_set_text(debugLabel [1], buffer);
     sprintf(buffer,"Angle: %f",mainPosition.angle);
     lv_label_set_text(debugLabel [2], buffer);
-    sprintf(buffer,"l: %f",leftenc.get());
+    /**sprintf(buffer,"l: %f",leftenc.get());
     lv_label_set_text(debugLabel [3], buffer);
     sprintf(buffer,"r: %f",rightenc.get());
     lv_label_set_text(debugLabel [4], buffer);
     sprintf(buffer,"b: %f",backenc.get());
-    lv_label_set_text(debugLabel [5], buffer);
+    lv_label_set_text(debugLabel [5], buffer);**/
 
   /*printf("Xpos: %f\r\n",mainPosition.x);
   printf("Ypos: %f\r\n",mainPosition.y);
@@ -166,8 +166,8 @@ static lv_res_t btn_click_action_screen(lv_obj_t * btn) //handles screen changes
 
       if (screenLoad[0] == 0){ //if page hasn't been previously loaded
 
-        redAutonButtons[0] = createBtn(redScr,0,0,200,60,10, "RED 1"); //auton selection buttons
-        redAutonButtons[1] = createBtn(redScr,0,0,200,60,11, "RED 2");
+        redAutonButtons[0] = createBtn(redScr,0,0,200,60,10, "RED UNPROC"); //auton selection buttons
+        redAutonButtons[1] = createBtn(redScr,0,0,200,60,11, "RED PROC");
         redAutonButtons[2] = createBtn(redScr,0,0,200,60,12, "RED 3");
         redAutonButtons[3] = createBtn(redScr,0,0,200,60,13, "RED 4");
 
@@ -189,10 +189,10 @@ static lv_res_t btn_click_action_screen(lv_obj_t * btn) //handles screen changes
 
         if (screenLoad[1] == 0){
 
-          blueAutonButtons[0] = createBtn(blueScr,0,0,200,60,20, "BLUE 1");
-          blueAutonButtons[1] = createBtn(blueScr,0,0,200,60,21, "BLUE 2");
-          blueAutonButtons[2] = createBtn(blueScr,0,0,200,60,22, "BLUE 3");
-          blueAutonButtons[3] = createBtn(blueScr,0,0,200,60,23, "BLUE 4");
+          blueAutonButtons[0] = createBtn(blueScr,0,0,200,60,20, "BLUE UNPROC");
+          blueAutonButtons[1] = createBtn(blueScr,0,0,200,60,21, "BLUE PROC");
+          blueAutonButtons[2] = createBtn(blueScr,0,0,200,60,22, "BLUE TEST UNPROC");
+          blueAutonButtons[3] = createBtn(blueScr,0,0,200,60,23, "BLUE TEST PROC");
 
           for (int i = 0; i < 4; i++){
             if (i<2){lv_obj_align(blueAutonButtons[i], NULL, LV_ALIGN_OUT_LEFT_TOP, 210+260*i, 40); }
@@ -214,7 +214,7 @@ static lv_res_t btn_click_action_screen(lv_obj_t * btn) //handles screen changes
 
         if (screenLoad[2] == 0){
 
-          skillsAutonButtons[0] = createBtn(skillsScr,0,0,200,60,30, "SKILLS 1");
+          skillsAutonButtons[0] = createBtn(skillsScr,0,0,200,60,30, "MAIN SKILLS");
           skillsAutonButtons[1] = createBtn(skillsScr,0,0,200,60,31, "SKILLS 2");
           skillsAutonButtons[2] = createBtn(skillsScr,0,0,200,60,32, "SKILLS 3");
           skillsAutonButtons[3] = createBtn(skillsScr,0,0,200,60,33, "SKILLS 4");
@@ -263,7 +263,7 @@ static lv_res_t btn_click_action_screen(lv_obj_t * btn) //handles screen changes
     return LV_RES_OK;
 }
 
-void initialize() {/*Create a three buttons, color, side, display auton */
+void initializecopy() {/*Create a three buttons, color, side, display auton */
   leftenc.reset();
   rightenc.reset();
   pros::delay(500);
@@ -340,7 +340,6 @@ void initialize() {/*Create a three buttons, color, side, display auton */
  * the VEX Competition Switch, following either autonomous or opcontrol. When
  * the robot is enabled, this task will exit.
  */
-void disabled() {}
 
 /**
  * Runs after initialize(), and before autonomous when connected to the Field
@@ -351,4 +350,3 @@ void disabled() {}
  * This task will exit when the robot is enabled and autonomous or opcontrol
  * starts.
  */
-void competition_initialize() {}

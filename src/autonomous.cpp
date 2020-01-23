@@ -13,8 +13,27 @@ const float  SPIN_TO_IN_LR = (WHEELDIAM * M_PI / TICKS_PER_ROTATION);
 const float  SPIN_TO_IN_S = (WHEELDIAM * M_PI / TICKS_PER_ROTATION);
 
 //hello im eric
+void bruh() {
+using namespace okapi;
 
+auto chassis = ChassisControllerBuilder().withMotors(1, -2) // left motor is 1, right motor is 2 (reversed)
+    // green gearset, 4 inch wheel diameter, 11.5 inch wheelbase
+    .withDimensions(AbstractMotor::gearset::green, {{4_in, 11.5_in}, imev5GreenTPR})
+    // left encoder in ADI ports A & B, right encoder in ADI ports C & D (reversed)
+    .withSensors(ADIEncoder{'A', 'B'}, ADIEncoder{'C', 'D', true})
+    // specify the tracking wheels diameter (3 in), track (7 in), and TPR (360)
+    .withOdometry({{3_in, 7_in}, quadEncoderTPR}, StateMode::FRAME_TRANSFORMATION)
+    .buildOdometry();
 
+// set the state to zero
+chassis->setState({0_in, 0_in, 0_deg});
+// turn 45 degrees and drive approximately 1.4 ft
+chassis->driveToPoint({1_ft, 1_ft});
+// turn approximately 45 degrees to end up at 90 degrees
+chassis->turnToAngle(90_deg);
+// turn approximately -90 degrees to face {5_ft, 0_ft} which is to the north of the robot
+chassis->turnToPoint({5_ft, 0_ft});
+}
 /*
 namespace WheelTracker{
   float wheelrad = 2.75;
@@ -194,7 +213,7 @@ void curvyboi(){//should be task but idk how
  	backenc.reset();
    while(true){
      trackPos(mainPosition);
- 		if ((int)pros::millis() % 50 == 0){
+ 		/**if ((int)pros::millis() % 50 == 0){
  			printf("Xpos: %f\r\n",mainPosition.x);
  			printf("Ypos: %f\r\n",mainPosition.y);
  			printf("Angle: %f\r\n",mainPosition.angle);
@@ -202,43 +221,12 @@ void curvyboi(){//should be task but idk how
  			printf("r: %f\r\n",rightenc.get());
  			printf("b: %f\r\n",backenc.get());
 
- 		}
+ 		}**/
  		pros::delay(10);
    }
  }
 
- using namespace okapi;
 
- TimeUtil chassisUtil = TimeUtilFactory::withSettledUtilParams(50, 5, 250_ms);
- okapi::MotorGroup group1 ({Motor(17,true,AbstractMotor::gearset::green),Motor(18,false,AbstractMotor::gearset::green)});
- okapi::MotorGroup group2 ({Motor(13,false,AbstractMotor::gearset::green),Motor(15,true,AbstractMotor::gearset::green)});
-
- okapi::ChassisScales scales ({4_in, 14.9606_in});
-
- ThreeEncoderSkidSteerModel myChassis = ChassisModelFactory::create(
-   group1,
-   group2,
-   leftenc,
-   rightenc,
-   backenc,
-   200.0, // 4 inch wheels, 12.5 inch wheelbase width
-   12000.0
- );
-
- TimeUtil chassisUtil2 = TimeUtilFactory::withSettledUtilParams(50, 5, 100_ms);
- auto bruh = new IterativePosPIDController(0.01, 0.01, 0.01, 0,
-                           chassisUtil);
- std::unique_ptr<Filter> iderivativeFilter = std::make_unique<PassthroughFilter>();
-
- auto profileController = AsyncControllerFactory::motionProfile(
-   1.0,  // Maximum linear velocity of the Chassis in m/s
-   1.2,  // Maximum linear acceleration of the Chassis in m/s/s
-   5.0, // Maximum linear jerk of the Chassis in m/s/s/s
-   std::shared_ptr<ThreeEncoderSkidSteerModel>(&myChassis),
-   scales,
- AbstractMotor::gearset::green,
- chassisUtil
- );
 void intake_task(void* param){
   intake1.move_velocity(51);
   intake2.move_velocity(-51);
@@ -281,18 +269,14 @@ void blue_unproc(){
   //profileController.waitUntilSettled();
   //profileController.setTarget("B",true);
   //profileController.waitUntilSettled();
-  profileController.generatePath({
-    Point{0_ft, 0_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
-    Point{2.3_ft, -2_ft, 66_deg}}, // The next point in the profile, 3 feet forward
-    "A" // Profile name
-  );
+
   //turn_PID(90);
   //turn_PID(-90);
 
   move_align(4,80);
 
   std::string text("deploy");
-  pros::Task task3(deploy_task,&text);
+  pros::Task task3(deploy_task,&text,"");
   deploy();
   tilter.move_velocity(-20);
   pros::delay(300);
@@ -303,10 +287,10 @@ void blue_unproc(){
   move_straight_rel_test(-25.5, 130, 1);
   pros::delay(50);
   std::string textsmth("intake");
-  pros::Task task2(turn_task,&textsmth);
+  pros::Task task2(turn_task,&textsmth,"");
   turn_PID(-148);
   std::string texttwo("intake");
-  pros::Task task(intake_task2,&texttwo);
+  pros::Task task(intake_task2,&texttwo,"");
   move_straight_rel_test(11.92, 100, 0);
   pros::delay(400);
   left_wheel.move_velocity(29);
@@ -320,18 +304,14 @@ void blue_unproc(){
 }
 
 void red_unproc_test(){
-  profileController.generatePath({
-    Point{0_ft, 0_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
-    Point{2.3_ft, -2_ft, 66_deg}}, // The next point in the profile, 3 feet forward
-    "A" // Profile name
-  );
+
   //turn_PID(90);
   //turn_PID(-90);
 
   move_align(4,80);
 
   std::string text("deploy");
-  pros::Task task3(deploy_task,&text);
+  pros::Task task3(deploy_task,&text,"");
   deploy();
   tilter.move_velocity(-20);
   pros::delay(300);
@@ -342,10 +322,10 @@ void red_unproc_test(){
   move_straight_rel_test(-25, 130, 1);
   pros::delay(50);
   std::string textsmth("intake");
-  pros::Task task2(turn_task,&textsmth);
+  pros::Task task2(turn_task,&textsmth,"");
   turn_PID(131.5);
   std::string texttwo("intake");
-  pros::Task task(intake_task2,&texttwo);
+  pros::Task task(intake_task2,&texttwo,"");
   move_straight_rel_test(12.3, 100, 0);
   pros::delay(400);
   left_wheel.move_velocity(29);
@@ -364,18 +344,14 @@ void test(){
 void skills_auton(){
 
 
-  profileController.generatePath({
-    Point{0_ft, 0_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
-    Point{2.3_ft, -2_ft, 66_deg}}, // The next point in the profile, 3 feet forward
-    "A" // Profile name
-  );
+
   //turn_PID(90);
   //turn_PID(-90);
 
   move_align(4,80);
 
   std::string text("deploy");
-  pros::Task task3(deploy_task,&text);
+  pros::Task task3(deploy_task,&text,"");
   deploy();
   tilter.move_velocity(-30);
   pros::delay(300);
@@ -383,13 +359,11 @@ void skills_auton(){
   tilter.move_velocity(0);
   intake1.move_velocity(-100);
   intake2.move_velocity(100);
-  profileController.setTarget("A",true);
-  profileController.waitUntilSettled();
 
   intake1.move_velocity(0);
   intake2.move_velocity(0);
   std::string texttwo("intake");
-  pros::Task task(intake_task,&texttwo);
+  pros::Task task(intake_task,&texttwo,"");
   move_straight_rel_test(28.2, 150, 0);
 
   intake1.move_velocity(0);
@@ -407,31 +381,26 @@ void skills_auton(){
 
 }
 void red_unproc(){
-  profileController.generatePath({
-    Point{0_ft, 0_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
-    Point{2_ft, 2_ft, -65_deg}}, // The next point in the profile, 3 feet forward
-    "A" // Profile name
-  );
+
   //turn_PID(90);
   //turn_PID(-90);
 
   move_align(4,80);
 
   std::string text("deploy");
-  pros::Task task4(deploy_task,&text);
+  pros::Task task4(deploy_task,&text,"");
   deploy();
   tilter.move_velocity(-30);
   move_straight_rel_test(44, 80, 1);
   tilter.move_velocity(0);
   intake1.move_velocity(-100);
   intake2.move_velocity(100);
-  profileController.setTarget("A",true);
-  profileController.waitUntilSettled();
+
 
   intake1.move_velocity(0);
   intake2.move_velocity(0);
   std::string texttwo("intake");
-  pros::Task task(intake_task,&texttwo);
+  pros::Task task(intake_task,&texttwo,"");
   move_straight_rel_test(28.3, 170, 0);
 
   lift.move_velocity(-40);
@@ -448,18 +417,14 @@ void red_unproc(){
 }
 
 void blue_proc(){
-  profileController.generatePath({
-    Point{0_ft, 0_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
-    Point{0.8_ft, 2.5_ft, -90_deg}}, // The next point in the profile, 3 feet forward
-    "A" // Profile name
-  );
+
   //turn_PID(90);
   //turn_PID(-90);
 
   move_align(4,80);
 
   std::string text("deploy");
-  pros::Task task(deploy_task,&text);
+  pros::Task task(deploy_task,&text,"");
   deploy();
 
 
@@ -479,7 +444,7 @@ void blue_proc(){
   intake2.move_velocity(0);
   turn_PID(89);
   std::string texttwo("intake");
-  pros::Task task2(intake_task,&texttwo);
+  pros::Task task2(intake_task,&texttwo,"");
   move_straight_rel_test(22.5, 150, 1);
   /*intake1.move_velocity(51);
   intake2.move_velocity(-51);
@@ -498,18 +463,14 @@ void blue_proc(){
     move_straight_rel_test(-10, 150, 0);
 }
 void red_proc(){
-  profileController.generatePath({
-    Point{0_ft, 0_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
-    Point{0.8_ft, 2.5_ft, -90_deg}}, // The next point in the profile, 3 feet forward
-    "A" // Profile name
-  );
+
   //turn_PID(90);
   //turn_PID(-90);
 
   move_align(4,80);
 
   std::string text("deploy");
-  pros::Task task4(deploy_task,&text);
+  pros::Task task4(deploy_task,&text,"");
   deploy();
 
 
@@ -528,7 +489,7 @@ void red_proc(){
   intake1.move_velocity(0);
   intake2.move_velocity(0);
   std::string textsmth("intake");
-  pros::Task task2(turn_task,&textsmth);
+  pros::Task task2(turn_task,&textsmth,"");
   move_straight_rel_test(22, 150, 0);
 
   intake1.move_velocity(0);
@@ -546,7 +507,7 @@ void blue_proc_test(){
   move_align(4,80);
 
   std::string text("deploy");
-  pros::Task task(deploy_task,&text);
+  pros::Task task(deploy_task,&text,"");
   deploy();
 
 
@@ -567,11 +528,11 @@ void blue_proc_test(){
   move_straight_rel_test(27, 80, 1);
   pros::delay(200);
   std::string textsmth("intake");
-  pros::Task task2(turn_task,&textsmth);
+  pros::Task task2(turn_task,&textsmth,"");
   turn_PID(10);
   pros::delay(200);
   std::string texttwo("intake");
-  pros::Task taskthree(intake_task2,&texttwo);
+  pros::Task taskthree(intake_task2,&texttwo,"");
   move_straight_rel_test(8, 100, 0);
   pros::delay(400);
   left_wheel.move_velocity(29);
@@ -589,7 +550,7 @@ void red_proc_test(){
   move_align(4,80);
 
   std::string text("deploy");
-  pros::Task task(deploy_task,&text);
+  pros::Task task(deploy_task,&text,"");
   deploy();
 
 
@@ -610,11 +571,11 @@ void red_proc_test(){
   move_straight_rel_test(27, 80, 1);
   pros::delay(200);
   std::string textsmth("intake");
-  pros::Task task2(turn_task,&textsmth);
+  pros::Task task2(turn_task,&textsmth,"");
   turn_PID(-4);
   pros::delay(200);
   std::string texttwo("intake");
-  pros::Task taskthree(intake_task2,&texttwo);
+  pros::Task taskthree(intake_task2,&texttwo,"");
   move_straight_rel_test(8, 100, 0);
   pros::delay(400);
   left_wheel.move_velocity(29);
@@ -628,7 +589,7 @@ void red_proc_test(){
 
 }
 
-void autonomous() {
+void auton() {
 
 switch(selectedAuton){
   case 10: red_unproc_test();

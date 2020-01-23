@@ -145,15 +145,15 @@ void tilter_task(void* param){
 }
 }
 
-void opcontrol() {
+void opcont() {
   //std::string text("wheelTrack");
   //pros::Task punchTask(WheelTrack2,&text);
   //deploy();
 
   std::string text("tilter");
   std::string texttwo("lift");
-  pros::Task task(lift_task,&texttwo);
-  pros::Task task2(tilter_task,&text);
+  pros::Task task(lift_task,&texttwo,"");
+  pros::Task task2(tilter_task,&text,"");
   //___int_least8_t_definedturn_PID(90.0);
   //move_test(12.0);
   /**profileController.generatePath({

@@ -34,9 +34,9 @@ extern pros::Motor tilter;
 extern pros::Controller master;
 extern pros::Motor left_lift;
 extern pros::Motor right_lift;
-extern okapi::ADIEncoder leftenc;
-extern okapi::ADIEncoder rightenc;
-extern okapi::ADIEncoder backenc;
+extern pros::ADIEncoder leftenc;
+extern pros::ADIEncoder rightenc;
+extern pros::ADIEncoder backenc;
 
 extern int selectedAuton;
 

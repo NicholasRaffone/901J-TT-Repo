@@ -137,12 +137,12 @@ void debug_task(void * p){
     lv_label_set_text(debugLabel [1], buffer);
     sprintf(buffer,"Angle: %f",mainPosition.angle);
     lv_label_set_text(debugLabel [2], buffer);
-    sprintf(buffer,"l: %f",leftenc.get());
+    /**sprintf(buffer,"l: %f",leftenc.get());
     lv_label_set_text(debugLabel [3], buffer);
     sprintf(buffer,"r: %f",rightenc.get());
     lv_label_set_text(debugLabel [4], buffer);
     sprintf(buffer,"b: %f",backenc.get());
-    lv_label_set_text(debugLabel [5], buffer);
+    lv_label_set_text(debugLabel [5], buffer);**/
 
   /*printf("Xpos: %f\r\n",mainPosition.x);
   printf("Ypos: %f\r\n",mainPosition.y);
@@ -263,7 +263,7 @@ static lv_res_t btn_click_action_screen(lv_obj_t * btn) //handles screen changes
     return LV_RES_OK;
 }
 
-void initialize() {/*Create a three buttons, color, side, display auton */
+void initializecopy() {/*Create a three buttons, color, side, display auton */
   leftenc.reset();
   rightenc.reset();
   pros::delay(500);
@@ -340,7 +340,6 @@ void initialize() {/*Create a three buttons, color, side, display auton */
  * the VEX Competition Switch, following either autonomous or opcontrol. When
  * the robot is enabled, this task will exit.
  */
-void disabled() {}
 
 /**
  * Runs after initialize(), and before autonomous when connected to the Field
@@ -351,4 +350,3 @@ void disabled() {}
  * This task will exit when the robot is enabled and autonomous or opcontrol
  * starts.
  */
-void competition_initialize() {}
