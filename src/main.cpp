@@ -83,7 +83,7 @@ void autonomous() {
  void enconder_task(void* param){
 	 int i = 0;
 	 float l = leftenc.get_value();
-	 float r = leftenc.get_value();
+	 float r = rightenc.get_value();
 	 while(true){
 		 if(i%10000==0){
 			 printf("Left: %f\n", (l-leftenc.get_value()));
@@ -97,30 +97,45 @@ void opcontrol() {
 	pros::Task task(enconder_task,&texttwo,"");
 	using namespace okapi;
 	okapi::MotorGroup group1 ({Motor(1,false,AbstractMotor::gearset::green,AbstractMotor::encoderUnits::degrees),Motor(11,false,AbstractMotor::gearset::green,AbstractMotor::encoderUnits::degrees)});
- okapi::MotorGroup group2 ({Motor(10,true,AbstractMotor::gearset::green,AbstractMotor::encoderUnits::degrees),Motor(20,true,AbstractMotor::gearset::green,AbstractMotor::encoderUnits::degrees)});
+ okapi::MotorGroup group2 ({Motor(10,false,AbstractMotor::gearset::green,AbstractMotor::encoderUnits::degrees),Motor(20,false,AbstractMotor::gearset::green,AbstractMotor::encoderUnits::degrees)});
 
 
 	auto chassis = ChassisControllerBuilder().withMotors(group1, group2) // left motor is 1, right motor is 2 (reversed)
 	    // green gearset, 4 inch wheel diameter, 11.5 inch wheelbase
 	    .withDimensions(AbstractMotor::gearset::green, {{3.25_in, 15_in}, imev5GreenTPR})
-			.withMaxVelocity(80.0)
+			.withMaxVelocity(150.0)
 	    // left encoder in ADI ports A & B, right encoder in ADI ports C & D (reversed)
-	    .withSensors(ADIEncoder{'D', 'C'}, ADIEncoder{'G', 'H'})
+	    .withSensors(ADIEncoder{'D', 'C'}, ADIEncoder{'F', 'G'})
 	    // specify the tracking wheels diameter (3 in), track (7 in), and TPR (360)
 	    .withOdometry({{2.75_in, 7.204724_in}, quadEncoderTPR}, StateMode::FRAME_TRANSFORMATION)
 	    .buildOdometry();
 
 	// set the state to zero
 	chassis->setState({0_in, 0_in, 0_deg});
+	//chassis->turnToAngle(90_deg);
+	/**while (true) {
+		double power = 200*master.get_analog(ANALOG_LEFT_Y)/127;
+		double turn = 200*master.get_analog(ANALOG_RIGHT_X)/127;
+		int left = (int)(pow(((power + turn)/200.0),2.0)*200.0);
+		int right = (int) (pow(((power - turn)/200.0),2.0)*200.0);
+		if(power+turn < 0){
+			left *=-1;
+		}
+		if(power - turn < 0){
+			right*=-1;
+		}
+		left_wheel.move_velocity(left);
+		left_chain.move_velocity(left);
+		right_wheel.move_velocity(right);
+		right_chain.move_velocity(right);}**/
 	// turn 45 degrees and drive approximately 1.4 ft
 	//chassis->moveDistance(12_in);
 	//chassis->turnToAngle(90_deg);
-	chassis->driveToPoint({4_in, 4_in});
-	pros::delay(1000);
+	//chassis->driveToPoint({4_in, 4_in});
 	//chassis->driveToPoint({4_in, 8_in});
 	//chassis->driveToPoint({0_in, 0_in});
 	// turn approximately 45 degrees to end up at 90 degrees
-	chassis->turnToAngle(90_deg);
+	//chassis->turnToAngle(90_deg);
 	// turn approximately -90 degrees to face {5_ft, 0_ft} which is to the north of the robot
-	//chassis->turnToPoint({5_ft, 0_ft});
+	chassis->turnToPoint({0_ft, 5_ft});
 }
