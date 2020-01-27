@@ -15,9 +15,9 @@ const int TILTERPORT = 7;
 
 const char LENC_TOP_PORT = 'D';
 const char LENC_BOT_PORT = 'C';
-const char RENC_TOP_PORT = 'G';
-const char RENC_BOT_PORT = 'H';
-const char BENC_TOP_PORT = 'E';
+const char RENC_TOP_PORT = 'F';
+const char RENC_BOT_PORT = 'E';
+const char BENC_TOP_PORT = 'P';
 const char BENC_BOT_PORT = 'O';
 
 pros::Motor left_wheel (LEFT_WHEEL_PORT, pros::E_MOTOR_GEARSET_18,false);//17

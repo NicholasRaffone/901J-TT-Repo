@@ -86,8 +86,8 @@ void autonomous() {
 	 float r = rightenc.get_value();
 	 while(true){
 		 if(i%10000==0){
-			 printf("Left: %f\n", (l-leftenc.get_value()));
-			 printf("Right: %f\n", (r-rightenc.get_value()));
+			 printf("Left: %f\n", (leftenc.get_value()-l));
+			 printf("Right: %f\n", (rightenc.get_value()-r));
 		 }
 		 i++;
 	 }
@@ -105,9 +105,9 @@ void opcontrol() {
 	    .withDimensions(AbstractMotor::gearset::green, {{3.25_in, 15_in}, imev5GreenTPR})
 			.withMaxVelocity(150.0)
 	    // left encoder in ADI ports A & B, right encoder in ADI ports C & D (reversed)
-	    .withSensors(ADIEncoder{'D', 'C'}, ADIEncoder{'F', 'G'})
+	    .withSensors(ADIEncoder{'D', 'C'}, ADIEncoder{'F', 'E'})
 	    // specify the tracking wheels diameter (3 in), track (7 in), and TPR (360)
-	    .withOdometry({{2.75_in, 7.204724_in}, quadEncoderTPR}, StateMode::FRAME_TRANSFORMATION)
+	    .withOdometry({{3_in, 7_in}, quadEncoderTPR}, StateMode::FRAME_TRANSFORMATION)
 	    .buildOdometry();
 
 	// set the state to zero
