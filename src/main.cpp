@@ -96,20 +96,39 @@ void opcontrol() {
 	std::string texttwo("enc");
 	pros::Task task(enconder_task,&texttwo,"");
 	using namespace okapi;
+	//okapi::AbstractTimer timer({100_ms});
+	//okapi::TimeUtil chassisUtil(std::unique_ptr<AbstractTimer>({100_ms}));
 	okapi::MotorGroup group1 ({Motor(1,false,AbstractMotor::gearset::green,AbstractMotor::encoderUnits::degrees),Motor(11,false,AbstractMotor::gearset::green,AbstractMotor::encoderUnits::degrees)});
  okapi::MotorGroup group2 ({Motor(10,false,AbstractMotor::gearset::green,AbstractMotor::encoderUnits::degrees),Motor(20,false,AbstractMotor::gearset::green,AbstractMotor::encoderUnits::degrees)});
-
+okapi::ADIEncoder leftencoder ({'D', 'C'});
+	okapi::ADIEncoder rightencoder ({'F', 'E',true});
 
 	auto chassis = ChassisControllerBuilder().withMotors(group1, group2) // left motor is 1, right motor is 2 (reversed)
 	    // green gearset, 4 inch wheel diameter, 11.5 inch wheelbase
 	    .withDimensions(AbstractMotor::gearset::green, {{3.25_in, 13.85_in}, imev5GreenTPR})
 			.withMaxVelocity(150.0)
 	    // left encoder in ADI ports A & B, right encoder in ADI ports C & D (reversed)
-	    .withSensors(ADIEncoder{'D', 'C'}, ADIEncoder{'F', 'E',true})
+	    .withSensors(leftencoder, rightencoder)
 	    // specify the tracking wheels diameter (3 in), track (7 in), and TPR (360)
 	    .withOdometry({{2.75_in, 14.4_in}, quadEncoderTPR}, StateMode::FRAME_TRANSFORMATION)
 			//.withOdometry()
 	    .buildOdometry();
+
+	auto bruh = SkidSteerModel(
+		std::shared_ptr<MotorGroup>(&group1),
+		std::shared_ptr<MotorGroup>(&group2),
+		std::shared_ptr<ADIEncoder>(&leftencoder),
+		std::shared_ptr<ADIEncoder>(&rightencoder),
+		200.0,
+		127.0);
+
+	/**auto profileController = AsyncMotionProfileController(
+		const TimeUtil& itimeUtil,
+		const PathfinderLimits& ilimits,
+		std::shared_ptr<SkidSteerModel>(&bruh),
+		{{3.25_in, 13.85_in}, imev5GreenTPR},
+		{AbstractMotor::gearset::green,1},
+	);**/
 
 	// set the state to zero
 	chassis->setState({0_in, 0_in, 0_deg});
