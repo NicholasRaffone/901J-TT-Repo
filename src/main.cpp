@@ -102,12 +102,13 @@ void opcontrol() {
 
 	auto chassis = ChassisControllerBuilder().withMotors(group1, group2) // left motor is 1, right motor is 2 (reversed)
 	    // green gearset, 4 inch wheel diameter, 11.5 inch wheelbase
-	    .withDimensions(AbstractMotor::gearset::green, {{3.25_in, 15_in}, imev5GreenTPR})
+	    .withDimensions(AbstractMotor::gearset::green, {{3.25_in, 13.85_in}, imev5GreenTPR})
 			.withMaxVelocity(150.0)
 	    // left encoder in ADI ports A & B, right encoder in ADI ports C & D (reversed)
-	    .withSensors(ADIEncoder{'D', 'C'}, ADIEncoder{'F', 'E'})
+	    .withSensors(ADIEncoder{'D', 'C'}, ADIEncoder{'F', 'E',true})
 	    // specify the tracking wheels diameter (3 in), track (7 in), and TPR (360)
-	    .withOdometry({{3_in, 7_in}, quadEncoderTPR}, StateMode::FRAME_TRANSFORMATION)
+	    .withOdometry({{2.75_in, 14.4_in}, quadEncoderTPR}, StateMode::FRAME_TRANSFORMATION)
+			//.withOdometry()
 	    .buildOdometry();
 
 	// set the state to zero
@@ -130,12 +131,15 @@ void opcontrol() {
 		right_chain.move_velocity(right);}**/
 	// turn 45 degrees and drive approximately 1.4 ft
 	//chassis->moveDistance(12_in);
-	//chassis->turnToAngle(90_deg);
+	chassis->turnAngle(90_deg);
+	chassis->turnAngle(-45_deg);
+
 	//chassis->driveToPoint({4_in, 4_in});
 	//chassis->driveToPoint({4_in, 8_in});
 	//chassis->driveToPoint({0_in, 0_in});
 	// turn approximately 45 degrees to end up at 90 degrees
 	//chassis->turnToAngle(90_deg);
 	// turn approximately -90 degrees to face {5_ft, 0_ft} which is to the north of the robot
-	chassis->turnToPoint({0_ft, 5_ft});
+	//chassis->turnToPoint({0_ft, 5_ft});
+
 }
