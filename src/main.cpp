@@ -5,21 +5,6 @@
 #include "auton_function.h"
 #include "okapi/api.hpp"
 
-/**
- * A callback function for LLEMU's center button.
- *
- * When this callback is fired, it will toggle line 2 of the LCD text between
- * "I was pressed!" and nothing.
- */
-void on_center_button() {
-	static bool pressed = false;
-	pressed = !pressed;
-	if (pressed) {
-		pros::lcd::set_text(2, "I was pressed!");
-	} else {
-		pros::lcd::clear_line(2);
-	}
-}
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -28,10 +13,6 @@ void on_center_button() {
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-	pros::lcd::initialize();
-	pros::lcd::set_text(1, "Hello PROS User!");
-
-	pros::lcd::register_btn1_cb(on_center_button);
 }
 
 /**
@@ -123,11 +104,11 @@ okapi::ADIEncoder leftencoder ({'D', 'C'});
 			**/
 
 Motor testm1(1);
-Motor testm2(2);
+Motor testm2(10);
 
 SkidSteerModel bruh(
-		std::shared_ptr<Motor>(&testm1),
-		std::shared_ptr<Motor>(&testm2),
+		std::shared_ptr<MotorGroup>(&group1),
+		std::shared_ptr<MotorGroup>(&group2),
 		std::shared_ptr<ADIEncoder>(&leftencoder),
 		std::shared_ptr<ADIEncoder>(&rightencoder),
 		40.0,
@@ -140,15 +121,15 @@ SkidSteerModel bruh(
 
 	okapi::AbstractMotor::GearsetRatioPair pair(AbstractMotor::gearset::green,1);
 
-	/**auto profileController = AsyncMotionProfileControllerBuilder()
+	auto profileController = AsyncMotionProfileControllerBuilder()
 	.withOutput(std::shared_ptr<SkidSteerModel>(&bruh),scales,pair)
 	//.withLimits(limits)
 	.buildMotionProfileController()
-	;**/
+	;
 
-	//okapi::PathfinderPoint a({12_in,12_in,90_deg});
+	okapi::PathfinderPoint a({12_in,12_in,90_deg});
 
-	//profileController->moveTo(std::initializer_list<PathfinderPoint>({a}),false,false);
+	profileController->moveTo(std::initializer_list<PathfinderPoint>({a}));
 
 
 
