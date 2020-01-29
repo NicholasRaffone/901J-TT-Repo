@@ -69,8 +69,8 @@ void autonomous() {
 	 float r = rightencoder.get();
 	 while(true){
 		 if(i%10000==0){
-			 printf("Left: %f\n", (leftencoder.get()-l));
-			 printf("Right: %f\n", (rightencoder.get()-r));
+			 //printf("Left: %f\n", (leftencoder.get()-l));
+			 //printf("Right: %f\n", (rightencoder.get()-r));
 		 }
 		 i++;
 	 }
