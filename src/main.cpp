@@ -81,13 +81,15 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
  void enconder_task(void* param){
+	 okapi::ADIEncoder leftencoder ({'D', 'C'});
+	 	okapi::ADIEncoder rightencoder ({'F', 'E',true});
 	 int i = 0;
-	 float l = leftenc.get_value();
-	 float r = rightenc.get_value();
+	 float l = leftencoder.get();
+	 float r = rightencoder.get();
 	 while(true){
 		 if(i%10000==0){
-			 printf("Left: %f\n", (leftenc.get_value()-l));
-			 printf("Right: %f\n", (rightenc.get_value()-r));
+			 printf("Left: %f\n", (leftencoder.get()-l));
+			 printf("Right: %f\n", (rightencoder.get()-r));
 		 }
 		 i++;
 	 }
@@ -103,7 +105,7 @@ void opcontrol() {
 okapi::ADIEncoder leftencoder ({'D', 'C'});
 	okapi::ADIEncoder rightencoder ({'F', 'E',true});
 
-	auto chassis = ChassisControllerBuilder().withMotors(group1, group2) // left motor is 1, right motor is 2 (reversed)
+	/**auto chassis = ChassisControllerBuilder().withMotors(group1, group2) // left motor is 1, right motor is 2 (reversed)
 	    // green gearset, 4 inch wheel diameter, 11.5 inch wheelbase
 	    .withDimensions(AbstractMotor::gearset::green, {{3.25_in, 13.85_in}, imev5GreenTPR})
 			.withMaxVelocity(150.0)
@@ -114,24 +116,44 @@ okapi::ADIEncoder leftencoder ({'D', 'C'});
 			//.withOdometry()
 	    .buildOdometry();
 
-	auto bruh = SkidSteerModel(
-		std::shared_ptr<MotorGroup>(&group1),
-		std::shared_ptr<MotorGroup>(&group2),
+			okapi::Timer time_moment();
+			okapi::Timer time2_moment();
+			okapi::Rate rate_moment();
+			okapi::SettledUtil settled_moment(std::unique_ptr<AbstractTimer>(&time2_moment));
+			**/
+
+Motor testm1(1);
+Motor testm2(2);
+
+SkidSteerModel bruh(
+		std::shared_ptr<Motor>(&testm1),
+		std::shared_ptr<Motor>(&testm2),
 		std::shared_ptr<ADIEncoder>(&leftencoder),
 		std::shared_ptr<ADIEncoder>(&rightencoder),
-		200.0,
-		127.0);
+		40.0,
+		50.0);
 
-	/**auto profileController = AsyncMotionProfileController(
-		const TimeUtil& itimeUtil,
-		const PathfinderLimits& ilimits,
-		std::shared_ptr<SkidSteerModel>(&bruh),
-		{{3.25_in, 13.85_in}, imev5GreenTPR},
-		{AbstractMotor::gearset::green,1},
-	);**/
+		//max v, a, j- logger pro
+	okapi::PathfinderLimits limits({5.0,5.0,5.0});
+
+	okapi::ChassisScales scales({3.25_in, 13.85_in},imev5GreenTPR);
+
+	okapi::AbstractMotor::GearsetRatioPair pair(AbstractMotor::gearset::green,1);
+
+	/**auto profileController = AsyncMotionProfileControllerBuilder()
+	.withOutput(std::shared_ptr<SkidSteerModel>(&bruh),scales,pair)
+	//.withLimits(limits)
+	.buildMotionProfileController()
+	;**/
+
+	//okapi::PathfinderPoint a({12_in,12_in,90_deg});
+
+	//profileController->moveTo(std::initializer_list<PathfinderPoint>({a}),false,false);
+
+
 
 	// set the state to zero
-	chassis->setState({0_in, 0_in, 0_deg});
+	//chassis->setState({0_in, 0_in, 0_deg});
 	//chassis->turnToAngle(90_deg);
 	/**while (true) {
 		double power = 200*master.get_analog(ANALOG_LEFT_Y)/127;
@@ -150,8 +172,8 @@ okapi::ADIEncoder leftencoder ({'D', 'C'});
 		right_chain.move_velocity(right);}**/
 	// turn 45 degrees and drive approximately 1.4 ft
 	//chassis->moveDistance(12_in);
-	chassis->turnAngle(90_deg);
-	chassis->turnAngle(-45_deg);
+	//chassis->turnAngle(90_deg);
+	//chassis->turnAngle(-45_deg);
 
 	//chassis->driveToPoint({4_in, 4_in});
 	//chassis->driveToPoint({4_in, 8_in});
