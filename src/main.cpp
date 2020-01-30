@@ -89,10 +89,19 @@ okapi::ADIEncoder leftencoder ({'D', 'C'});
   auto rightautoenc = std::make_shared<ADIEncoder>('F', 'E',true);
   auto testm1 = std::make_shared<Motor>(1);
   auto testm2 = std::make_shared<Motor>(11);
-  Motor testm3(10);
-  Motor testm4(20);
-  auto groupleft = std::make_shared<MotorGroup>({testm3,testm4});
-  auto groupright = std::make_shared<MotorGroup>(2);
+  okapi::Motor moto1 (1,false,AbstractMotor::gearset::green,AbstractMotor::encoderUnits::degrees);
+  okapi::Motor moto2(11,false,AbstractMotor::gearset::green,AbstractMotor::encoderUnits::degrees);
+  okapi::Motor moto3(10,false,AbstractMotor::gearset::green,AbstractMotor::encoderUnits::degrees);
+  okapi::Motor moto4(20,false,AbstractMotor::gearset::green,AbstractMotor::encoderUnits::degrees);
+  auto leftmoment = {moto1,moto2};
+  auto rightmoment = {moto3,moto4};
+
+  auto groupleft = std::make_shared<MotorGroup>(leftmoment);
+  auto groupright = std::make_shared<MotorGroup>(rightmoment);
+
+  PathfinderPoint a = {12_in,12_in,90_deg};
+
+  //auto pointA PathfinderPoint(a);
 
   //auto groupleft = std::make_shared<MotorGroup>({testm3,testm4});
 
@@ -136,11 +145,7 @@ auto bruh = std::make_shared<SkidSteerModel>(
 	.buildMotionProfileController()
 	;
 
-
-  //PathfinderPoint pointA = (12_in,12_in,90_deg);
-	//okapi::PathfinderPoint a ({12_in,12_in,90_deg});
-
-	//profileController->moveTo({12_in,12_in,90_deg});
+	//profileController->generatePath({a},"patha");
 
 
 
