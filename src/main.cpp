@@ -87,7 +87,14 @@ okapi::ADIEncoder leftencoder ({'D', 'C'});
 	okapi::ADIEncoder rightencoder ({'F', 'E',true});
   auto leftautoenc = std::make_shared<ADIEncoder>('D', 'C');
   auto rightautoenc = std::make_shared<ADIEncoder>('F', 'E',true);
+  auto testm1 = std::make_shared<Motor>(1);
+  auto testm2 = std::make_shared<Motor>(11);
+  Motor testm3(10);
+  Motor testm4(20);
+  auto groupleft = std::make_shared<MotorGroup>({testm3,testm4});
+  auto groupright = std::make_shared<MotorGroup>(2);
 
+  //auto groupleft = std::make_shared<MotorGroup>({testm3,testm4});
 
 	/**auto chassis = ChassisControllerBuilder().withMotors(group1, group2) // left motor is 1, right motor is 2 (reversed)
 	    // green gearset, 4 inch wheel diameter, 11.5 inch wheelbase
@@ -106,14 +113,11 @@ okapi::ADIEncoder leftencoder ({'D', 'C'});
 			okapi::SettledUtil settled_moment(std::unique_ptr<AbstractTimer>(&time2_moment));
 			**/
 
-      
 
-Motor testm1(1);
-Motor testm2(10);
 
 auto bruh = std::make_shared<SkidSteerModel>(
-		std::shared_ptr<MotorGroup>(&group1),
-		std::shared_ptr<MotorGroup>(&group2),
+		groupleft,
+		groupright,
 		leftautoenc,
 		rightautoenc,
 		40.0,
@@ -128,13 +132,15 @@ auto bruh = std::make_shared<SkidSteerModel>(
 
 	auto profileController = AsyncMotionProfileControllerBuilder()
 	.withOutput(bruh,scales,pair)
-	//.withLimits(limits)
+	.withLimits(limits)
 	.buildMotionProfileController()
 	;
 
-	okapi::PathfinderPoint a({12_in,12_in,90_deg});
 
-	profileController->moveTo(std::initializer_list<PathfinderPoint>({a}));
+  //PathfinderPoint pointA = (12_in,12_in,90_deg);
+	//okapi::PathfinderPoint a ({12_in,12_in,90_deg});
+
+	//profileController->moveTo({12_in,12_in,90_deg});
 
 
 
