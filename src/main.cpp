@@ -85,6 +85,9 @@ void opcontrol() {
  okapi::MotorGroup group2 ({Motor(10,false,AbstractMotor::gearset::green,AbstractMotor::encoderUnits::degrees),Motor(20,false,AbstractMotor::gearset::green,AbstractMotor::encoderUnits::degrees)});
 okapi::ADIEncoder leftencoder ({'D', 'C'});
 	okapi::ADIEncoder rightencoder ({'F', 'E',true});
+  auto leftautoenc = std::make_shared<ADIEncoder>('D', 'C');
+  auto rightautoenc = std::make_shared<ADIEncoder>('F', 'E',true);
+
 
 	/**auto chassis = ChassisControllerBuilder().withMotors(group1, group2) // left motor is 1, right motor is 2 (reversed)
 	    // green gearset, 4 inch wheel diameter, 11.5 inch wheelbase
@@ -103,14 +106,16 @@ okapi::ADIEncoder leftencoder ({'D', 'C'});
 			okapi::SettledUtil settled_moment(std::unique_ptr<AbstractTimer>(&time2_moment));
 			**/
 
+      
+
 Motor testm1(1);
 Motor testm2(10);
 
-SkidSteerModel bruh(
+auto bruh = std::make_shared<SkidSteerModel>(
 		std::shared_ptr<MotorGroup>(&group1),
 		std::shared_ptr<MotorGroup>(&group2),
-		std::shared_ptr<ADIEncoder>(&leftencoder),
-		std::shared_ptr<ADIEncoder>(&rightencoder),
+		leftautoenc,
+		rightautoenc,
 		40.0,
 		50.0);
 
@@ -122,7 +127,7 @@ SkidSteerModel bruh(
 	okapi::AbstractMotor::GearsetRatioPair pair(AbstractMotor::gearset::green,1);
 
 	auto profileController = AsyncMotionProfileControllerBuilder()
-	.withOutput(std::shared_ptr<SkidSteerModel>(&bruh),scales,pair)
+	.withOutput(bruh,scales,pair)
 	//.withLimits(limits)
 	.buildMotionProfileController()
 	;
