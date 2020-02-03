@@ -81,25 +81,28 @@ void opcontrol() {
 	using namespace okapi;
 	//okapi::AbstractTimer timer({100_ms});
 	//okapi::TimeUtil chassisUtil(std::unique_ptr<AbstractTimer>({100_ms}));
-	okapi::MotorGroup group1 ({Motor(1,false,AbstractMotor::gearset::green,AbstractMotor::encoderUnits::degrees),Motor(11,false,AbstractMotor::gearset::green,AbstractMotor::encoderUnits::degrees)});
- okapi::MotorGroup group2 ({Motor(10,false,AbstractMotor::gearset::green,AbstractMotor::encoderUnits::degrees),Motor(20,false,AbstractMotor::gearset::green,AbstractMotor::encoderUnits::degrees)});
-okapi::ADIEncoder leftencoder ({'D', 'C'});
+
+  okapi::MotorGroup group1 ({Motor(1,false,AbstractMotor::gearset::green,AbstractMotor::encoderUnits::degrees),Motor(11,false,AbstractMotor::gearset::green,AbstractMotor::encoderUnits::degrees)});
+  okapi::MotorGroup group2 ({Motor(10,false,AbstractMotor::gearset::green,AbstractMotor::encoderUnits::degrees),Motor(20,false,AbstractMotor::gearset::green,AbstractMotor::encoderUnits::degrees)});
+
+  okapi::ADIEncoder leftencoder ({'D', 'C'});
 	okapi::ADIEncoder rightencoder ({'F', 'E',true});
+
   auto leftautoenc = std::make_shared<ADIEncoder>('D', 'C');
   auto rightautoenc = std::make_shared<ADIEncoder>('F', 'E',true);
-  auto testm1 = std::make_shared<Motor>(1);
-  auto testm2 = std::make_shared<Motor>(11);
+
   okapi::Motor moto1 (1,false,AbstractMotor::gearset::green,AbstractMotor::encoderUnits::degrees);
   okapi::Motor moto2(11,false,AbstractMotor::gearset::green,AbstractMotor::encoderUnits::degrees);
   okapi::Motor moto3(10,false,AbstractMotor::gearset::green,AbstractMotor::encoderUnits::degrees);
   okapi::Motor moto4(20,false,AbstractMotor::gearset::green,AbstractMotor::encoderUnits::degrees);
+
   auto leftmoment = {moto1,moto2};
   auto rightmoment = {moto3,moto4};
 
   auto groupleft = std::make_shared<MotorGroup>(leftmoment);
   auto groupright = std::make_shared<MotorGroup>(rightmoment);
 
-  PathfinderPoint a = {12_in,12_in,90_deg};
+  //PathfinderPoint a = {12_in,12_in,90_deg};
 
   //auto pointA PathfinderPoint(a);
 
@@ -116,10 +119,6 @@ okapi::ADIEncoder leftencoder ({'D', 'C'});
 			//.withOdometry()
 	    .buildOdometry();
 
-			okapi::Timer time_moment();
-			okapi::Timer time2_moment();
-			okapi::Rate rate_moment();
-			okapi::SettledUtil settled_moment(std::unique_ptr<AbstractTimer>(&time2_moment));
 			**/
 
 
@@ -152,7 +151,7 @@ auto bruh = std::make_shared<SkidSteerModel>(
 	// set the state to zero
 	//chassis->setState({0_in, 0_in, 0_deg});
 	//chassis->turnToAngle(90_deg);
-	/**while (true) {
+	while (true) {
 		double power = 200*master.get_analog(ANALOG_LEFT_Y)/127;
 		double turn = 200*master.get_analog(ANALOG_RIGHT_X)/127;
 		int left = (int)(pow(((power + turn)/200.0),2.0)*200.0);
@@ -166,7 +165,31 @@ auto bruh = std::make_shared<SkidSteerModel>(
 		left_wheel.move_velocity(left);
 		left_chain.move_velocity(left);
 		right_wheel.move_velocity(right);
-		right_chain.move_velocity(right);}**/
+		right_chain.move_velocity(right);
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A)){
+    tilter.move_velocity(25);
+    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_B)){
+    tilter.move_velocity(-25);
+  } else{
+    tilter.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    tilter.move_velocity(0);
+  }
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2) && !master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) && !master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
+      intake1.move_velocity(200);
+      intake2.move_velocity(-200);
+      intake1.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+      intake2.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)&& !master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) && !master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
+      intake1.move_velocity(-200);
+      intake2.move_velocity(200);
+      intake1.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+      intake2.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    } else {
+
+      intake1.move_velocity(0);
+      intake2.move_velocity(0);
+    }
+  }
 	// turn 45 degrees and drive approximately 1.4 ft
 	//chassis->moveDistance(12_in);
 	//chassis->turnAngle(90_deg);
