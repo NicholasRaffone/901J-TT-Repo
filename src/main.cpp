@@ -132,9 +132,9 @@ auto bruh = std::make_shared<SkidSteerModel>(
 		200.0);
 
 		//max v, a, j- logger pro
-	okapi::PathfinderLimits limits({0.9,5.8,5.4});
+	okapi::PathfinderLimits limits({0.9,5.8,7.5});
 
-	okapi::ChassisScales scales({3.25_in, 10.85_in},imev5GreenTPR);
+	okapi::ChassisScales scales({3.25_in, 13.85_in},imev5GreenTPR);
 
 	okapi::AbstractMotor::GearsetRatioPair pair(AbstractMotor::gearset::green,1);
 
@@ -146,7 +146,7 @@ auto bruh = std::make_shared<SkidSteerModel>(
 
   profileController->moveTo(    {
         {0_ft, 0_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
-        {1_ft, 1_ft, 45_deg}
+        {1_ft, 1_ft, 0_deg}
       });
 
 
