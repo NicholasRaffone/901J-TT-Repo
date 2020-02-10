@@ -4,14 +4,14 @@
 using namespace okapi;
 
 
-const int LEFT_WHEEL_PORT = 1; //17
-const int LEFT_CHAIN_PORT = 11; //18
-const int RIGHT_CHAIN_PORT = 10; //13
-const int RIGHT_WHEEL_PORT = 20; //15
-const int LIFT_PORT = 8;
-const int INTAKE1 = 3;
-const int INTAKE2 = 2;
-const int TILTERPORT = 5;
+const int LEFT_WHEEL_PORT = 19; //17
+const int LEFT_CHAIN_PORT = 20; //18
+const int RIGHT_CHAIN_PORT = 12; //13
+const int RIGHT_WHEEL_PORT = 11; //15
+const int LIFT_PORT = 16;
+const int INTAKE1 = 13;
+const int INTAKE2 = 14;
+const int TILTERPORT = 10;
 
 const char LENC_TOP_PORT = 'D';
 const char LENC_BOT_PORT = 'C';
@@ -20,14 +20,14 @@ const char RENC_BOT_PORT = 'E';
 const char BENC_TOP_PORT = 'P';
 const char BENC_BOT_PORT = 'O';
 
-pros::Motor left_wheel (LEFT_WHEEL_PORT, pros::E_MOTOR_GEARSET_18,false);//17
-pros::Motor right_wheel (RIGHT_WHEEL_PORT, pros::E_MOTOR_GEARSET_18, true);//15
-pros::Motor left_chain (LEFT_CHAIN_PORT, pros::E_MOTOR_GEARSET_18, false);//18
-pros::Motor right_chain (RIGHT_CHAIN_PORT, pros::E_MOTOR_GEARSET_18, true);//13
+pros::Motor left_wheel (LEFT_WHEEL_PORT, pros::E_MOTOR_GEARSET_18,true);//17
+pros::Motor right_wheel (RIGHT_WHEEL_PORT, pros::E_MOTOR_GEARSET_18, false);//15
+pros::Motor left_chain (LEFT_CHAIN_PORT, pros::E_MOTOR_GEARSET_18, true);//18
+pros::Motor right_chain (RIGHT_CHAIN_PORT, pros::E_MOTOR_GEARSET_18, false);//13
 pros::Motor lift (LIFT_PORT,pros::E_MOTOR_GEARSET_36, false);
 pros::Controller master (CONTROLLER_MASTER);
-pros::Motor intake1 (INTAKE1, pros::E_MOTOR_GEARSET_36, true);//13
-pros::Motor intake2 (INTAKE2, pros::E_MOTOR_GEARSET_36, true);//13
+pros::Motor intake1 (INTAKE1, pros::E_MOTOR_GEARSET_18, true);//13
+pros::Motor intake2 (INTAKE2, pros::E_MOTOR_GEARSET_18, true);//13
 pros::Motor tilter(TILTERPORT, pros::E_MOTOR_GEARSET_36, false);//13
 
 //pros::ADIEncoder LeftEncoder(LENC_TOP_PORT,LENC_BOT_PORT,true);

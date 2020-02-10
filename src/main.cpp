@@ -75,9 +75,60 @@ void autonomous() {
 		 i++;
 	 }
  }
+ void lift_task(void* param){
+
+   while(true){
+
+   if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) && master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
+       lift_PID(-343,90,200,0);
+   } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)&&master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
+     lift_PID(-308,100,200,0);
+   } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)&& master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
+       lift.move_velocity(-200);
+   } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)&&master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
+     lift.move_velocity(200);
+   } else {
+     lift.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+     lift.move_velocity(0);
+   }
+   pros::delay(8);
+ }
+ }
+
+ void tilter_task(void* param){
+   while (true){
+     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)&& master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
+         tilter_PID(135,100,(double)0.5,0);
+     } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)&& master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
+       tilter_PID(135,100,(double)0.5,0);
+     }
+
+     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A)){
+     tilter.move_velocity(25);
+     } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_B)){
+     tilter.move_velocity(-200);
+     } else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)){
+             tilter_PID(330,80,(double)0.06,0);
+     }
+     else{
+     tilter.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+     tilter.move_velocity(0);
+     }
+
+
+     pros::delay(8);
+
+ }
+ }
+
 void opcontrol() {
-	std::string texttwo("enc");
-	pros::Task task(enconder_task,&texttwo,"");
+
+   std::string text("tilter");
+   std::string texttwo("lift");
+
+   pros::Task task(lift_task,&texttwo,"");
+   pros::Task task2(tilter_task,&text,"");
+
 	using namespace okapi;
 	//okapi::AbstractTimer timer({100_ms});
 	//okapi::TimeUtil chassisUtil(std::unique_ptr<AbstractTimer>({100_ms}));
@@ -120,9 +171,6 @@ void opcontrol() {
 	    .buildOdometry();
 
 			**/
-
-
-
 auto bruh = std::make_shared<SkidSteerModel>(
 		groupleft,
 		groupright,
@@ -144,57 +192,63 @@ auto bruh = std::make_shared<SkidSteerModel>(
 	.buildMotionProfileController()
 	;
 
-  profileController->moveTo(    {
+  /*profileController->moveTo(    {
         {0_ft, 0_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
         {1_ft, 1_ft, 0_deg}
-      });
-
-
-
-
-
+      });*/
 	// set the state to zero
 	//chassis->setState({0_in, 0_in, 0_deg});
 	//chassis->turnToAngle(90_deg);
-	/**while (true) {
-		double power = 200*master.get_analog(ANALOG_LEFT_Y)/127;
-		double turn = 200*master.get_analog(ANALOG_RIGHT_X)/127;
-		int left = (int)(pow(((power + turn)/200.0),2.0)*200.0);
-		int right = (int) (pow(((power - turn)/200.0),2.0)*200.0);
-		if(power+turn < 0){
-			left *=-1;
-		}
-		if(power - turn < 0){
-			right*=-1;
-		}
-		left_wheel.move_velocity(left);
-		left_chain.move_velocity(left);
-		right_wheel.move_velocity(right);
-		right_chain.move_velocity(right);
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A)){
-    tilter.move_velocity(25);
-    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_B)){
-    tilter.move_velocity(-25);
-  } else{
-    tilter.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-    tilter.move_velocity(0);
-  }
+  while (true) {
+    double power = 200*master.get_analog(ANALOG_LEFT_Y)/127;
+    double turn = 200*master.get_analog(ANALOG_RIGHT_X)/127;
+    int left = (int)(pow(((power + turn)/200.0),2.0)*200.0);
+    int right = (int) (pow(((power - turn)/200.0),2.0)*200.0);
+    if(power+turn < 0){
+      left *=-1;
+    }
+    if(power - turn < 0){
+      right*=-1;
+    }
+    left_wheel.move_velocity(left);
+    left_chain.move_velocity(left);
+    right_wheel.move_velocity(right);
+    right_chain.move_velocity(right);
+
+
+    if(master.get_digital(pros::E_CONTROLLER_DIGITAL_X) != 0){
+      left_wheel.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+      right_wheel.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+      left_chain.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+      right_chain.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+      left_wheel.move_velocity(0);
+      left_chain.move_velocity(0);
+      right_wheel.move_velocity(0);
+      right_chain.move_velocity(0);
+    }else{
+      left_wheel.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+      right_wheel.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+      left_chain.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+      right_chain.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+    }
+
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2) && !master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) && !master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
       intake1.move_velocity(200);
       intake2.move_velocity(-200);
       intake1.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
       intake2.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)&& !master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) && !master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
-      intake1.move_velocity(-200);
-      intake2.move_velocity(200);
+      intake1.move_velocity(-75);
+      intake2.move_velocity(75);
       intake1.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
       intake2.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     } else {
-
       intake1.move_velocity(0);
       intake2.move_velocity(0);
     }
-  }**/
+    pros::delay(8);
+  }
+
 	// turn 45 degrees and drive approximately 1.4 ft
 	//chassis->moveDistance(12_in);
 	//chassis->turnAngle(90_deg);
@@ -207,5 +261,4 @@ auto bruh = std::make_shared<SkidSteerModel>(
 	//chassis->turnToAngle(90_deg);
 	// turn approximately -90 degrees to face {5_ft, 0_ft} which is to the north of the robot
 	//chassis->turnToPoint({0_ft, 5_ft});
-
 }

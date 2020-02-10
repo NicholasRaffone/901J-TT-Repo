@@ -66,7 +66,7 @@ void liftpid(int targetDegree, int maxvel){
   left_lift.move_velocity(0);
 }
 */
-void trackPos(rPos& position) //Based off of 5225a E-bots Pilons APS code, https://github.com/nickmertin/5225A-2017-2018/blob/master/src/auto.c
+/*void trackPos(rPos& position) //Based off of 5225a E-bots Pilons APS code, https://github.com/nickmertin/5225A-2017-2018/blob/master/src/auto.c
 {
   int currentL = leftenc.get();
   int currentR = rightenc.get();
@@ -114,7 +114,7 @@ void trackPos(rPos& position) //Based off of 5225a E-bots Pilons APS code, https
 	position.x += h2 * cosP; // cos(x) = cos(-x)
 
 	position.angle += angle;
-}
+}*/
 
 void slewRateControl(pros::Motor *motor, int targetVelocity, int increment){
   int currentVelocity = motor->get_target_velocity();
@@ -224,7 +224,7 @@ void move_straight_rel_test(double xCoord, int maxVel, int multi){
 
  while(!goalMet){
 
-   currentPosition = (leftenc.get());
+   //currentPosition = (leftenc.get());
    error = target - currentPosition;
 
    if (std::abs(error) < 600){
@@ -257,6 +257,82 @@ void move_straight_rel_test(double xCoord, int maxVel, int multi){
  intake2.move_velocity(0);
 }
 
+void new_turn_PID(float targetDegree){
+  leftenc.reset();
+  float turn_constant_right = 2.4;
+  float turn_constant_left = 2.42;
+  int maxVoltage = 90;
+  double degreeGoal;
+  double integral_start_degree = 15;
+  if (targetDegree > 0){
+    degreeGoal = targetDegree*turn_constant_right;
+    integral_start_degree *= turn_constant_right;
+  } else {
+    degreeGoal = targetDegree*turn_constant_left;
+    integral_start_degree *= turn_constant_left;
+  }
+  bool goalMet = false;
+  int targetVelocity = 0;
+  int leftTarget = 0;
+  int rightTarget = 0;
+  double currentPosition = 0;
+  double error = 0;
+  double previous_error = degreeGoal;
+  double kP = 0.75;
+  double kI = 0.0005;
+  double kD = 0.001;
+  double integral = 0;
+  double derivative = 0;
+  int settletime = 0;
+  if(targetDegree<0){maxVoltage *= -1;}
+
+
+  while(!goalMet){
+
+    //currentPosition = leftenc.get();
+
+    error = degreeGoal - currentPosition;
+    printf("%f\r\n",currentPosition);
+    if (std::abs(error) < integral_start_degree){
+      integral += error;
+    }
+    if((previous_error < 0 && error > 0) ||(previous_error > 0 && error < 0)){
+      integral = 0;
+    }
+
+    derivative = error - previous_error;
+    previous_error = error;
+
+    targetVelocity = kP*error + kI*integral + kD*derivative;
+
+    if (std::abs(targetVelocity) > std::abs(maxVoltage)){
+      targetVelocity = maxVoltage;
+    }
+
+
+      leftTarget = targetVelocity;
+      rightTarget = -1*targetVelocity;
+
+
+    left_wheel.move_voltage(leftTarget);
+    left_chain.move_voltage(leftTarget);
+    right_wheel.move_voltage(rightTarget);
+    right_chain.move_voltage(rightTarget);
+
+    if (std::abs(error) < 4){
+      settletime++;
+    } else{
+      settletime = 0;
+    }
+    if (settletime >= 20){
+      goalMet = true;
+    }
+
+    pros::delay(10);
+  }
+  brakeMotors();
+  }
+
 void turn_PID(float targetDegree){
   leftenc.reset();
   float turn_constant_right = 2.4;
@@ -285,7 +361,7 @@ void turn_PID(float targetDegree){
 
   while(!goalMet){
 
-      currentPosition = leftenc.get();
+      //currentPosition = leftenc.get();
 
     error = degreeGoal - currentPosition;
     printf("%f\r\n",currentPosition);
