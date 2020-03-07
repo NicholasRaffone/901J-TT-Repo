@@ -442,8 +442,8 @@ void tilter_PID(float targetDegree, int maxVelocity, double kp,int delay){
   double error = 0;
   double previous_error = degreeGoal;
   double kP = kp;
-  double kI = 0.001;
-  double kD = 0.005;
+  double kI = 0.0025;
+  double kD = 0.007;
   double integral = 0;
   double derivative = 0;
 
@@ -458,8 +458,11 @@ pros::delay(delay);
     currentPosition = tilter.get_position();
     error = degreeGoal - currentPosition;
 
-    if (std::abs(error) < 80){
+    if (std::abs(error) < 600){
       integral += error;
+    }
+    if (std::abs(integral) > 9000){
+      integral = 9000;
     }
       if (std::abs(error) < 1100){
     intake1.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);

@@ -97,18 +97,14 @@ void autonomous() {
 
  void tilter_task(void* param){
    while (true){
-     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)&& master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
-         tilter_PID(135,100,(double)0.5,0);
-     } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)&& master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
-       tilter_PID(135,100,(double)0.5,0);
-     }
+
 
      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A)){
      tilter.move_velocity(25);
      } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_B)){
      tilter.move_velocity(-200);
      } else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)){
-             tilter_PID(330,80,(double)0.06,0);
+             tilter_PID(230,200,(double)0.11,0);
      }
      else{
      tilter.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
