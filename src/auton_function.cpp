@@ -288,7 +288,6 @@ void new_turn_PID(float targetDegree){
 
 
   while(!goalMet){
-
     //currentPosition = leftenc.get();
 
     error = degreeGoal - currentPosition;
